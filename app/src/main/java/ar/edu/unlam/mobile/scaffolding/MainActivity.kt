@@ -21,6 +21,8 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
@@ -65,6 +67,14 @@ fun MainScreen() {
             composable("home") {
                 // Home es el componente en sí que es el destino de navegación.
                 HomeScreen(modifier = Modifier.padding(paddingValue))
+            }
+            composable("nofitication") {
+                // Home es el componente en sí que es el destino de navegación.
+                NotificationScreen()
+            }
+            composable("favorite") {
+                // Home es el componente en sí que es el destino de navegación.
+                FavoriteScreen()
             }
             composable(
                 route = "user/{id}",
