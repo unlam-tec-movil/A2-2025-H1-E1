@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.favorite_post
+package ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite
 
 class FavoriteViewModel {
     // TODO: Pantalla de posts favoritos.

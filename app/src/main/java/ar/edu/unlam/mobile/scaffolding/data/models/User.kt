@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.models
 
-data class User (
+data class User(
     val userId: Int,
     val name: String,
     val avatar_url: String,
