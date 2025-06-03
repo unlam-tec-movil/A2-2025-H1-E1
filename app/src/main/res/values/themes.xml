@@ -2,4 +2,15 @@
 <resources>
 
     <style name="Theme.ScaffoldingV2" parent="android:Theme.Material.Light.NoActionBar" />
+    <style name="Theme.ScaffoldingV2.Splash" parent="Theme.SplashScreen">
+        <!-- Fondo de la splash screen -->
+        <item name="windowSplashScreenBackground">@color/white</item>
+
+        <!-- Icono que se muestra en el centro -->
+        <item name="windowSplashScreenAnimatedIcon">@drawable/unlamlogo</item>
+
+        <!-- Tema que se usará después de la splash -->
+        <item name="postSplashScreenTheme">@style/Theme.ScaffoldingV2</item>
+    </style>
+
 </resources>
