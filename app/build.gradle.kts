@@ -74,7 +74,8 @@ dependencies {
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
 
-
+    // Fonts
+    implementation ("androidx.compose.ui:ui-text-google-fonts:1.8.2")
 
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
