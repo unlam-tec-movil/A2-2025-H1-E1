@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -76,6 +76,10 @@ dependencies {
 
     // Fonts
     implementation ("androidx.compose.ui:ui-text-google-fonts:1.8.2")
+
+    // Splash
+    implementation ("androidx.core:core-splashscreen:1.0.0")
+
 
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
