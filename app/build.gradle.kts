@@ -70,6 +70,10 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Splash Screen
+    implementation ("androidx.core:core-splashscreen:1.0.0")
+
+
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
     
