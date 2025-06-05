@@ -16,7 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ScaffoldingV2">
+            android:theme="@style/Theme.ScaffoldingV2.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

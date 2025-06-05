@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 34
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -72,7 +72,7 @@ dependencies {
 
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
-
+    
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
