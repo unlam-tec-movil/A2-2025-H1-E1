@@ -70,11 +70,8 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
-
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
-
-
 
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
@@ -83,4 +80,5 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
+
 }
