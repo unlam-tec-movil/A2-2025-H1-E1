@@ -12,8 +12,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.theme.darkGreen
-import ar.edu.unlam.mobile.scaffolding.ui.theme.lightGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.LightGreen
 
 @Composable
 fun SplashScreen(navController: NavController) {
@@ -28,7 +28,7 @@ fun SplashScreen(navController: NavController) {
             .fillMaxSize()
             .background(
                 brush = Brush.verticalGradient(
-                    colors = listOf(lightGreen, darkGreen)
+                    colors = listOf(LightGreen, DarkGreen)
                 )
             ),
         contentAlignment = Alignment.Center

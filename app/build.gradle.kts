@@ -73,6 +73,8 @@ dependencies {
     // Splash Screen
     implementation ("androidx.core:core-splashscreen:1.0.0")
 
+    //imagenes por url
+    implementation("io.coil-kt:coil-compose:2.6.0")
 
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
