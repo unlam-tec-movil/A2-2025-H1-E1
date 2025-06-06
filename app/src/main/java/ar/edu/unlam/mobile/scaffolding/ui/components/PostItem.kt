@@ -38,6 +38,8 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
@@ -45,7 +47,7 @@ import coil.compose.rememberAsyncImagePainter
 
 
 @Composable
-fun PostItem(post: Post, modifier: Modifier) {
+fun PostItem(post: Post, modifier: Modifier, navController: NavController ) {
     Card(
         modifier = Modifier
             .fillMaxWidth(),
@@ -61,17 +63,18 @@ fun PostItem(post: Post, modifier: Modifier) {
                 ImagePostItem(post.urlPostImage)
             }
 
-            ButtonsPost()
+            ButtonsPost(post.likes, post.comments, navController, post.id)
         }
     }
 }
 
 
 @Composable
-fun ButtonsPost() {
+fun ButtonsPost(likes: Int?, comments: Int?, navController: NavController, id: Int) {
 
     var isLiked by remember { mutableStateOf(false) }
     var isBookmark by remember { mutableStateOf(false) }
+
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -83,23 +86,51 @@ fun ButtonsPost() {
         IconButton(onClick = {
             isLiked = !isLiked
         }) {
-            Icon(
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Me gusta",
-                tint = if (isLiked) Green else Color.Gray,
-                modifier = Modifier.size(30.dp)
-            )
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Favorite,
+                    contentDescription = "Me gusta",
+                    tint = if (isLiked) Green else Color.Gray,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(
+                    text = "$likes",
+                    color = GrayLight,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
-        IconButton(onClick = {}) {
-            Icon(
-                Icons.Default.Comment,
-                "Comentar",
-                tint = Color.Gray,
-                modifier = Modifier.size(30.dp)
-            )
+        IconButton(onClick = {
+
+                navController.navigate("comments/${id}")
+
+
+        }) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Icon(
+                    Icons.Default.Comment,
+                    "Comentar",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(30.dp)
+                )
+                Text(
+                    text = "$comments",
+                    color = GrayLight,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp
+                )
+            }
+
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -193,7 +224,7 @@ fun UserName(userName: String) {
 
 
 @Composable
-fun ListPost(posts: List<Post>) {
+fun ListPost(posts: List<Post>, navController: NavController) {
 
     LazyColumn(
         modifier = Modifier
@@ -201,7 +232,7 @@ fun ListPost(posts: List<Post>) {
             .background(color = GrayLight)
     ) {
         items(posts) { post ->
-            PostItem(post, modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp))
+            PostItem(post, modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp), navController)
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
 
         }
@@ -251,6 +282,8 @@ fun PreviewListPost() {
         )
     }
 
-    ListPost(posts)
+    val navController= rememberNavController()
+
+    ListPost(posts, navController)
 
 }

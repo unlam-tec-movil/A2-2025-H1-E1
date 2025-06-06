@@ -1,11 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.data.models
 
-data class Post(
-    val id: Int,
+data class Comment(
+    val idComent: Int,
     val userId: Int,
-    val title: String,
+    val idPost: Int,
     val body: String,
-    val urlPostImage: String? = null,
     val likes: Int? = 0,
-    val comments: Int? = 0
 )

@@ -8,10 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,6 +27,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
@@ -68,15 +67,18 @@ fun MainScreen() {
 
     val showBottomBar = currentRoute != "splash"
 
+
+
     Scaffold(
         topBar = {
-            TopBar("UNLAM", {})
+            if (showBottomBar) {TopBar("UNLAM", {})}
+
         },
         bottomBar = {
             if (showBottomBar) BottomBar(controller = controller)
         },
         floatingActionButton = {
-            if (showBottomBar) {
+            if (showBottomBar && currentRoute != "comments/{idPost}") {
                 FloatingActionButton(
                     onClick = { controller.navigate("home") },
                     containerColor = Green,
@@ -113,6 +115,17 @@ fun MainScreen() {
             composable("favorite") {
                 FavoriteScreen()
             }
+
+            composable(
+                route = "comments/{idPost}",
+                arguments = listOf(navArgument("idPost") { type = NavType.IntType })
+            ) { backStackEntry ->
+                val idPost = backStackEntry.arguments?.getInt("idPost") ?: 0
+                DetailPostScreen(controller, idPost)
+            }
+
+
+
             composable(
                 route = "user/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType })
