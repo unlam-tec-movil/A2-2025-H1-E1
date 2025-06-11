@@ -14,21 +14,29 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
+        installSplashScreen()
+
         super.onCreate(savedInstanceState)
+
         setContent {
             ScaffoldingV2Theme {
                 // A surface container using the 'background' color from the theme
@@ -49,22 +57,44 @@ fun MainScreen() {
     // para navegar como naviegate y también la información de en dónde se "encuentra" el usuario
     // a través del back stack
     val controller = rememberNavController()
+    val currentBackStackEntry = controller.currentBackStackEntryAsState()
+    val currentRoute = currentBackStackEntry.value?.destination?.route
+
+    val showBottomBar = currentRoute != "splash"
+
     Scaffold(
-        bottomBar = { BottomBar(controller = controller) },
+        bottomBar = {
+            if (showBottomBar) BottomBar(controller = controller)
+        },
         floatingActionButton = {
-            IconButton(onClick = { controller.navigate("home") }) {
-                Icon(Icons.Filled.Home, contentDescription = "Home")
+            if (showBottomBar) {
+                IconButton(onClick = { controller.navigate("home") }) {
+                    Icon(Icons.Filled.Home, contentDescription = "Home")
+                }
             }
         },
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.
-        NavHost(navController = controller, startDestination = "home") {
+        NavHost(
             // composable es el componente que se usa para definir un destino de navegación.
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
+            navController = controller,
+            startDestination = "splash",
+            modifier = Modifier.padding(paddingValue),
+        ) {
+            composable("splash") {
+                SplashScreen(navController = controller)
+            }
             composable("home") {
                 // Home es el componente en sí que es el destino de navegación.
-                HomeScreen(modifier = Modifier.padding(paddingValue))
+                HomeScreen(modifier = Modifier.fillMaxSize())
+            }
+            composable("nofitication") {
+                NotificationScreen()
+            }
+            composable("favorite") {
+                FavoriteScreen()
             }
             composable(
                 route = "user/{id}",

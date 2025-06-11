@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
-        android:name="ScaffoldingApplication"
+        android:name=".ScaffoldingApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -16,7 +16,7 @@
         <activity
             android:name=".MainActivity"
             android:exported="true"
-            android:theme="@style/Theme.ScaffoldingV2">
+            android:theme="@style/Theme.ScaffoldingV2.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
