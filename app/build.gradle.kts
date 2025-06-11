@@ -71,12 +71,11 @@ dependencies {
     debugImplementation(libs.androidx.ui.test.manifest)
 
     // Splash Screen
-    implementation ("androidx.core:core-splashscreen:1.0.0")
-
+    implementation("androidx.core:core-splashscreen:1.0.0")
 
     // iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
-    
+
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
     ksp(libs.google.dagger.hilt.android.compiler)
@@ -84,5 +83,4 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
-
 }

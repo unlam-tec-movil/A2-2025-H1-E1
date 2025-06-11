@@ -7,24 +7,25 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.tooling.preview.Preview
 import ar.edu.unlam.mobile.scaffolding.data.models.UserProof
-import androidx.compose.runtime.getValue
 
 @Composable
 fun FollowedContent(
     users: List<UserProof>,
     onToggleFollow: (UserProof) -> Unit,
-    title: String = "Siguiendo"
+    title: String = "Siguiendo",
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp)
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(16.dp),
     ) {
         Text(text = title, modifier = Modifier.padding(bottom = 16.dp))
 
@@ -32,7 +33,7 @@ fun FollowedContent(
             items(users) { user ->
                 FollowedUserItem(
                     user = user,
-                    onToggleFollow = { onToggleFollow(user) }
+                    onToggleFollow = { onToggleFollow(user) },
                 )
             }
         }
@@ -45,7 +46,7 @@ fun Followed(viewModel: FollowedViewModel = viewModel()) {
     FollowedContent(
         users = users,
         onToggleFollow = { viewModel.toggleFollow(it) },
-        title = "Siguiendo"
+        title = "Siguiendo",
     )
 }
 
@@ -55,10 +56,9 @@ fun Followers(viewModel: FollowersViewModel = viewModel()) {
     FollowedContent(
         users = users,
         onToggleFollow = { viewModel.toggleFollow(it) },
-        title = "Seguidores"
+        title = "Seguidores",
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable

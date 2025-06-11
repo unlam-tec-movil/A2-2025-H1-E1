@@ -2,6 +2,7 @@
 <resources>
 
     <style name="Theme.ScaffoldingV2" parent="android:Theme.Material.Light.NoActionBar" />
+
     <style name="Theme.ScaffoldingV2.Splash" parent="Theme.SplashScreen">
         <!-- Fondo de la splash screen -->
         <item name="windowSplashScreenBackground">@color/white</item>

@@ -52,60 +52,75 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.ui.theme.blueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.darkGreen
 
-
-
 @Preview
 @Composable
-fun LoginScreen(){
+fun LoginScreen() {
     val isImeVisible by rememberImeState()
     var rememberUser by remember { mutableStateOf(false) }
 
-
-
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)){
-        Column( modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally)
-
-        {
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             val animatedUpperSectionRatio by animateFloatAsState(
                 targetValue = if (isImeVisible) 0f else 0.35f,
                 label = "",
             )
             AnimatedVisibility(visible = !isImeVisible, enter = fadeIn(), exit = fadeOut()) {
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .fillMaxHeight(animatedUpperSectionRatio),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .fillMaxHeight(animatedUpperSectionRatio),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Image(
                         painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamoptionb),
                         contentDescription = "Fondo superior",
                         contentScale = ContentScale.Crop, // Esto hace que la imagen llene el espacio
-                        modifier = Modifier.matchParentSize()
+                        modifier = Modifier.matchParentSize(),
                     )
 
                     Image(
                         painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamlogo),
                         contentDescription = "logo",
-                        modifier = Modifier.size(100.dp)
+                        modifier = Modifier.size(100.dp),
                     )
-
-
                 }
             }
 
-            //Columna blanca con los bordes redondeados
-            Column(modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp)).background(Color.White)
-                , horizontalAlignment = Alignment.CenterHorizontally){
+            // Columna blanca con los bordes redondeados
+            Column(
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
+                        .background(Color.White),
+                horizontalAlignment = Alignment.CenterHorizontally,
+            ) {
                 Spacer(modifier = Modifier.height(80.dp))
 
-
-                Text(text = "Welcome back!", fontFamily = FontFamily.Default, fontSize =36.sp, fontWeight = FontWeight.Bold
-                    , color = blueGreen)
+                Text(
+                    text = "Welcome back!",
+                    fontFamily = FontFamily.Default,
+                    fontSize = 36.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = blueGreen,
+                )
                 Spacer(modifier = Modifier.height(5.dp))
 
-                Text(text = "Login to your account", fontFamily = FontFamily.Default, fontSize = 15.sp
-                    , color = Color.Gray)
+                Text(
+                    text = "Login to your account",
+                    fontFamily = FontFamily.Default,
+                    fontSize = 15.sp,
+                    color = Color.Gray,
+                )
                 Spacer(modifier = Modifier.height(30.dp))
 
                 var username by remember { mutableStateOf("Username") }
@@ -117,9 +132,7 @@ fun LoginScreen(){
                     keyboardOptions = KeyboardOptions(),
                     keyboardActions = KeyboardActions(),
                     trailingIcon = Icons.Default.Person,
-                    onValueChange = { username = it }
-
-
+                    onValueChange = { username = it },
                 )
                 Spacer(modifier = Modifier.height(20.dp))
 
@@ -132,28 +145,28 @@ fun LoginScreen(){
                     keyboardOptions = KeyboardOptions(),
                     keyboardActions = KeyboardActions(),
                     trailingIcon = Icons.Default.Lock,
-                    onValueChange = { password = it }
-
-
+                    onValueChange = { password = it },
                 )
                 Spacer(modifier = Modifier.height(10.dp))
 
                 Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
+                    horizontalArrangement = Arrangement.SpaceBetween,
                 ) {
                     // Grupo izquierdo: Checkbox + "Remember me"
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Checkbox(
                             checked = rememberUser,
                             onCheckedChange = { rememberUser = it },
-                            colors = CheckboxDefaults.colors(
-                                checkedColor = blueGreen,
-                                uncheckedColor = Color.Gray
-                            )
+                            colors =
+                                CheckboxDefaults.colors(
+                                    checkedColor = blueGreen,
+                                    uncheckedColor = Color.Gray,
+                                ),
                         )
 
                         Spacer(modifier = Modifier.width(4.dp))
@@ -161,43 +174,52 @@ fun LoginScreen(){
                         Text(
                             text = "Remember me",
                             color = Color.Black,
-                            fontSize = 14.sp
+                            fontSize = 14.sp,
                         )
                     }
 
                     // Botón a la derecha
                     TextButton(
                         contentPadding = PaddingValues(0.dp),
-                        onClick = { /* TODO */ }
+                        onClick = { /* TODO */ },
                     ) {
                         Text("Forgot your password?", color = darkGreen, fontSize = 14.sp)
                     }
                 }
 
-
                 if (isImeVisible) {
                     Button(
                         onClick = { /*TODO*/ },
-                        modifier = Modifier.fillMaxWidth().padding(top = 60.dp).padding(horizontal = 16.dp),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = blueGreen,
-                            contentColor = Color.White
-                        ),
-                        shape = RoundedCornerShape(30.dp)
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 60.dp)
+                                .padding(horizontal = 16.dp),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = blueGreen,
+                                contentColor = Color.White,
+                            ),
+                        shape = RoundedCornerShape(30.dp),
                     ) {
                         Text(
                             text = "log in",
-                            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
+                            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
                         )
-
                     }
-                    Row(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 16.dp),
+                    Row(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(horizontal = 16.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center) {
+                        horizontalArrangement = Arrangement.Center,
+                    ) {
                         Text(
-                            text = "Don't you have an account?", color = darkGreen, fontSize = 14.sp)
+                            text = "Don't you have an account?",
+                            color = darkGreen,
+                            fontSize = 14.sp,
+                        )
 
                         TextButton(onClick = { /* TODO */ }) {
                             Text("Sign in", color = darkGreen, fontWeight = FontWeight.Bold)
@@ -205,51 +227,51 @@ fun LoginScreen(){
                     }
                 } else {
                     Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(horizontal = 16.dp, vertical = 24.dp),
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .padding(horizontal = 16.dp, vertical = 24.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center
+                        verticalArrangement = Arrangement.Center,
                     ) {
                         Button(
                             onClick = { /*TODO*/ },
                             modifier = Modifier.fillMaxWidth(),
-                            colors = ButtonDefaults.buttonColors(
-                                containerColor = blueGreen,
-                                contentColor = Color.White
-                            ),
+                            colors =
+                                ButtonDefaults.buttonColors(
+                                    containerColor = blueGreen,
+                                    contentColor = Color.White,
+                                ),
                             // enabled = inputValido,
-
-                            shape = RoundedCornerShape(30.dp)
+                            shape = RoundedCornerShape(30.dp),
                         ) {
                             Text(
                                 text = "log in",
-                                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500))
+                                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
                             )
-
-
                         }
-                        Row(modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
+                        Row(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 16.dp),
                             verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center) {
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
                             Text(
-                                text = "Don't you have an account?", color = darkGreen, fontSize = 14.sp)
+                                text = "Don't you have an account?",
+                                color = darkGreen,
+                                fontSize = 14.sp,
+                            )
 
                             TextButton(onClick = { /* TODO */ }) {
                                 Text("Sign in", color = darkGreen, fontWeight = FontWeight.Bold)
-                            }}
+                            }
+                        }
                         // Spacer(modifier = Modifier.height(200.dp))
-
                     }
-
-
-
                 }
             }
-        }}
+        }
+    }
 }
-
-
-

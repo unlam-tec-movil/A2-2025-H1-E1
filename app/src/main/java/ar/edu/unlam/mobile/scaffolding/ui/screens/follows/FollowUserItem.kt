@@ -26,20 +26,24 @@ import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.data.models.UserProof
 
 @Composable
-fun FollowedUserItem(user: UserProof, onToggleFollow: () -> Unit) {
+fun FollowedUserItem(
+    user: UserProof,
+    onToggleFollow: () -> Unit,
+) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Icon(
                 imageVector = Icons.Default.AccountCircle,
                 contentDescription = null,
                 modifier = Modifier.size(48.dp),
-                tint = Color(0xFF6B8F89)
+                tint = Color(0xFF6B8F89),
             )
             Spacer(modifier = Modifier.width(12.dp))
             Column {
@@ -50,10 +54,11 @@ fun FollowedUserItem(user: UserProof, onToggleFollow: () -> Unit) {
         OutlinedButton(
             onClick = onToggleFollow,
             border = BorderStroke(1.dp, Color(0xFF2F7E6F)),
-            colors = ButtonDefaults.outlinedButtonColors(
-                contentColor = if (user.isFollowing) Color(0xFF2F7E6F) else Color.Gray
-            ),
-            shape = RoundedCornerShape(24.dp)
+            colors =
+                ButtonDefaults.outlinedButtonColors(
+                    contentColor = if (user.isFollowing) Color(0xFF2F7E6F) else Color.Gray,
+                ),
+            shape = RoundedCornerShape(24.dp),
         ) {
             Text(if (user.isFollowing) "Siguiendo" else "Seguir")
         }

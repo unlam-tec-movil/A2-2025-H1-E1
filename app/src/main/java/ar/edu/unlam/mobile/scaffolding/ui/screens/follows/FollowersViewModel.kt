@@ -11,18 +11,20 @@ class FollowersViewModel : ViewModel() {
     val followersUsers = _followersUsers.asStateFlow()
 
     init {
-        _followersUsers.value = List(10) {
-            UserProof(
-                name = "Danturron",
-                username = "cacaman",
-                isFollowing = false
-            )
-        }
+        _followersUsers.value =
+            List(10) {
+                UserProof(
+                    name = "Danturron",
+                    username = "cacaman",
+                    isFollowing = false,
+                )
+            }
     }
 
     fun toggleFollow(user: UserProof) {
-        _followersUsers.value = _followersUsers.value.map {
-            if (it.username == user.username) it.copy(isFollowing = !it.isFollowing) else it
-        }
+        _followersUsers.value =
+            _followersUsers.value.map {
+                if (it.username == user.username) it.copy(isFollowing = !it.isFollowing) else it
+            }
     }
 }
