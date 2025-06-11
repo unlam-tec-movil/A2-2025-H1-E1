@@ -83,7 +83,8 @@ fun LoginScreen() {
                     Image(
                         painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamoptionb),
                         contentDescription = "Fondo superior",
-                        contentScale = ContentScale.Crop, // Esto hace que la imagen llene el espacio
+                        contentScale = ContentScale.Crop,
+                        // Esto hace que la imagen llene el espacio
                         modifier = Modifier.matchParentSize(),
                     )
 
