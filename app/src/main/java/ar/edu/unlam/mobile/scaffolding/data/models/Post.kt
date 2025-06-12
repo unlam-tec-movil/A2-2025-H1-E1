@@ -7,5 +7,5 @@ data class Post(
     val body: String,
     val urlPostImage: String? = null,
     val likes: Int? = 0,
-    val comments: Int? = 0
+    val comments: Int? = 0,
 )

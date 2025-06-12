@@ -28,25 +28,27 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 @Composable
 fun TopBar(
     title: String = "",
-    onActionClick: () -> Unit = {}
+    onActionClick: () -> Unit = {},
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(64.dp)
-            .background(Green)
-            .padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(64.dp)
+                .background(Green)
+                .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
+        horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Image(
             painter = painterResource(R.drawable.unlamlogo),
             contentDescription = "User_image",
             contentScale = ContentScale.Crop,
-            modifier = Modifier
-                .size(40.dp)
-                .clip(CircleShape)
-                .border(1.dp, Color.LightGray, CircleShape)
+            modifier =
+                Modifier
+                    .size(40.dp)
+                    .clip(CircleShape)
+                    .border(1.dp, Color.LightGray, CircleShape),
         )
 
         Text(
@@ -56,7 +58,10 @@ fun TopBar(
             fontWeight = FontWeight.Bold,
             color = Color.White,
             overflow = TextOverflow.Ellipsis,
-            modifier = Modifier.weight(1f).padding(start = 8.dp)
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
         )
 
         IconButton(onClick = onActionClick) {

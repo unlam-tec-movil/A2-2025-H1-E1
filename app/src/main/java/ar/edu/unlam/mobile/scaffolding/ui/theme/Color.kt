@@ -16,5 +16,3 @@ val LightGreen = Color(0xff1c9154)
 val DarkGreen = Color(0xFF053d47)
 
 val GrayLight = Color(0xFFDCDCDC)
-
-

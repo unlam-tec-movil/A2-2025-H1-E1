@@ -67,12 +67,11 @@ fun MainScreen() {
 
     val showBottomBar = currentRoute != "splash"
 
-
-
     Scaffold(
         topBar = {
-            if (showBottomBar) {TopBar("UNLAM", {})}
-
+            if (showBottomBar) {
+                TopBar("UNLAM", {})
+            }
         },
         bottomBar = {
             if (showBottomBar) BottomBar(controller = controller)
@@ -82,12 +81,12 @@ fun MainScreen() {
                 FloatingActionButton(
                     onClick = { controller.navigate("home") },
                     containerColor = Green,
-                    shape = CircleShape
+                    shape = CircleShape,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Agregar",
-                        tint = Color.White
+                        tint = Color.White,
                     )
                 }
             }
@@ -100,7 +99,7 @@ fun MainScreen() {
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             navController = controller,
             startDestination = "splash",
-            modifier = Modifier.padding(paddingValue)
+            modifier = Modifier.padding(paddingValue),
         ) {
             composable("splash") {
                 SplashScreen(navController = controller)
@@ -118,17 +117,15 @@ fun MainScreen() {
 
             composable(
                 route = "comments/{idPost}",
-                arguments = listOf(navArgument("idPost") { type = NavType.IntType })
+                arguments = listOf(navArgument("idPost") { type = NavType.IntType }),
             ) { backStackEntry ->
                 val idPost = backStackEntry.arguments?.getInt("idPost") ?: 0
                 DetailPostScreen(controller, idPost)
             }
 
-
-
             composable(
                 route = "user/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
                 UserScreen(userId = id)
@@ -136,5 +133,3 @@ fun MainScreen() {
         }
     }
 }
-
-

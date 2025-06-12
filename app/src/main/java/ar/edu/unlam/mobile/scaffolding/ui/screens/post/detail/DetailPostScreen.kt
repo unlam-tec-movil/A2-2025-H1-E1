@@ -35,61 +35,66 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.ListComment
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 
-
 @Composable
-fun DetailPostScreen(controller: NavHostController, idPost: Int) {
+fun DetailPostScreen(
+    controller: NavHostController,
+    idPost: Int,
+) {
+    val comments =
+        remember {
+            mutableStateListOf(
+                Comment(1, 1, 1, "Comentario del post numero 1"),
+                Comment(2, 1, 1, "Comentario del post numero 1"),
+                Comment(3, 1, 2, "Comentario del post numero 2"),
+                Comment(4, 1, 3, "Comentario del post numero 3"),
+                Comment(5, 1, 1, "Comentario del post numero 1"),
+            )
+        }
 
-    val comments = remember {
-        mutableStateListOf(
-            Comment(1, 1, 1, "Comentario del post numero 1"),
-            Comment(2, 1, 1, "Comentario del post numero 1"),
-            Comment(3, 1, 2, "Comentario del post numero 2"),
-            Comment(4, 1, 3, "Comentario del post numero 3"),
-            Comment(5, 1, 1, "Comentario del post numero 1")
-        )
-    }
-
-    val posts = remember {
-        mutableStateListOf(
-            Post(
-                1,
-                1,
-                "Título 1",
-                "Este es el contenido del post 1.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(
-                2,
-                1,
-                "Título 2",
-                "Este es el contenido del post 2.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(3, 1, "Título 3", "Este es el contenido del post 3."),
-            Post(
-                4,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(5, 1, "Título 5", "Este es el contenido del post 5.")
-        )
-    }
+    val posts =
+        remember {
+            mutableStateListOf(
+                Post(
+                    1,
+                    1,
+                    "Título 1",
+                    "Este es el contenido del post 1.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(
+                    2,
+                    1,
+                    "Título 2",
+                    "Este es el contenido del post 2.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
+                Post(
+                    4,
+                    1,
+                    "Título 4",
+                    "Este es el contenido del post 4.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
+            )
+        }
 
     val post = posts.find { it.id == idPost }
 
     val filteredComments = comments.filter { it.idPost == idPost }
 
-    Column(modifier = Modifier
-        .fillMaxSize()
-        .background(Green)) {
-
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Green),
+    ) {
         post?.let {
             PostItem(
                 post = it,
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
-                navController = controller
+                navController = controller,
             )
         } ?: run {
             Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
@@ -100,18 +105,20 @@ fun DetailPostScreen(controller: NavHostController, idPost: Int) {
             fontWeight = FontWeight.SemiBold,
             color = Color.White,
             fontSize = 18.sp,
-            modifier = Modifier
-                .padding(vertical = 8.dp)
-                .padding(start = 20.dp)
+            modifier =
+                Modifier
+                    .padding(vertical = 8.dp)
+                    .padding(start = 20.dp),
         )
 
         if (filteredComments.size == 0) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .weight(1f)
-                    .background(Color.White),
-                contentAlignment = Alignment.Center
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f)
+                        .background(Color.White),
+                contentAlignment = Alignment.Center,
             ) {
                 Text(
                     "Sin Comentarios",
@@ -123,29 +130,26 @@ fun DetailPostScreen(controller: NavHostController, idPost: Int) {
         } else {
             ListComment(
                 comments = filteredComments,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
         }
 
-
         InputComment(
-            modifier = Modifier.padding(0.dp)
+            modifier = Modifier.padding(0.dp),
         )
     }
 }
 
-
 @Composable
-fun InputComment(
-    modifier: Modifier = Modifier,
-) {
+fun InputComment(modifier: Modifier = Modifier) {
     var comment by remember { mutableStateOf("") }
 
     Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(Green),
-        verticalAlignment = Alignment.CenterVertically
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(Green),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
             value = comment,
@@ -154,32 +158,33 @@ fun InputComment(
                 Text(
                     "Escribe un comentario...",
                     fontWeight = FontWeight.Bold,
-                    color = Color.White
+                    color = Color.White,
                 )
             },
-            modifier = Modifier
-                .weight(1f)
-                .padding(end = 8.dp),
+            modifier =
+                Modifier
+                    .weight(1f)
+                    .padding(end = 8.dp),
             maxLines = 3,
             singleLine = false,
-            textStyle = TextStyle(
-                color = Color.White,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold
-            ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                cursorColor = Color.White
-            )
+            textStyle =
+                TextStyle(
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    cursorColor = Color.White,
+                ),
         )
-
 
         IconButton(
             onClick = {
-            }
-
+            },
         ) {
             Icon(
                 imageVector = Icons.Default.Send,
@@ -188,4 +193,3 @@ fun InputComment(
         }
     }
 }
-

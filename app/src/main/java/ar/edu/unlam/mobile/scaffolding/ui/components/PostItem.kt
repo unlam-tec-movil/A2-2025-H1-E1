@@ -45,16 +45,19 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 
-
 @Composable
-fun PostItem(post: Post, modifier: Modifier, navController: NavController ) {
+fun PostItem(
+    post: Post,
+    modifier: Modifier,
+    navController: NavController,
+) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
-
         Column(modifier) {
             HeaderPostItem("Pepito123", "mailDePrueba", null)
             TitlePostItem(post.title)
@@ -68,19 +71,20 @@ fun PostItem(post: Post, modifier: Modifier, navController: NavController ) {
     }
 }
 
-
 @Composable
-fun ButtonsPost(likes: Int?, comments: Int?, navController: NavController, id: Int) {
-
+fun ButtonsPost(
+    likes: Int?,
+    comments: Int?,
+    navController: NavController,
+    id: Int,
+) {
     var isLiked by remember { mutableStateOf(false) }
     var isBookmark by remember { mutableStateOf(false) }
 
-
     Row(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Center,
     ) {
-
         Spacer(modifier = Modifier.weight(0.1f))
 
         IconButton(onClick = {
@@ -88,19 +92,19 @@ fun ButtonsPost(likes: Int?, comments: Int?, navController: NavController, id: I
         }) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
                     tint = if (isLiked) Green else Color.Gray,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
                 )
                 Text(
                     text = "$likes",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
         }
@@ -108,29 +112,25 @@ fun ButtonsPost(likes: Int?, comments: Int?, navController: NavController, id: I
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(onClick = {
-
-                navController.navigate("comments/${id}")
-
-
+            navController.navigate("comments/$id")
         }) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     Icons.Default.Comment,
                     "Comentar",
                     tint = Color.Gray,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
                 )
                 Text(
                     text = "$comments",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
-
         }
 
         Spacer(modifier = Modifier.weight(1f))
@@ -142,7 +142,7 @@ fun ButtonsPost(likes: Int?, comments: Int?, navController: NavController, id: I
                 Icons.Default.Bookmark,
                 "Guardar",
                 tint = if (isBookmark) Green else Color.Gray,
-                modifier = Modifier.size(30.dp)
+                modifier = Modifier.size(30.dp),
             )
         }
 
@@ -156,11 +156,12 @@ fun ImagePostItem(imageUrl: String) {
     Image(
         painter = painter,
         contentDescription = "Imagen del post",
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clip(RoundedCornerShape(10.dp)),
-        contentScale = ContentScale.Crop
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clip(RoundedCornerShape(10.dp)),
+        contentScale = ContentScale.Crop,
     )
 }
 
@@ -171,11 +172,9 @@ fun TitlePostItem(title: String) {
         modifier = Modifier.padding(top = 3.dp),
         maxLines = 1,
         fontWeight = FontWeight.Bold,
-        fontSize = 17.sp
-
+        fontSize = 17.sp,
     )
 }
-
 
 @Composable
 fun BodyPostItem(body: String) {
@@ -183,21 +182,25 @@ fun BodyPostItem(body: String) {
 }
 
 @Composable
-fun HeaderPostItem(userName: String, userMail: String, userImage: String?) {
+fun HeaderPostItem(
+    userName: String,
+    userMail: String,
+    userImage: String?,
+) {
     Row(modifier = Modifier.fillMaxWidth()) {
         AvatarItem()
         Column(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth()
-                .padding(start = 10.dp),
+            modifier =
+                Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()
+                    .padding(start = 10.dp),
             verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start
+            horizontalAlignment = Alignment.Start,
         ) {
             UserName(userName)
             UserMail(userMail)
         }
-
     }
 }
 
@@ -208,7 +211,7 @@ fun UserMail(userMail: String) {
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
         color = GrayLight,
-        fontSize = 12.sp
+        fontSize = 12.sp,
     )
 }
 
@@ -218,72 +221,75 @@ fun UserName(userName: String) {
         text = "$userName",
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
-        fontSize = 18.sp
+        fontSize = 18.sp,
     )
 }
 
-
 @Composable
-fun ListPost(posts: List<Post>, navController: NavController) {
-
+fun ListPost(
+    posts: List<Post>,
+    navController: NavController,
+) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = GrayLight)
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(color = GrayLight),
     ) {
         items(posts) { post ->
-            PostItem(post, modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp), navController)
+            PostItem(
+                post,
+                modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                navController,
+            )
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
-
         }
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun PreviewListPost() {
-
-    val posts = remember {
-        mutableStateListOf(
-            Post(
-                1,
-                1,
-                "Título 1",
-                "Este es el contenido del post 1.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(
-                2,
-                1,
-                "Título 2",
-                "Este es el contenido del post 2.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(
-                3,
-                1,
-                "Título 3",
-                "Este es el contenido del post 3."
-            ),
-            Post(
-                4,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1"
-            ),
-            Post(
-                5,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4."
+    val posts =
+        remember {
+            mutableStateListOf(
+                Post(
+                    1,
+                    1,
+                    "Título 1",
+                    "Este es el contenido del post 1.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(
+                    2,
+                    1,
+                    "Título 2",
+                    "Este es el contenido del post 2.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(
+                    3,
+                    1,
+                    "Título 3",
+                    "Este es el contenido del post 3.",
+                ),
+                Post(
+                    4,
+                    1,
+                    "Título 4",
+                    "Este es el contenido del post 4.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(
+                    5,
+                    1,
+                    "Título 4",
+                    "Este es el contenido del post 4.",
+                ),
             )
-        )
-    }
+        }
 
-    val navController= rememberNavController()
+    val navController = rememberNavController()
 
     ListPost(posts, navController)
-
 }

@@ -35,17 +35,18 @@ import ar.edu.unlam.mobile.scaffolding.data.models.Comment
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 
-
 @Composable
-fun CommentItem(comment: Comment, modifier: Modifier)  {
-
+fun CommentItem(
+    comment: Comment,
+    modifier: Modifier,
+) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth(),
+        modifier =
+            Modifier
+                .fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White)
+        colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
-
         Column(modifier) {
             HeaderPostItem("Pepito123", "mailDePrueba", null)
             BodyPostItem(comment.body)
@@ -55,7 +56,7 @@ fun CommentItem(comment: Comment, modifier: Modifier)  {
 }
 
 @Composable
-fun ButtonLike(likes: Int?){
+fun ButtonLike(likes: Int?) {
     var isLiked by remember { mutableStateOf(false) }
 
     Row(
@@ -66,35 +67,41 @@ fun ButtonLike(likes: Int?){
         }, modifier = Modifier.fillMaxWidth()) {
             Row(
                 verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth()
+                modifier = Modifier.fillMaxWidth(),
             ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
                     tint = if (isLiked) Green else Color.Gray,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
                 )
                 Text(
                     text = "$likes",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp
+                    fontSize = 18.sp,
                 )
             }
         }
     }
 }
 
-
 @Composable
-fun ListComment(comments: List<Comment>, modifier: Modifier = Modifier) {
+fun ListComment(
+    comments: List<Comment>,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(color = GrayLight)
+        modifier =
+            modifier
+                .fillMaxWidth()
+                .background(color = GrayLight),
     ) {
         items(comments) { comment ->
-            CommentItem(comment, modifier = Modifier.padding(top = 8.dp, start = 25.dp, end = 25.dp))
+            CommentItem(
+                comment,
+                modifier = Modifier.padding(top = 8.dp, start = 25.dp, end = 25.dp),
+            )
             Spacer(modifier = Modifier.height(2.dp))
         }
     }
@@ -103,43 +110,41 @@ fun ListComment(comments: List<Comment>, modifier: Modifier = Modifier) {
 @Preview(showBackground = true)
 @Composable
 fun PreviewListCommets() {
-
-    val comments = remember {
-        mutableStateListOf(
-            Comment(
-                1,
-                1,
-                1,
-                "Comentario del post numero 1"
-            ),
-            Comment(
-                2,
-                1,
-                1,
-                "Comentario del post numero 1"
-            ),
-            Comment(
-                3,
-                1,
-                1,
-                "Comentario del post numero 1"
-            ),
-            Comment(
-                4,
-                1,
-                1,
-                "Comentario del post numero 1"
-            ),
-            Comment(
-                5,
-                1,
-                1,
-                "Comentario del post numero 1"
+    val comments =
+        remember {
+            mutableStateListOf(
+                Comment(
+                    1,
+                    1,
+                    1,
+                    "Comentario del post numero 1",
+                ),
+                Comment(
+                    2,
+                    1,
+                    1,
+                    "Comentario del post numero 1",
+                ),
+                Comment(
+                    3,
+                    1,
+                    1,
+                    "Comentario del post numero 1",
+                ),
+                Comment(
+                    4,
+                    1,
+                    1,
+                    "Comentario del post numero 1",
+                ),
+                Comment(
+                    5,
+                    1,
+                    1,
+                    "Comentario del post numero 1",
+                ),
             )
-        )
-    }
-
+        }
 
     ListComment(comments)
-
 }

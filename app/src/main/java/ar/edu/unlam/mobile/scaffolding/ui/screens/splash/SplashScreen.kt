@@ -27,22 +27,24 @@ fun SplashScreen(navController: NavController) {
         }
     }
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(
-                brush = Brush.verticalGradient(
-                    colors = listOf(LightGreen, DarkGreen)
-                )
-            ),
-        contentAlignment = Alignment.Center
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(
+                    brush =
+                        Brush.verticalGradient(
+                            colors = listOf(LightGreen, DarkGreen),
+                        ),
+                ),
+        contentAlignment = Alignment.Center,
     ) {
         Column(
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Image(
                 painter = painterResource(id = R.drawable.unlamlogo),
                 contentDescription = "Logo de la UNLaM",
-                modifier = Modifier.size(120.dp)
+                modifier = Modifier.size(120.dp),
             )
         }
     }

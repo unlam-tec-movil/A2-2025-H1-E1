@@ -5,6 +5,6 @@ import androidx.compose.runtime.Composable
 
 // TODO: Pantalla de posts favoritos.
 @Composable
-fun FavoriteScreen()  {
+fun FavoriteScreen() {
     Text(text = "Pantalla de guardados/favoritos")
 }

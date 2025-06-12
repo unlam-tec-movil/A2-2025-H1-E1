@@ -18,14 +18,15 @@ import ar.edu.unlam.mobile.scaffolding.R
 
 @Preview
 @Composable
-fun AvatarItem()  {
+fun AvatarItem() {
     Image(
         painter = painterResource(R.drawable.profile_photo),
         contentDescription = "User_image",
         contentScale = ContentScale.Crop,
-        modifier = Modifier
-            .size(50.dp)
-            .clip(CircleShape)
-            .border(1.dp, Color.Gray, CircleShape)
+        modifier =
+            Modifier
+                .size(50.dp)
+                .clip(CircleShape)
+                .border(1.dp, Color.Gray, CircleShape),
     )
 }
