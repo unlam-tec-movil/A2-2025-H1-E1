@@ -51,5 +51,4 @@ fun FeedScreen(modifier: Modifier, controller: NavHostController) {
     }
 
     ListPost(posts,controller )
-
 }

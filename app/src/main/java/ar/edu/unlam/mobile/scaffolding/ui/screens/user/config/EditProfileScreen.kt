@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,24 +15,22 @@ import androidx.compose.ui.unit.dp
 
 @Preview
 @Composable
- fun edit() {
- Column(){
+fun edit() {
+    Column {
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(50.dp)
+                    .background(Color(0xFF4B877A)),
+        )
 
-  Box(modifier = Modifier
-   .fillMaxWidth()
-   .height(50.dp)
-   .background(Color(0xFF4B877A))
-
-  )
-
-   Box(modifier = Modifier.
-   fillMaxWidth()
-   .height(150.dp)
-   .background(Color(0xFF4B877A)))
-
-
-
- }
-
-
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(150.dp)
+                    .background(Color(0xFF4B877A)),
+        )
+    }
 }

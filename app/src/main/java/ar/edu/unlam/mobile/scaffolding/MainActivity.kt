@@ -100,7 +100,7 @@ fun MainScreen() {
             // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
             navController = controller,
             startDestination = "splash",
-            modifier = Modifier.padding(paddingValue)
+            modifier = Modifier.padding(paddingValue),
         ) {
             composable("splash") {
                 SplashScreen(navController = controller)
@@ -128,7 +128,7 @@ fun MainScreen() {
 
             composable(
                 route = "user/{id}",
-                arguments = listOf(navArgument("id") { type = NavType.StringType })
+                arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
                 UserScreen(userId = id)
