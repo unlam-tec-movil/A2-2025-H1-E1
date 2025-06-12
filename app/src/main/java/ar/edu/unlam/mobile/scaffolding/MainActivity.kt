@@ -5,15 +5,17 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -22,11 +24,14 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
-import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -63,13 +68,26 @@ fun MainScreen() {
     val showBottomBar = currentRoute != "splash"
 
     Scaffold(
+        topBar = {
+            if (showBottomBar) {
+                TopBar("UNLAM", {})
+            }
+        },
         bottomBar = {
             if (showBottomBar) BottomBar(controller = controller)
         },
         floatingActionButton = {
-            if (showBottomBar) {
-                IconButton(onClick = { controller.navigate("home") }) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
+            if (showBottomBar && currentRoute != "comments/{idPost}") {
+                FloatingActionButton(
+                    onClick = { controller.navigate("home") },
+                    containerColor = Green,
+                    shape = CircleShape,
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Agregar",
+                        tint = Color.White,
+                    )
                 }
             }
         },
@@ -88,7 +106,7 @@ fun MainScreen() {
             }
             composable("home") {
                 // Home es el componente en sí que es el destino de navegación.
-                HomeScreen(modifier = Modifier.fillMaxSize())
+                FeedScreen(modifier = Modifier, controller)
             }
             composable("nofitication") {
                 NotificationScreen()
@@ -96,6 +114,15 @@ fun MainScreen() {
             composable("favorite") {
                 FavoriteScreen()
             }
+
+            composable(
+                route = "comments/{idPost}",
+                arguments = listOf(navArgument("idPost") { type = NavType.IntType }),
+            ) { backStackEntry ->
+                val idPost = backStackEntry.arguments?.getInt("idPost") ?: 0
+                DetailPostScreen(controller, idPost)
+            }
+
             composable(
                 route = "user/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),

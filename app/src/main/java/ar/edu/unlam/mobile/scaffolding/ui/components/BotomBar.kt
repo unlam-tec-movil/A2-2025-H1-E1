@@ -1,5 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Home
@@ -11,6 +15,9 @@ import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -18,7 +25,13 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 @Composable
 fun BottomBar(controller: NavHostController) {
     val navBackStackEntry by controller.currentBackStackEntryAsState()
-    NavigationBar {
+    NavigationBar(
+        modifier =
+            Modifier
+                .height(60.dp)
+                .padding(0.dp)
+                .fillMaxWidth(),
+    ) {
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "home" } == true,
             onClick = { controller.navigate("home") },
@@ -29,6 +42,7 @@ fun BottomBar(controller: NavHostController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
+            modifier = Modifier.clip(CircleShape),
         )
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "nofitication" } == true,
@@ -40,6 +54,7 @@ fun BottomBar(controller: NavHostController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
+            modifier = Modifier.clip(CircleShape),
         )
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "favorite" } == true,
@@ -51,6 +66,7 @@ fun BottomBar(controller: NavHostController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
+            modifier = Modifier.clip(CircleShape),
         )
         NavigationBarItem(
             selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "user/{id}" } == true,
@@ -62,6 +78,7 @@ fun BottomBar(controller: NavHostController) {
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
+            modifier = Modifier.clip(CircleShape),
         )
     }
 }

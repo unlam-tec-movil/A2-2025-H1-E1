@@ -49,8 +49,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import ar.edu.unlam.mobile.scaffolding.ui.theme.blueGreen
-import ar.edu.unlam.mobile.scaffolding.ui.theme.darkGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 
 @Preview
 @Composable
@@ -112,7 +112,7 @@ fun LoginScreen() {
                     fontFamily = FontFamily.Default,
                     fontSize = 36.sp,
                     fontWeight = FontWeight.Bold,
-                    color = blueGreen,
+                    color = BlueGreen,
                 )
                 Spacer(modifier = Modifier.height(5.dp))
 
@@ -165,7 +165,7 @@ fun LoginScreen() {
                             onCheckedChange = { rememberUser = it },
                             colors =
                                 CheckboxDefaults.colors(
-                                    checkedColor = blueGreen,
+                                    checkedColor = BlueGreen,
                                     uncheckedColor = Color.Gray,
                                 ),
                         )
@@ -184,7 +184,7 @@ fun LoginScreen() {
                         contentPadding = PaddingValues(0.dp),
                         onClick = { /* TODO */ },
                     ) {
-                        Text("Forgot your password?", color = darkGreen, fontSize = 14.sp)
+                        Text("Forgot your password?", color = DarkGreen, fontSize = 14.sp)
                     }
                 }
 
@@ -198,7 +198,7 @@ fun LoginScreen() {
                                 .padding(horizontal = 16.dp),
                         colors =
                             ButtonDefaults.buttonColors(
-                                containerColor = blueGreen,
+                                containerColor = BlueGreen,
                                 contentColor = Color.White,
                             ),
                         shape = RoundedCornerShape(30.dp),
@@ -218,12 +218,12 @@ fun LoginScreen() {
                     ) {
                         Text(
                             text = "Don't you have an account?",
-                            color = darkGreen,
+                            color = DarkGreen,
                             fontSize = 14.sp,
                         )
 
                         TextButton(onClick = { /* TODO */ }) {
-                            Text("Sign in", color = darkGreen, fontWeight = FontWeight.Bold)
+                            Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
                         }
                     }
                 } else {
@@ -240,7 +240,7 @@ fun LoginScreen() {
                             modifier = Modifier.fillMaxWidth(),
                             colors =
                                 ButtonDefaults.buttonColors(
-                                    containerColor = blueGreen,
+                                    containerColor = BlueGreen,
                                     contentColor = Color.White,
                                 ),
                             // enabled = inputValido,
@@ -261,12 +261,12 @@ fun LoginScreen() {
                         ) {
                             Text(
                                 text = "Don't you have an account?",
-                                color = darkGreen,
+                                color = DarkGreen,
                                 fontSize = 14.sp,
                             )
 
                             TextButton(onClick = { /* TODO */ }) {
-                                Text("Sign in", color = darkGreen, fontWeight = FontWeight.Bold)
+                                Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
                             }
                         }
                         // Spacer(modifier = Modifier.height(200.dp))
