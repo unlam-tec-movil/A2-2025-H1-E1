@@ -52,7 +52,11 @@ fun MyTextField(
                 trailingIcon?.let {
                     {
                         IconButton(onClick = { /*TODO*/ }) {
-                            Icon(imageVector = it, contentDescription = null, tint = Color(0xFF828282))
+                            Icon(
+                                imageVector = it,
+                                contentDescription = null,
+                                tint = Color(0xFF828282),
+                            )
                         }
                     }
                 },

@@ -1,4 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
