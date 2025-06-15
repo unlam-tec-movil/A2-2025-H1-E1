@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
@@ -47,7 +48,7 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun PostItem(
-    post: Post,
+    post: Tuit,
     modifier: Modifier,
     navController: NavController,
 ) {
@@ -59,14 +60,14 @@ fun PostItem(
         colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
         Column(modifier) {
-            HeaderPostItem("Pepito123", "mailDePrueba", null)
-            TitlePostItem(post.title)
-            BodyPostItem(post.body)
-            if (!post.urlPostImage.isNullOrEmpty()) {
-                ImagePostItem(post.urlPostImage)
-            }
+            HeaderPostItem(post.author, "mailDePrueba", post.avatarUrl)
+            TitlePostItem("tittle")
+            BodyPostItem(post.message)
+//            if (!post.) {
+//                ImagePostItem(post.urlPostImage)
+//            }
 
-            ButtonsPost(post.likes, post.comments, navController, post.id)
+            ButtonsPost(post.likes, 1, navController, post.id)
         }
     }
 }
@@ -227,7 +228,7 @@ fun UserName(userName: String) {
 
 @Composable
 fun ListPost(
-    posts: List<Post>,
+    posts: List<Tuit>,
     navController: NavController,
 ) {
     LazyColumn(
@@ -291,5 +292,5 @@ fun PreviewListPost() {
 
     val navController = rememberNavController()
 
-    ListPost(posts, navController)
+//    ListPost(posts, navController)
 }

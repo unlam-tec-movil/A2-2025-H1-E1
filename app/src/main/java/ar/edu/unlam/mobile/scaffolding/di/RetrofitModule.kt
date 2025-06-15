@@ -1,6 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.ApiService
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.api.AuthApiService
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.api.PostApiService
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.api.ProfileApiService
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,8 +14,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RetrofitModule {
-    private const val BASE_URL = "https://tuiter.fragua.com.ar/"
+    private const val BASE_URL = "https://tuiter.fragua.com.ar"
 
+    @Provides
+    @Singleton
     fun provideRetrofit(): Retrofit =
         Retrofit
             .Builder()
@@ -23,5 +27,15 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideApiService(retrofit: Retrofit): ApiService = retrofit.create(ApiService::class.java)
+    fun provideApiService(retrofit: Retrofit): AuthApiService = retrofit.create(AuthApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideProfileApiService(retrofit: Retrofit): ProfileApiService =
+        retrofit.create(ProfileApiService::class.java)
+
+    @Provides
+    @Singleton
+    fun providePostApiService(retrofit: Retrofit): PostApiService =
+        retrofit.create(PostApiService::class.java)
 }

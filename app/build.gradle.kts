@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -8,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
 }
 
+val p = Properties()
+p.load(File(rootDir, "local.properties").inputStream())
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
     compileSdk = 36
@@ -23,6 +27,12 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "API_KEY",
+            "\"${p.getProperty("API_KEY", "")}\""
+        )
     }
 
     buildTypes {
@@ -43,10 +53,21 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
+
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes += setOf(
+                "META-INF/INDEX.LIST",
+                "META-INF/DEPENDENCIES",
+                "META-INF/io.netty.versions.properties",
+                "META-INF/NOTICE",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE.txt"
+            )
         }
     }
 }

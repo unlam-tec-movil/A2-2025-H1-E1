@@ -90,15 +90,15 @@ fun DetailPostScreen(
                 .fillMaxSize()
                 .background(Green),
     ) {
-        post?.let {
-            PostItem(
-                post = it,
-                modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
-                navController = controller,
-            )
-        } ?: run {
-            Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
-        }
+//        post?.let {
+//            PostItem(
+//                post = it,
+//                modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
+//                navController = controller,
+//            )
+//        } ?: run {
+//            Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
+//        }
 
         Text(
             text = "Comentarios",
