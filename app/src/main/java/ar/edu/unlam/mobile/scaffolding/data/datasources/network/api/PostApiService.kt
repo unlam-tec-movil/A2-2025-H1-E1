@@ -10,12 +10,11 @@ import retrofit2.http.POST
 import retrofit2.http.Path
 
 interface PostApiService {
-
     @POST("/api/v1/me/tuits")
     suspend fun postTuit(
         @Header("Authorization") userToken: String,
         @Header("Application-Token") token: String,
-        @Body request: TuitRequest
+        @Body request: TuitRequest,
     ): Result<Unit>
 
     @GET("/api/v1/me/tuits/{tuit_id}")
@@ -51,6 +50,6 @@ interface PostApiService {
         @Path("tuit_id") tuitId: Int,
         @Header("Authorization") userToken: String,
         @Header("Application-Token") token: String,
-        @Body request: TuitRequest
+        @Body request: TuitRequest,
     )
 }

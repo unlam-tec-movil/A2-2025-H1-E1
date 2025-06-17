@@ -10,14 +10,13 @@ import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Composable
 fun FeedScreen(
     modifier: Modifier,
     controller: NavHostController,
-    viewModel: FeedViewModel = hiltViewModel()
+    viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
 //    val posts =
@@ -59,17 +58,16 @@ fun FeedScreen(
 //            )
 //        }
 
-    when(val state = postState.value){
-        is PostUiState.Error ->  Text("Error: ${state.message}")
+    when (val state = postState.value) {
+        is PostUiState.Error -> Text("Error: ${state.message}")
         PostUiState.Loading -> {
-            Box(Modifier.fillMaxSize()){
+            Box(Modifier.fillMaxSize()) {
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
+
         is PostUiState.Success -> {
             ListPost(posts = state.list, navController = controller)
         }
     }
-
-
 }

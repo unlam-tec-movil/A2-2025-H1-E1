@@ -11,33 +11,39 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FeedViewModel @Inject constructor(private val profileRepository: ProfileRespository) :
-    ViewModel() {
-    // TODO: ViewModel para manejar el estado del feed.
+class FeedViewModel
+    @Inject
+    constructor(
+        private val profileRepository: ProfileRespository,
+    ) : ViewModel() {
+        // TODO: ViewModel para manejar el estado del feed.
 
-    private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
-    val posts: StateFlow<PostUiState> get() = _posts
+        private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
+        val posts: StateFlow<PostUiState> get() = _posts
 
-    init {
-        getPosts()
-    }
+        init {
+            getPosts()
+        }
 
-    private fun getPosts() {
-
-        viewModelScope.launch {
-
-            try {
-                _posts.value = PostUiState.Success(profileRepository.getFeed())
-            } catch (e: Exception) {
-                _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+        private fun getPosts() {
+            viewModelScope.launch {
+                try {
+                    _posts.value = PostUiState.Success(profileRepository.getFeed())
+                } catch (e: Exception) {
+                    _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                }
             }
-
         }
     }
-}
 
 sealed interface PostUiState {
     object Loading : PostUiState
-    data class Success(val list: List<Tuit>) : PostUiState
-    data class Error(val message: String) : PostUiState
+
+    data class Success(
+        val list: List<Tuit>,
+    ) : PostUiState
+
+    data class Error(
+        val message: String,
+    ) : PostUiState
 }

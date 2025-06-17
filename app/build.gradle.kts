@@ -31,7 +31,7 @@ android {
         buildConfigField(
             "String",
             "API_KEY",
-            "\"${p.getProperty("API_KEY", "")}\""
+            "\"${p.getProperty("API_KEY", "")}\"",
         )
     }
 
@@ -56,18 +56,18 @@ android {
         buildConfig = true
     }
 
-
     packaging {
         resources {
-            excludes += setOf(
-                "META-INF/INDEX.LIST",
-                "META-INF/DEPENDENCIES",
-                "META-INF/io.netty.versions.properties",
-                "META-INF/NOTICE",
-                "META-INF/LICENSE",
-                "META-INF/LICENSE.txt",
-                "META-INF/NOTICE.txt"
-            )
+            excludes +=
+                setOf(
+                    "META-INF/INDEX.LIST",
+                    "META-INF/DEPENDENCIES",
+                    "META-INF/io.netty.versions.properties",
+                    "META-INF/NOTICE",
+                    "META-INF/LICENSE",
+                    "META-INF/LICENSE.txt",
+                    "META-INF/NOTICE.txt",
+                )
         }
     }
 }

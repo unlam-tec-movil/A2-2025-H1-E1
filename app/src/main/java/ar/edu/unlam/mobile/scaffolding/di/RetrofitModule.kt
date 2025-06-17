@@ -31,11 +31,9 @@ object RetrofitModule {
 
     @Provides
     @Singleton
-    fun provideProfileApiService(retrofit: Retrofit): ProfileApiService =
-        retrofit.create(ProfileApiService::class.java)
+    fun provideProfileApiService(retrofit: Retrofit): ProfileApiService = retrofit.create(ProfileApiService::class.java)
 
     @Provides
     @Singleton
-    fun providePostApiService(retrofit: Retrofit): PostApiService =
-        retrofit.create(PostApiService::class.java)
+    fun providePostApiService(retrofit: Retrofit): PostApiService = retrofit.create(PostApiService::class.java)
 }

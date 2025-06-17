@@ -48,9 +48,8 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 fun ControllerPostScreen(
     modifier: Modifier = Modifier,
     viewModel: ControllerPostViewModel = hiltViewModel(),
-    navigateToHome: () -> Unit
+    navigateToHome: () -> Unit,
 ) {
-
     val state by viewModel.newPost.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
 
@@ -67,10 +66,9 @@ fun ControllerPostScreen(
         state = state,
         onTextChange = { text = it },
         onPostClick = { viewModel.newPost(text) },
-        onCloseClick = navigateToHome
+        onCloseClick = navigateToHome,
     )
 }
-
 
 @Composable
 fun ControllerPostScreen(
@@ -79,22 +77,19 @@ fun ControllerPostScreen(
     state: NewPostUiState,
     onTextChange: (String) -> Unit,
     onPostClick: () -> Unit,
-    onCloseClick: () -> Unit
+    onCloseClick: () -> Unit,
 ) {
-
     Scaffold { innerPading ->
         Column(modifier.padding(innerPading)) {
-
             Row(
                 modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-
                 IconButton(onClick = onCloseClick) {
                     Icon(
                         imageVector = (Icons.Default.Close),
                         contentDescription = null,
-                        modifier = modifier.size(28.dp)
+                        modifier = modifier.size(28.dp),
                     )
                 }
                 Button(
@@ -105,37 +100,38 @@ fun ControllerPostScreen(
                 ) { Text("Publicar", fontWeight = FontWeight.Bold) }
             }
 
-
             Row {
                 CircularProfileIconPreview()
                 BasicTextField(
                     value = text,
                     onValueChange = { onTextChange(it) },
-                    modifier = modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 12.dp, top = 20.dp, end = 12.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 18.sp
-                    ),
+                    modifier =
+                        modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    textStyle =
+                        TextStyle(
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                        ),
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
                             Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
-                    }
+                    },
                 )
-
             }
             when (state) {
-                is NewPostUiState.Error -> Text(
-                    text = state.message,
-                    color = Color.Red
-                )
+                is NewPostUiState.Error ->
+                    Text(
+                        text = state.message,
+                        color = Color.Red,
+                    )
 
                 NewPostUiState.Loading -> CircularProgressIndicator()
                 else -> {}
@@ -144,27 +140,22 @@ fun ControllerPostScreen(
     }
 }
 
-
 @Composable
 @Preview(showBackground = true)
 fun ControllerPostScreenPreview() {
-
     var text by remember { mutableStateOf("") }
-
 
     Scaffold { innerPading ->
         Column(Modifier.padding(innerPading)) {
-
             Row(
                 Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-
                 IconButton(onClick = {}) {
                     Icon(
                         imageVector = (Icons.Default.Close),
                         contentDescription = null,
-                        modifier = Modifier.size(28.dp)
+                        modifier = Modifier.size(28.dp),
                     )
                 }
                 Button(
@@ -172,34 +163,35 @@ fun ControllerPostScreenPreview() {
                     modifier = Modifier.padding(end = 8.dp),
                     onClick = {
                         TODO()
-                    }) { Text("Publicar", fontWeight = FontWeight.Bold) }
+                    },
+                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
             }
-
 
             Row {
                 CircularProfileIconPreview()
                 BasicTextField(
                     value = text,
                     onValueChange = { text = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(150.dp)
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 12.dp, top = 20.dp, end = 12.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    textStyle = TextStyle(
-                        color = Color.Black,
-                        fontSize = 18.sp
-                    ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    textStyle =
+                        TextStyle(
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                        ),
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
                             Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
-                    }
+                    },
                 )
-
             }
         }
     }
@@ -210,9 +202,10 @@ fun CircularProfileIconPreview() {
     Image(
         painter = painterResource(id = R.drawable.ic_launcher_background),
         contentDescription = "Profile Icon",
-        modifier = Modifier
-            .padding(start = 10.dp)
-            .clip(CircleShape)
-            .size(50.dp)
+        modifier =
+            Modifier
+                .padding(start = 10.dp)
+                .clip(CircleShape)
+                .size(50.dp),
     )
 }

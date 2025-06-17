@@ -32,7 +32,6 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.data.models.Comment
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListComment
-import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 
 @Composable
@@ -80,7 +79,7 @@ fun DetailPostScreen(
             )
         }
 
-    val post = posts.find { it.id == idPost }
+    posts.find { it.id == idPost }
 
     val filteredComments = comments.filter { it.idPost == idPost }
 

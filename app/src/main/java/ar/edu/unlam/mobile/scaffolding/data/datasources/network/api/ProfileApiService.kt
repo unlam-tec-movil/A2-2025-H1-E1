@@ -19,7 +19,7 @@ interface ProfileApiService {
     @PUT("/api/v1/me/profile")
     suspend fun updateProfile(
         @Header("Application-Token") token: String,
-        @Body request: ProfileRequest
+        @Body request: ProfileRequest,
     )
 
     @GET("api/v1/me/feed")
@@ -27,7 +27,6 @@ interface ProfileApiService {
         @Header("Authorization") userToken: String,
         @Header("Application-Token") token: String,
         @Query("page") page: Int,
-        @Query("only_parents") parents: Boolean
+        @Query("only_parents") parents: Boolean,
     ): List<Tuit>
-
 }

@@ -10,42 +10,46 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class ControllerPostViewModel @Inject constructor(private val postRepository: PostRespository) :
-    ViewModel() {
-    // TODO: Pantalla para crear una nueva publicación.
-    private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
-    val newPost: StateFlow<NewPostUiState> get() = _newPost
+class ControllerPostViewModel
+    @Inject
+    constructor(
+        private val postRepository: PostRespository,
+    ) : ViewModel() {
+        // TODO: Pantalla para crear una nueva publicación.
+        private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
+        val newPost: StateFlow<NewPostUiState> get() = _newPost
 
-    fun newPost(message: String) {
+        fun newPost(message: String) {
+            if (message.isBlank()) {
+                _newPost.value = NewPostUiState.Error("El texto no puede estar vacío")
+                return
+            }
 
-        if (message.isBlank()) {
-            _newPost.value = NewPostUiState.Error("El texto no puede estar vacío")
-            return
-        }
+            viewModelScope.launch {
+                _newPost.value = NewPostUiState.Loading
 
-        viewModelScope.launch {
-            _newPost.value = NewPostUiState.Loading
-
-            try {
-                val result = postRepository.postTuit(message)
-                if (result.isSuccess) {
-                    _newPost.value = NewPostUiState.Success
-                } else {
-                    _newPost.value = NewPostUiState.Error("Error en la solicitud")
-
+                try {
+                    val result = postRepository.postTuit(message)
+                    if (result.isSuccess) {
+                        _newPost.value = NewPostUiState.Success
+                    } else {
+                        _newPost.value = NewPostUiState.Error("Error en la solicitud")
+                    }
+                } catch (e: Exception) {
+                    _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
                 }
-            } catch (e: Exception) {
-                _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
             }
         }
-
     }
-
-}
 
 sealed interface NewPostUiState {
     object Init : NewPostUiState
+
     object Loading : NewPostUiState
+
     object Success : NewPostUiState
-    data class Error(val message: String) : NewPostUiState
+
+    data class Error(
+        val message: String,
+    ) : NewPostUiState
 }
