@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.data.repositories
 
-import androidx.multidex.BuildConfig
 import ar.edu.unlam.mobile.scaffolding.BuildConfig
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.api.PostApiService
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.requests.TuitRequest
@@ -15,10 +14,7 @@ class PostRespository
         // TODO: Implementa PostRepository usando datos remotos y locales.
 
         val applicationToken = BuildConfig.API_KEY
-        val userToken =
-            "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9." +
-                "eyJlbWFpbCI6InVzdWFyaW9AZ21haWwuY29tIiwiZXhwIjoxNzUyNTMzNjM1LCJpc3MiOiJ1bmxhbS10dWl0ZXIiLCJuYW1lIjoidXN1YXJpb0BnbWFpbC5jb20iLCJzdWIiOjIwOH0." +
-                "r1fdwZBUQMvHZgQurqPNpVVJSmNmRRWXnMY-U04e-ew"
+        val userToken = BuildConfig.USER_TOKEN
 
         suspend fun postTuit(message: String): Result<Unit> =
             postApiService.postTuit(

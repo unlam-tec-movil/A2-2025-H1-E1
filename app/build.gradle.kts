@@ -33,6 +33,11 @@ android {
             "API_KEY",
             "\"${p.getProperty("API_KEY", "")}\"",
         )
+        buildConfigField(
+            "String",
+            "USER_TOKEN",
+            "\"${p.getProperty("USER_TOKEN", "")}\"",
+        )
     }
 
     buildTypes {
