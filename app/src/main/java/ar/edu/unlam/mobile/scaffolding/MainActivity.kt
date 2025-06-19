@@ -31,6 +31,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.Edit
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import dagger.hilt.android.AndroidEntryPoint
@@ -114,6 +115,9 @@ fun MainScreen() {
             composable("favorite") {
                 FavoriteScreen()
             }
+            composable("edit profile") {
+                Edit(controller)
+            }
 
             composable(
                 route = "comments/{idPost}",
@@ -128,7 +132,7 @@ fun MainScreen() {
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(userId = id)
+                UserScreen(userId = id, controller)
             }
         }
     }

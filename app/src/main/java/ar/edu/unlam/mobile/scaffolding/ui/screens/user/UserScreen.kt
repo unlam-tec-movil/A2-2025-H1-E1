@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,15 +15,15 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -34,19 +33,51 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.data.models.Post
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
 @Composable
-fun UserScreen(userId: String = "User gay") {
+fun UserScreen(userId: String = "User gay", controller : NavHostController = rememberNavController() ) {
+    val posts =
+        remember {
+            mutableStateListOf(
+                Post(
+                    1,
+                    1,
+                    "Título 1",
+                    "Este es el contenido del post 1.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(
+                    2,
+                    1,
+                    "Título 2",
+                    "Este es el contenido del post 2.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
+                Post(
+                    4,
+                    1,
+                    "Título 4",
+                    "Este es el contenido del post 4.",
+                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+                ),
+                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
+            )
+        }
+
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
                 .background(Color.White)
-                .verticalScroll(rememberScrollState()),
-    ) {
-        // Header verde
+    ){
+
         Box(
             modifier =
                 Modifier
@@ -70,7 +101,7 @@ fun UserScreen(userId: String = "User gay") {
                         .size(95.dp)
                         .clip(CircleShape)
                         .border(0.1.dp, Color.White, CircleShape)
-                        .clickable(onClick = { /* Acción */ }),
+                        .clickable(onClick = {}),
             )
             Image(
                 painter = painterResource(id = R.drawable.ic_edit),
@@ -82,7 +113,7 @@ fun UserScreen(userId: String = "User gay") {
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable(onClick = { }),
+                        .clickable(onClick = { controller.navigate("edit profile") }),
             )
         }
         Text(
@@ -136,6 +167,13 @@ fun UserScreen(userId: String = "User gay") {
                 )
             }
         }
+        Box(
+            modifier = Modifier.fillMaxWidth().background(Color(0xFF4B877A)))
+
+        Spacer(modifier = Modifier.height(30.dp))
+
+        //Posts del pibe
+        ListPost(posts, controller)
 
         Spacer(modifier = Modifier.height(200.dp))
 
@@ -152,3 +190,4 @@ fun UserScreen(userId: String = "User gay") {
         }
     }
 }
+
