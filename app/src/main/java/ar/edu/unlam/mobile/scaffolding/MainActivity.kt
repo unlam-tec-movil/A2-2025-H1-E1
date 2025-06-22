@@ -113,7 +113,7 @@ fun MainScreen() {
                 NotificationScreen()
             }
             composable("favorite") {
-                FavoriteScreen()
+                FavoriteScreen(navController = controller)
             }
             composable("edit profile") {
                 Edit(controller)

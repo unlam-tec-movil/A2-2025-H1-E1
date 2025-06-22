@@ -94,8 +94,11 @@ fun DetailPostScreen(
             PostItem(
                 post = it,
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
-                navController = controller,
+                controller = controller,
+                isFavorite = false, // Dejo en falso, luego hay que poner logica real
+                onToggleFavorite = {}
             )
+
         } ?: run {
             Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
         }
