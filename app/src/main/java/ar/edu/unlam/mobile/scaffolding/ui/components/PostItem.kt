@@ -17,10 +17,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -48,25 +50,52 @@ import coil.compose.rememberAsyncImagePainter
 @Composable
 fun PostItem(
     post: Post,
-    modifier: Modifier,
-    navController: NavController,
+    modifier: Modifier = Modifier,
+    controller: NavController,
+    isFavorite: Boolean,
+    onToggleFavorite: (Post) -> Unit
 ) {
     Card(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
-        shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(8.dp),
+        shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
+        elevation = CardDefaults.cardElevation(4.dp)
     ) {
-        Column(modifier) {
-            HeaderPostItem("Pepito123", "mailDePrueba", null)
-            TitlePostItem(post.title)
-            BodyPostItem(post.body)
-            if (!post.urlPostImage.isNullOrEmpty()) {
-                ImagePostItem(post.urlPostImage)
+        Column(modifier = Modifier.padding(12.dp)) {
+            Text(
+                text = post.title,
+                fontSize = 20.sp,
+                fontWeight = FontWeight.Bold
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            post.urlPostImage?.let {
+                Image(
+                    painter = rememberAsyncImagePainter(it),
+                    contentDescription = null,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(180.dp)
+                        .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop
+                )
+                Spacer(modifier = Modifier.height(8.dp))
             }
-
-            ButtonsPost(post.likes, post.comments, navController, post.id)
+            Text(text = post.body)
+            Spacer(modifier = Modifier.height(8.dp))
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.End
+            ) {
+                IconButton(onClick = { onToggleFavorite(post) }) {
+                    Icon(
+                        imageVector = if (isFavorite) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
+                        contentDescription = "Guardar",
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray
+                    )
+                }
+            }
         }
     }
 }
@@ -238,9 +267,11 @@ fun ListPost(
     ) {
         items(posts) { post ->
             PostItem(
-                post,
+                post = post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                navController,
+                controller = navController,
+                isFavorite = false, // por ahora
+                onToggleFavorite = {} // función vacía
             )
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
