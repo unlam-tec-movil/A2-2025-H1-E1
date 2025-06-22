@@ -258,25 +258,27 @@ fun UserName(userName: String) {
 fun ListPost(
     posts: List<Post>,
     navController: NavController,
+    isFavorite: (Post) -> Boolean = { false },
+    onToggleFavorite: (Post) -> Unit = {}
 ) {
     LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(color = GrayLight),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(color = GrayLight),
     ) {
         items(posts) { post ->
             PostItem(
                 post = post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 controller = navController,
-                isFavorite = false, // por ahora
-                onToggleFavorite = {} // función vacía
+                isFavorite = isFavorite(post),
+                onToggleFavorite = onToggleFavorite
             )
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
     }
 }
+
 
 @Preview(showBackground = true)
 @Composable

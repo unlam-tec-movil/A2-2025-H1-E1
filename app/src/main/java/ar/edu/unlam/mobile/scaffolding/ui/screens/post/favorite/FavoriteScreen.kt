@@ -9,9 +9,15 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 @Composable
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
-    controller: NavHostController,
+    navController: NavHostController,
     viewModel: FavoriteViewModel = hiltViewModel(),
 ) {
-    ListPost(posts = viewModel.favoritePosts, controller = controller)
+    ListPost(
+        posts = viewModel.favoritePosts,
+        navController = navController,
+        isFavorite = { viewModel.isFavorite(it) },
+        onToggleFavorite = { viewModel.toggleFavorite(it) }
+    )
 }
+
 
