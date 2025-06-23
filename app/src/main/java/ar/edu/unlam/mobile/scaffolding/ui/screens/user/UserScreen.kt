@@ -37,11 +37,13 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
-import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
 @Composable
-fun UserScreen(userId: String = "User gay", controller : NavHostController = rememberNavController() ) {
+fun UserScreen(
+    userId: String = "User gay",
+    controller: NavHostController = rememberNavController(),
+) {
     val posts =
         remember {
             mutableStateListOf(
@@ -75,9 +77,8 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(Color.White)
-    ){
-
+                .background(Color.White),
+    ) {
         Box(
             modifier =
                 Modifier
@@ -168,12 +169,13 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth().background(Color(0xFF4B877A)))
+            modifier = Modifier.fillMaxWidth().background(Color(0xFF4B877A)),
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        //Posts del pibe
-        ListPost(posts, controller)
+        // Posts del pibe
+        //  ListPost(posts, controller)
 
         Spacer(modifier = Modifier.height(200.dp))
 
@@ -190,4 +192,3 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
         }
     }
 }
-
