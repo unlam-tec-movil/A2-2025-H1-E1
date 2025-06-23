@@ -15,7 +15,9 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.FloatingActionButton
@@ -42,7 +44,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 @Preview()
 @Composable
 fun UserScreen(
-    userId: String = "User crack",
+    userId: String = "User gay",
     controller: NavHostController = rememberNavController(),
 ) {
     val posts =
@@ -78,8 +80,10 @@ fun UserScreen(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()), // Agregando scroll
     ) {
+        // Header verde
         Box(
             modifier =
                 Modifier
@@ -87,8 +91,8 @@ fun UserScreen(
                     .height(160.dp)
                     .background(Color(0xFF4B877A)),
         )
-        // Foto de perfil
 
+        // Foto de perfil
         Box(
             modifier =
                 Modifier
@@ -118,6 +122,7 @@ fun UserScreen(
                         .clickable(onClick = { controller.navigate("edit profile") }),
             )
         }
+
         Text(
             text = "User",
             modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -134,6 +139,8 @@ fun UserScreen(
         )
 
         Spacer(modifier = Modifier.height(30.dp))
+
+        // Estadísticas
         Row {
             Spacer(modifier = Modifier.width(50.dp))
             Column {
@@ -169,19 +176,16 @@ fun UserScreen(
                 )
             }
         }
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF4B877A)),
-        )
 
+        // Spacer antes de la lista de posts
         Spacer(modifier = Modifier.height(30.dp))
 
+        // Lista de posts
         ListPost(posts.toList(), controller)
 
         Spacer(modifier = Modifier.height(200.dp))
 
+        // Floating Action Button para crear un nuevo post
         FloatingActionButton(
             onClick = { },
             modifier =
