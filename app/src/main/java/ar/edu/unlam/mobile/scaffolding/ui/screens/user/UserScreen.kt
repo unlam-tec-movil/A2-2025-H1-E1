@@ -42,7 +42,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 @Preview()
 @Composable
 fun UserScreen(
-    userId: String = "User gay",
+    userId: String = "User crack",
     controller: NavHostController = rememberNavController(),
 ) {
     val posts =
