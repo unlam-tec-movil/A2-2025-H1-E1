@@ -170,15 +170,15 @@ fun UserScreen(
             }
         }
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF4B877A)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF4B877A)),
         )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Posts del pibe
-        ListPost(posts, controller)
+        ListPost(posts.toList(), controller)
 
         Spacer(modifier = Modifier.height(200.dp))
 
