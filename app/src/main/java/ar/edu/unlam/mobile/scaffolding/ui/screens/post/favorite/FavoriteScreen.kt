@@ -16,8 +16,6 @@ fun FavoriteScreen(
         posts = viewModel.favoritePosts,
         navController = navController,
         isFavorite = { viewModel.isFavorite(it) },
-        onToggleFavorite = { viewModel.toggleFavorite(it) }
+        onToggleFavorite = { viewModel.toggleFavorite(it) },
     )
 }
-
-

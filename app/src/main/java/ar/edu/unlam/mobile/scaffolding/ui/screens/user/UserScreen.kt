@@ -41,7 +41,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
 @Composable
-fun UserScreen(userId: String = "User gay", controller : NavHostController = rememberNavController() ) {
+fun UserScreen(
+    userId: String = "User gay",
+    controller: NavHostController = rememberNavController(),
+) {
     val posts =
         remember {
             mutableStateListOf(
@@ -75,9 +78,8 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(Color.White)
-    ){
-
+                .background(Color.White),
+    ) {
         Box(
             modifier =
                 Modifier
@@ -168,11 +170,14 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
             }
         }
         Box(
-            modifier = Modifier.fillMaxWidth().background(Color(0xFF4B877A)))
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Color(0xFF4B877A)),
+        )
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        //Posts del pibe
+        // Posts del pibe
         ListPost(posts, controller)
 
         Spacer(modifier = Modifier.height(200.dp))
@@ -190,4 +195,3 @@ fun UserScreen(userId: String = "User gay", controller : NavHostController = rem
         }
     }
 }
-

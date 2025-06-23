@@ -5,7 +5,6 @@ import androidx.lifecycle.ViewModel
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
 
 class FavoriteViewModel : ViewModel() {
-
     private val _favoritePosts = mutableStateListOf<Post>()
     val favoritePosts: List<Post> = _favoritePosts
 
@@ -17,8 +16,5 @@ class FavoriteViewModel : ViewModel() {
         }
     }
 
-    fun isFavorite(post: Post): Boolean {
-        return _favoritePosts.any { it.id == post.id }
-    }
+    fun isFavorite(post: Post): Boolean = _favoritePosts.any { it.id == post.id }
 }
-

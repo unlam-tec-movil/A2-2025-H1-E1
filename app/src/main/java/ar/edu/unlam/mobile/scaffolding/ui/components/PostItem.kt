@@ -53,32 +53,34 @@ fun PostItem(
     modifier: Modifier = Modifier,
     controller: NavController,
     isFavorite: Boolean,
-    onToggleFavorite: (Post) -> Unit
+    onToggleFavorite: (Post) -> Unit,
 ) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(8.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(8.dp),
         shape = RoundedCornerShape(12.dp),
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        elevation = CardDefaults.cardElevation(4.dp)
+        elevation = CardDefaults.cardElevation(4.dp),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
             Text(
                 text = post.title,
                 fontSize = 20.sp,
-                fontWeight = FontWeight.Bold
+                fontWeight = FontWeight.Bold,
             )
             Spacer(modifier = Modifier.height(8.dp))
             post.urlPostImage?.let {
                 Image(
                     painter = rememberAsyncImagePainter(it),
                     contentDescription = null,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(180.dp)
-                        .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(180.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    contentScale = ContentScale.Crop,
                 )
                 Spacer(modifier = Modifier.height(8.dp))
             }
@@ -86,13 +88,13 @@ fun PostItem(
             Spacer(modifier = Modifier.height(8.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
+                horizontalArrangement = Arrangement.End,
             ) {
                 IconButton(onClick = { onToggleFavorite(post) }) {
                     Icon(
                         imageVector = if (isFavorite) Icons.Filled.Bookmark else Icons.Outlined.BookmarkBorder,
                         contentDescription = "Guardar",
-                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray
+                        tint = if (isFavorite) MaterialTheme.colorScheme.primary else Color.Gray,
                     )
                 }
             }
@@ -259,12 +261,13 @@ fun ListPost(
     posts: List<Post>,
     navController: NavController,
     isFavorite: (Post) -> Boolean = { false },
-    onToggleFavorite: (Post) -> Unit = {}
+    onToggleFavorite: (Post) -> Unit = {},
 ) {
     LazyColumn(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(color = GrayLight),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(color = GrayLight),
     ) {
         items(posts) { post ->
             PostItem(
@@ -272,13 +275,12 @@ fun ListPost(
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 controller = navController,
                 isFavorite = isFavorite(post),
-                onToggleFavorite = onToggleFavorite
+                onToggleFavorite = onToggleFavorite,
             )
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable

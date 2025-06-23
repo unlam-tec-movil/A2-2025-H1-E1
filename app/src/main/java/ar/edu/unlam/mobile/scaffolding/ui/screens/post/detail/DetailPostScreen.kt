@@ -95,10 +95,10 @@ fun DetailPostScreen(
                 post = it,
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
                 controller = controller,
-                isFavorite = false, // Dejo en falso, luego hay que poner logica real
-                onToggleFavorite = {}
+                isFavorite = false,
+                // Dejo en falso, luego hay que poner logica real
+                onToggleFavorite = {},
             )
-
         } ?: run {
             Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
         }
