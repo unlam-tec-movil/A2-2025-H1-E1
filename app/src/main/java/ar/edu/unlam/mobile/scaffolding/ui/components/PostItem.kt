@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
@@ -49,11 +50,12 @@ import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun PostItem(
-    post: Post,
+    post: Tuit,
     modifier: Modifier = Modifier,
     controller: NavController,
     isFavorite: Boolean,
     onToggleFavorite: (Post) -> Unit,
+    navController: NavController,
 ) {
     Card(
         modifier =
@@ -98,7 +100,6 @@ fun PostItem(
                     )
                 }
             }
-        }
     }
 }
 
@@ -258,7 +259,7 @@ fun UserName(userName: String) {
 
 @Composable
 fun ListPost(
-    posts: List<Post>,
+    posts: List<Tuit>,
     navController: NavController,
     isFavorite: (Post) -> Boolean = { false },
     onToggleFavorite: (Post) -> Unit = {},
@@ -285,46 +286,45 @@ fun ListPost(
 @Preview(showBackground = true)
 @Composable
 fun PreviewListPost() {
-    val posts =
-        remember {
-            mutableStateListOf(
-                Post(
-                    1,
-                    1,
-                    "Título 1",
-                    "Este es el contenido del post 1.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    2,
-                    1,
-                    "Título 2",
-                    "Este es el contenido del post 2.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    3,
-                    1,
-                    "Título 3",
-                    "Este es el contenido del post 3.",
-                ),
-                Post(
-                    4,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    5,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                ),
-            )
-        }
+    remember {
+        mutableStateListOf(
+            Post(
+                1,
+                1,
+                "Título 1",
+                "Este es el contenido del post 1.",
+                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+            ),
+            Post(
+                2,
+                1,
+                "Título 2",
+                "Este es el contenido del post 2.",
+                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+            ),
+            Post(
+                3,
+                1,
+                "Título 3",
+                "Este es el contenido del post 3.",
+            ),
+            Post(
+                4,
+                1,
+                "Título 4",
+                "Este es el contenido del post 4.",
+                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+            ),
+            Post(
+                5,
+                1,
+                "Título 4",
+                "Este es el contenido del post 4.",
+            ),
+        )
+    }
 
-    val navController = rememberNavController()
+    rememberNavController()
 
-    ListPost(posts, navController)
+//    ListPost(posts, navController)
 }

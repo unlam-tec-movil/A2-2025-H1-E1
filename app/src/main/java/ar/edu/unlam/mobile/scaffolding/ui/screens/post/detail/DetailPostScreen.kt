@@ -19,7 +19,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -95,8 +94,7 @@ fun DetailPostScreen(
                 post = it,
                 modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
                 controller = controller,
-                isFavorite = false,
-                // Dejo en falso, luego hay que poner logica real
+                isFavorite = false, // Se mantiene como falso, luego se debe integrar la lógica real
                 onToggleFavorite = {},
             )
         } ?: run {
@@ -114,7 +112,7 @@ fun DetailPostScreen(
                     .padding(start = 20.dp),
         )
 
-        if (filteredComments.size == 0) {
+        if (filteredComments.isEmpty()) {
             Box(
                 modifier =
                     Modifier
@@ -187,6 +185,7 @@ fun InputComment(modifier: Modifier = Modifier) {
 
         IconButton(
             onClick = {
+                // Lógica para enviar comentario (actualiza el estado)
             },
         ) {
             Icon(
