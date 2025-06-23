@@ -27,6 +27,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
@@ -79,7 +80,7 @@ fun MainScreen() {
         floatingActionButton = {
             if (showBottomBar && currentRoute != "comments/{idPost}") {
                 FloatingActionButton(
-                    onClick = { controller.navigate("home") },
+                    onClick = { controller.navigate("newPost") },
                     containerColor = Green,
                     shape = CircleShape,
                 ) {
@@ -129,6 +130,12 @@ fun MainScreen() {
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
                 UserScreen(userId = id)
+            }
+
+            composable(
+                "newPost",
+            ) { backStackEntry ->
+                ControllerPostScreen(navigateToHome = { controller.navigate("home") })
             }
         }
     }

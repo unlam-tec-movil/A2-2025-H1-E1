@@ -1,3 +1,5 @@
+import java.util.Properties
+
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.jetbrainsKotlinAndroid)
@@ -8,6 +10,8 @@ plugins {
     alias(libs.plugins.kotlin.compose.compiler)
 }
 
+val p = Properties()
+p.load(File(rootDir, "local.properties").inputStream())
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
     compileSdk = 36
@@ -23,6 +27,17 @@ android {
         vectorDrawables {
             useSupportLibrary = true
         }
+
+        buildConfigField(
+            "String",
+            "API_KEY",
+            "\"${p.getProperty("API_KEY", "")}\"",
+        )
+        buildConfigField(
+            "String",
+            "USER_TOKEN",
+            "\"${p.getProperty("USER_TOKEN", "")}\"",
+        )
     }
 
     buildTypes {
@@ -43,10 +58,21 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
+
     packaging {
         resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+            excludes +=
+                setOf(
+                    "META-INF/INDEX.LIST",
+                    "META-INF/DEPENDENCIES",
+                    "META-INF/io.netty.versions.properties",
+                    "META-INF/NOTICE",
+                    "META-INF/LICENSE",
+                    "META-INF/LICENSE.txt",
+                    "META-INF/NOTICE.txt",
+                )
         }
     }
 }
@@ -62,6 +88,7 @@ dependencies {
     implementation(libs.androidx.ui.graphics)
     implementation(libs.androidx.ui.tooling.preview)
     implementation(libs.androidx.material3)
+    implementation(libs.firebase.appdistribution.gradle)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -78,6 +105,17 @@ dependencies {
 
     // Iconos
     implementation("androidx.compose.material:material-icons-extended:1.6.0")
+
+    // Retrofit
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
+
+    // Coroutines
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.3")
+
+    // ViewModel y LiveData
+    implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-livedata-ktx:2.7.0")
 
     // Dagger + Hilt
     implementation(libs.google.dagger.hilt.android)
