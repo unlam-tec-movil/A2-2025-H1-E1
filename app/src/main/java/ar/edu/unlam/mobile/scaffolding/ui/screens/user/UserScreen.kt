@@ -37,6 +37,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
@@ -126,7 +127,6 @@ fun UserScreen(
         Text(
             text = "@$userId",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            // style = TextStyle(color = Color.Gray)
         )
         Text(
             "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
@@ -177,8 +177,22 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Posts del pibe
-        ListPost(posts, controller)
+        // Posts del pibe convertidos a Tuit para ListPost
+        ListPost(
+            posts = posts.map { post ->
+                Tuit(
+                    id = post.id,
+                    message = post.body,
+                    parentId = 0,
+                    author = "Unknown",
+                    avatarUrl = "",
+                    likes = post.likes ?: 0,
+                    liked = false,
+                    date = "2025-01-01"
+                )
+            },
+            navController = controller
+        )
 
         Spacer(modifier = Modifier.height(200.dp))
 

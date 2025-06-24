@@ -2,14 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,18 +11,8 @@ import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.outlined.BookmarkBorder
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,7 +26,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
@@ -54,8 +36,7 @@ fun PostItem(
     modifier: Modifier = Modifier,
     controller: NavController,
     isFavorite: Boolean,
-    onToggleFavorite: (Post) -> Unit,
-    navController: NavController,
+    onToggleFavorite: (Tuit) -> Unit,
 ) {
     Card(
         modifier =
@@ -67,27 +48,29 @@ fun PostItem(
         elevation = CardDefaults.cardElevation(4.dp),
     ) {
         Column(modifier = Modifier.padding(12.dp)) {
-            Text(
-                text = post.title,
-                fontSize = 20.sp,
-                fontWeight = FontWeight.Bold,
+            HeaderPostItem(
+                userName = post.author,
+                userMail = post.author,
+                userImage = post.avatarUrl,
             )
+
             Spacer(modifier = Modifier.height(8.dp))
-            post.urlPostImage?.let {
-                Image(
-                    painter = rememberAsyncImagePainter(it),
-                    contentDescription = null,
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(180.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                    contentScale = ContentScale.Crop,
-                )
+
+            post.avatarUrl.let {
+                ImagePostItem(imageUrl = it)
                 Spacer(modifier = Modifier.height(8.dp))
             }
-            Text(text = post.body)
-            Spacer(modifier = Modifier.height(8.dp))
+
+            BodyPostItem(body = post.message)
+
+            ButtonsPost(
+                likes = post.likes,
+                comments = 0, // Simulado por ahora
+                navController = controller,
+                id = post.id,
+                isInitiallyLiked = post.liked,
+            )
+
             Row(
                 modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.End,
@@ -100,6 +83,7 @@ fun PostItem(
                     )
                 }
             }
+        }
     }
 }
 
@@ -109,8 +93,9 @@ fun ButtonsPost(
     comments: Int?,
     navController: NavController,
     id: Int,
+    isInitiallyLiked: Boolean = false,
 ) {
-    var isLiked by remember { mutableStateOf(false) }
+    var isLiked by remember { mutableStateOf(isInitiallyLiked) }
     var isBookmark by remember { mutableStateOf(false) }
 
     Row(
@@ -119,13 +104,8 @@ fun ButtonsPost(
     ) {
         Spacer(modifier = Modifier.weight(0.1f))
 
-        IconButton(onClick = {
-            isLiked = !isLiked
-        }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+        IconButton(onClick = { isLiked = !isLiked }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
@@ -133,7 +113,7 @@ fun ButtonsPost(
                     modifier = Modifier.size(30.dp),
                 )
                 Text(
-                    text = "$likes",
+                    text = "${likes ?: 0}",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -146,10 +126,7 @@ fun ButtonsPost(
         IconButton(onClick = {
             navController.navigate("comments/$id")
         }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     Icons.Default.Comment,
                     "Comentar",
@@ -157,7 +134,7 @@ fun ButtonsPost(
                     modifier = Modifier.size(30.dp),
                 )
                 Text(
-                    text = "$comments",
+                    text = "${comments ?: 0}",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -194,17 +171,6 @@ fun ImagePostItem(imageUrl: String) {
                 .height(150.dp)
                 .clip(RoundedCornerShape(10.dp)),
         contentScale = ContentScale.Crop,
-    )
-}
-
-@Composable
-fun TitlePostItem(title: String) {
-    Text(
-        text = title,
-        modifier = Modifier.padding(top = 3.dp),
-        maxLines = 1,
-        fontWeight = FontWeight.Bold,
-        fontSize = 17.sp,
     )
 }
 
@@ -250,7 +216,7 @@ fun UserMail(userMail: String) {
 @Composable
 fun UserName(userName: String) {
     Text(
-        text = "$userName",
+        text = userName,
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
@@ -261,8 +227,8 @@ fun UserName(userName: String) {
 fun ListPost(
     posts: List<Tuit>,
     navController: NavController,
-    isFavorite: (Post) -> Boolean = { false },
-    onToggleFavorite: (Post) -> Unit = {},
+    isFavorite: (Tuit) -> Boolean = { false },
+    onToggleFavorite: (Tuit) -> Unit = {},
 ) {
     LazyColumn(
         modifier =
@@ -273,12 +239,11 @@ fun ListPost(
         items(posts) { post ->
             PostItem(
                 post = post,
-                modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 controller = navController,
                 isFavorite = isFavorite(post),
                 onToggleFavorite = onToggleFavorite,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
+            Spacer(modifier = Modifier.height(8.dp))
         }
     }
 }
@@ -286,45 +251,46 @@ fun ListPost(
 @Preview(showBackground = true)
 @Composable
 fun PreviewListPost() {
-    remember {
-        mutableStateListOf(
-            Post(
-                1,
-                1,
-                "Título 1",
-                "Este es el contenido del post 1.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+    val fakePosts =
+        listOf(
+            Tuit(
+                id = 1,
+                message = "Kiair",
+                parentId = 0,
+                author = "abueladedante",
+                avatarUrl = "https://cdn-icons-png.flaticon.com/512/147/147144.png",
+                likes = 5,
+                liked = true,
+                date = "2025-06-23",
             ),
-            Post(
-                2,
-                1,
-                "Título 2",
-                "Este es el contenido del post 2.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
+            Tuit(
+                id = 2,
+                message = "Dantima",
+                parentId = 0,
+                author = "cacaman.rpg",
+                avatarUrl = "https://cdn-icons-png.flaticon.com/512/147/147144.png",
+                likes = 12,
+                liked = false,
+                date = "2025-06-22",
             ),
-            Post(
-                3,
-                1,
-                "Título 3",
-                "Este es el contenido del post 3.",
-            ),
-            Post(
-                4,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                5,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
+            Tuit(
+                id = 3,
+                message = "gaubrera",
+                parentId = 0,
+                author = "yairciño",
+                avatarUrl = "",
+                likes = 0,
+                liked = false,
+                date = "2025-06-20",
             ),
         )
-    }
 
-    rememberNavController()
+    val navController = rememberNavController()
 
-//    ListPost(posts, navController)
+    ListPost(
+        posts = fakePosts,
+        navController = navController,
+        isFavorite = { it.liked },
+        onToggleFavorite = {},
+    )
 }
