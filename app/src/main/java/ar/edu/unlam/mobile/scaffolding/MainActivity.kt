@@ -110,7 +110,7 @@ fun MainScreen() {
                 FeedScreen(modifier = Modifier, controller)
             }
             composable("favorite") {
-                FavoriteScreen()
+                FavoriteScreen(navController = controller)
             }
             composable("login") {
                 LoginScreen()
