@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.auth
 
+import android.widget.Toast
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -28,9 +29,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,24 +44,38 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
+import ar.edu.unlam.mobile.scaffolding.utils.Resource
 
 @Composable
-fun LoginScreen(navController: NavController) {
+fun LoginScreen(
+    navController: NavController,
+    viewModel: LoginViewModel = hiltViewModel(),
+) {
     val isImeVisible by rememberImeState()
     var rememberUser by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
+    val loginState by viewModel.loginState.collectAsState()
 
-    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    val context = LocalContext.current
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
+    ) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -72,9 +90,42 @@ fun LoginScreen(navController: NavController) {
                 onUsernameChange = { username = it },
                 password = password,
                 onPasswordChange = { password = it },
+                onLoginClick = { viewModel.login(username, password) },
                 navController,
             )
         }
+    }
+
+    // Estadito de carga o error. TODO: Usar un toast personalizado
+    when (loginState) {
+        is Resource.Loading -> {
+            CircularProgressIndicator()
+        }
+
+        is Resource.Success -> {
+            LaunchedEffect(Unit) {
+                navController.navigate("home") {
+                    popUpTo("login") { inclusive = true }
+                }
+            }
+        }
+
+        is Resource.Failure -> {
+            LaunchedEffect(loginState) {
+                val error = (loginState as Resource.Failure).throwable.message
+                Toast
+                    .makeText(
+                        context,
+                        error ?: "Error al registrarse",
+                        Toast.LENGTH_SHORT,
+                    ).show()
+                navController.navigate("login") {
+                    popUpTo("register") { inclusive = true }
+                }
+            }
+        }
+
+        else -> {}
     }
 }
 
@@ -87,7 +138,10 @@ fun AnimatedHeader(isVisible: Boolean) {
 
     AnimatedVisibility(visible = isVisible, enter = fadeIn(), exit = fadeOut()) {
         Box(
-            modifier = Modifier.fillMaxWidth().fillMaxHeight(animatedUpperSectionRatio),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .fillMaxHeight(animatedUpperSectionRatio),
             contentAlignment = Alignment.Center,
         ) {
             Image(
@@ -114,6 +168,7 @@ fun LoginCard(
     onUsernameChange: (String) -> Unit,
     password: String,
     onPasswordChange: (String) -> Unit,
+    onLoginClick: () -> Unit,
     navController: NavController,
 ) {
     Column(
@@ -153,9 +208,9 @@ fun LoginCard(
         RememberAndForgotRow(rememberUser = rememberUser, onCheckedChange = onRememberUserChange)
 
         if (isImeVisible) {
-            FooterButtonSection(navController)
+            FooterButtonSection(onLoginClick = onLoginClick, navController)
         } else {
-            FooterButtonColumn(navController)
+            FooterButtonColumn(onLoginClick = onLoginClick, navController)
         }
     }
 }
@@ -184,7 +239,10 @@ fun RememberAndForgotRow(
     onCheckedChange: (Boolean) -> Unit,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
@@ -205,9 +263,12 @@ fun RememberAndForgotRow(
 }
 
 @Composable
-fun FooterButtonSection(navController: NavController) {
+fun FooterButtonSection(
+    onLoginClick: () -> Unit,
+    navController: NavController,
+) {
     Button(
-        onClick = { navController.navigate("home") },
+        onClick = { onLoginClick() },
         modifier =
             Modifier
                 .fillMaxWidth()
@@ -223,7 +284,10 @@ fun FooterButtonSection(navController: NavController) {
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -235,14 +299,20 @@ fun FooterButtonSection(navController: NavController) {
 }
 
 @Composable
-fun FooterButtonColumn(navController: NavController) {
+fun FooterButtonColumn(
+    onLoginClick: () -> Unit,
+    navController: NavController,
+) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 24.dp),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp, vertical = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center,
     ) {
         Button(
-            onClick = { navController.navigate("home") },
+            onClick = { onLoginClick() },
             modifier = Modifier.fillMaxWidth(),
             colors =
                 ButtonDefaults.buttonColors(
@@ -255,7 +325,10 @@ fun FooterButtonColumn(navController: NavController) {
         }
 
         Row(
-            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
