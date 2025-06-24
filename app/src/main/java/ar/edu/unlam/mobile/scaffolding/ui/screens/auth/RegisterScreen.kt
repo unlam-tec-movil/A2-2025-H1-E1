@@ -33,15 +33,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
+import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 
-@Preview
 @Composable
-fun RegisterScreen() {
+fun RegisterScreenK(navController: NavHostController) {
     Box(
         modifier =
             Modifier
@@ -160,6 +160,143 @@ fun RegisterScreen() {
                     Text("Login", color = DarkGreen, fontWeight = FontWeight.Bold)
                 }
             }
+        }
+    }
+}
+
+@Composable
+fun RegisterScreen(navController: NavHostController) {
+    var username by remember { mutableStateOf("") }
+    var email by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
+    var confirmPassword by remember { mutableStateOf("") }
+
+    Box(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.White),
+    ) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
+        ) {
+            Spacer(modifier = Modifier.height(10.dp))
+
+            RegisterTitleSection()
+
+            Spacer(modifier = Modifier.height(30.dp))
+
+            MyTextField(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                label = "Username",
+                text = username,
+                keyboardOptions = KeyboardOptions(),
+                keyboardActions = KeyboardActions(),
+                trailingIcon = Icons.Default.Person,
+                onValueChange = { username = it },
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            MyTextField(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                label = "E-mail",
+                text = email,
+                keyboardOptions = KeyboardOptions(),
+                keyboardActions = KeyboardActions(),
+                trailingIcon = Icons.Default.MailOutline,
+                onValueChange = { email = it },
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            MyTextField(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                label = "Password",
+                text = password,
+                keyboardOptions = KeyboardOptions(),
+                keyboardActions = KeyboardActions(),
+                trailingIcon = Icons.Default.Lock,
+                onValueChange = { password = it },
+            )
+
+            Spacer(modifier = Modifier.height(10.dp))
+
+            MyTextField(
+                modifier = Modifier.padding(horizontal = 16.dp),
+                label = "PasswordConfirm",
+                text = confirmPassword,
+                keyboardOptions = KeyboardOptions(),
+                keyboardActions = KeyboardActions(),
+                trailingIcon = Icons.Default.Lock,
+                onValueChange = { confirmPassword = it },
+            )
+
+            Spacer(modifier = Modifier.height(60.dp))
+
+            RegisterButton(navController)
+
+            AlreadyHaveAccountSection(navController)
+        }
+    }
+}
+
+@Composable
+fun RegisterTitleSection() {
+    Text(
+        text = "Register",
+        fontFamily = FontFamily.Default,
+        fontSize = 36.sp,
+        fontWeight = FontWeight.Bold,
+        color = BlueGreen,
+    )
+    Spacer(modifier = Modifier.height(20.dp))
+    Text(
+        text = "Create your new account",
+        fontFamily = FontFamily.Default,
+        fontSize = 15.sp,
+        color = Color.Gray,
+    )
+}
+
+@Composable
+fun RegisterButton(navController: NavController) {
+    Button(
+        onClick = { navController.navigate("login") },
+        modifier = Modifier.width(300.dp),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = BlueGreen,
+                contentColor = Color.White,
+            ),
+        shape = RoundedCornerShape(30.dp),
+    ) {
+        Text(
+            text = "Sign up",
+            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
+        )
+    }
+}
+
+@Composable
+fun AlreadyHaveAccountSection(navController: NavHostController) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            text = "Already have an account?",
+            color = DarkGreen,
+            fontSize = 14.sp,
+        )
+        TextButton(onClick = { navController.popBackStack() }) {
+            Text("Login", color = DarkGreen, fontWeight = FontWeight.Bold)
         }
     }
 }

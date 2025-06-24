@@ -22,7 +22,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.LightGreen
 fun SplashScreen(navController: NavController) {
     LaunchedEffect(Unit) {
         kotlinx.coroutines.delay(2000)
-        navController.navigate("home") {
+        navController.navigate("login") {
             popUpTo("splash") { inclusive = true }
         }
     }

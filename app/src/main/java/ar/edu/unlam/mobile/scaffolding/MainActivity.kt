@@ -26,6 +26,7 @@ import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
@@ -70,15 +71,19 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            if (showBottomBar) {
+            if (showBottomBar && currentRoute != "login" && currentRoute != "register") {
                 TopBar("UNLAM", {})
             }
         },
         bottomBar = {
-            if (showBottomBar) BottomBar(controller = controller)
+            if (showBottomBar && currentRoute != "login" && currentRoute != "register") {
+                BottomBar(
+                    controller = controller,
+                )
+            }
         },
         floatingActionButton = {
-            if (showBottomBar && currentRoute != "comments/{idPost}") {
+            if (showBottomBar && currentRoute != "comments/{idPost}" && currentRoute != "login" && currentRoute != "register") {
                 FloatingActionButton(
                     onClick = { controller.navigate("newPost") },
                     containerColor = Green,
@@ -113,7 +118,11 @@ fun MainScreen() {
                 FavoriteScreen()
             }
             composable("login") {
-                LoginScreen()
+                LoginScreen(navController = controller)
+            }
+
+            composable("register") {
+                RegisterScreen(navController = controller)
             }
 
             composable(

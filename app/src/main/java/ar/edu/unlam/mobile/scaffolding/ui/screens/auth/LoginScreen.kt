@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.auth
 
-import android.R
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.fadeIn
@@ -10,7 +9,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -46,232 +44,224 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 
-@Preview
 @Composable
-fun LoginScreen() {
+fun LoginScreen(navController: NavController) {
     val isImeVisible by rememberImeState()
     var rememberUser by remember { mutableStateOf(false) }
+    var username by remember { mutableStateOf("") }
+    var password by remember { mutableStateOf("") }
 
-    Box(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(Color.Black),
-    ) {
+    Box(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         Column(
             modifier = Modifier.fillMaxSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            val animatedUpperSectionRatio by animateFloatAsState(
-                targetValue = if (isImeVisible) 0f else 0.35f,
-                label = "",
+            AnimatedHeader(isVisible = !isImeVisible)
+
+            LoginCard(
+                isImeVisible = isImeVisible,
+                rememberUser = rememberUser,
+                onRememberUserChange = { rememberUser = it },
+                username = username,
+                onUsernameChange = { username = it },
+                password = password,
+                onPasswordChange = { password = it },
+                navController,
             )
-            AnimatedVisibility(visible = !isImeVisible, enter = fadeIn(), exit = fadeOut()) {
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .fillMaxHeight(animatedUpperSectionRatio),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Image(
-                        painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamoptionb),
-                        contentDescription = "Fondo superior",
-                        contentScale = ContentScale.Crop,
-                        // Esto hace que la imagen llene el espacio
-                        modifier = Modifier.matchParentSize(),
-                    )
+        }
+    }
+}
 
-                    Image(
-                        painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamlogo),
-                        contentDescription = "logo",
-                        modifier = Modifier.size(100.dp),
-                    )
-                }
-            }
+@Composable
+fun AnimatedHeader(isVisible: Boolean) {
+    val animatedUpperSectionRatio by animateFloatAsState(
+        targetValue = if (isVisible) 0.35f else 0f,
+        label = "",
+    )
 
-            // Columna blanca con los bordes redondeados
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .clip(RoundedCornerShape(topStart = 40.dp, topEnd = 40.dp))
-                        .background(Color.White),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                Spacer(modifier = Modifier.height(80.dp))
+    AnimatedVisibility(visible = isVisible, enter = fadeIn(), exit = fadeOut()) {
+        Box(
+            modifier = Modifier.fillMaxWidth().fillMaxHeight(animatedUpperSectionRatio),
+            contentAlignment = Alignment.Center,
+        ) {
+            Image(
+                painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamoptionb),
+                contentDescription = "Fondo superior",
+                contentScale = ContentScale.Crop,
+                modifier = Modifier.matchParentSize(),
+            )
+            Image(
+                painter = painterResource(id = ar.edu.unlam.mobile.scaffolding.R.drawable.unlamlogo),
+                contentDescription = "Logo",
+                modifier = Modifier.size(100.dp),
+            )
+        }
+    }
+}
 
-                Text(
-                    text = "Welcome back!",
-                    fontFamily = FontFamily.Default,
-                    fontSize = 36.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = BlueGreen,
-                )
-                Spacer(modifier = Modifier.height(5.dp))
+@Composable
+fun LoginCard(
+    isImeVisible: Boolean,
+    rememberUser: Boolean,
+    onRememberUserChange: (Boolean) -> Unit,
+    username: String,
+    onUsernameChange: (String) -> Unit,
+    password: String,
+    onPasswordChange: (String) -> Unit,
+    navController: NavController,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .clip(RoundedCornerShape(topStart = 30.dp, topEnd = 20.dp))
+                .background(Color.White),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Spacer(modifier = Modifier.height(30.dp))
+        TitleSection()
+        Spacer(modifier = Modifier.height(10.dp))
 
-                Text(
-                    text = "Login to your account",
-                    fontFamily = FontFamily.Default,
-                    fontSize = 15.sp,
-                    color = Color.Gray,
-                )
-                Spacer(modifier = Modifier.height(30.dp))
+        MyTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            label = "Username",
+            text = username,
+            keyboardOptions = KeyboardOptions(),
+            keyboardActions = KeyboardActions(),
+            trailingIcon = Icons.Default.Person,
+            onValueChange = onUsernameChange,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
 
-                var username by remember { mutableStateOf("Username") }
+        MyTextField(
+            modifier = Modifier.padding(horizontal = 16.dp),
+            label = "Password",
+            text = password,
+            keyboardOptions = KeyboardOptions(),
+            keyboardActions = KeyboardActions(),
+            trailingIcon = Icons.Default.Lock,
+            onValueChange = onPasswordChange,
+        )
+        Spacer(modifier = Modifier.height(10.dp))
 
-                MyTextField(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    label = "",
-                    text = "Username",
-                    keyboardOptions = KeyboardOptions(),
-                    keyboardActions = KeyboardActions(),
-                    trailingIcon = Icons.Default.Person,
-                    onValueChange = { username = it },
-                )
-                Spacer(modifier = Modifier.height(20.dp))
+        RememberAndForgotRow(rememberUser = rememberUser, onCheckedChange = onRememberUserChange)
 
-                var password by remember { mutableStateOf("Password") }
+        if (isImeVisible) {
+            FooterButtonSection(navController)
+        } else {
+            FooterButtonColumn(navController)
+        }
+    }
+}
 
-                MyTextField(
-                    modifier = Modifier.padding(horizontal = 16.dp),
-                    label = "",
-                    text = "Password",
-                    keyboardOptions = KeyboardOptions(),
-                    keyboardActions = KeyboardActions(),
-                    trailingIcon = Icons.Default.Lock,
-                    onValueChange = { password = it },
-                )
-                Spacer(modifier = Modifier.height(10.dp))
+@Composable
+fun TitleSection() {
+    Text(
+        text = "Welcome back!",
+        fontFamily = FontFamily.Default,
+        fontSize = 36.sp,
+        fontWeight = FontWeight.Bold,
+        color = BlueGreen,
+    )
+    Spacer(modifier = Modifier.height(5.dp))
+    Text(
+        text = "Login to your account",
+        fontFamily = FontFamily.Default,
+        fontSize = 15.sp,
+        color = Color.Gray,
+    )
+}
 
-                Row(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 16.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                ) {
-                    // Grupo izquierdo: Checkbox + "Remember me"
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Checkbox(
-                            checked = rememberUser,
-                            onCheckedChange = { rememberUser = it },
-                            colors =
-                                CheckboxDefaults.colors(
-                                    checkedColor = BlueGreen,
-                                    uncheckedColor = Color.Gray,
-                                ),
-                        )
+@Composable
+fun RememberAndForgotRow(
+    rememberUser: Boolean,
+    onCheckedChange: (Boolean) -> Unit,
+) {
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Checkbox(
+                checked = rememberUser,
+                onCheckedChange = onCheckedChange,
+                colors =
+                    CheckboxDefaults.colors(
+                        checkedColor = BlueGreen,
+                        uncheckedColor = Color.Gray,
+                    ),
+            )
+            Spacer(modifier = Modifier.width(4.dp))
+            Text(text = "Remember me", color = Color.Black, fontSize = 14.sp)
+        }
+    }
+}
 
-                        Spacer(modifier = Modifier.width(4.dp))
+@Composable
+fun FooterButtonSection(navController: NavController) {
+    Button(
+        onClick = { navController.navigate("home") },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+        colors =
+            ButtonDefaults.buttonColors(
+                containerColor = BlueGreen,
+                contentColor = Color.White,
+            ),
+        shape = RoundedCornerShape(30.dp),
+    ) {
+        Text("log in", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
+    }
 
-                        Text(
-                            text = "Remember me",
-                            color = Color.Black,
-                            fontSize = 14.sp,
-                        )
-                    }
+    Row(
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(text = "Don't you have an account?", color = DarkGreen, fontSize = 14.sp)
+        TextButton(onClick = { navController.navigate("register") }) {
+            Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
+        }
+    }
+}
 
-                    // Botón a la derecha
-                    TextButton(
-                        contentPadding = PaddingValues(0.dp),
-                        onClick = { /* TODO */ },
-                    ) {
-                        Text("Forgot your password?", color = DarkGreen, fontSize = 14.sp)
-                    }
-                }
+@Composable
+fun FooterButtonColumn(navController: NavController) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp, vertical = 24.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Button(
+            onClick = { navController.navigate("home") },
+            modifier = Modifier.fillMaxWidth(),
+            colors =
+                ButtonDefaults.buttonColors(
+                    containerColor = BlueGreen,
+                    contentColor = Color.White,
+                ),
+            shape = RoundedCornerShape(30.dp),
+        ) {
+            Text("log in", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
+        }
 
-                if (isImeVisible) {
-                    Button(
-                        onClick = { /*TODO*/ },
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(top = 60.dp)
-                                .padding(horizontal = 16.dp),
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = BlueGreen,
-                                contentColor = Color.White,
-                            ),
-                        shape = RoundedCornerShape(30.dp),
-                    ) {
-                        Text(
-                            text = "log in",
-                            style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
-                        )
-                    }
-                    Row(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.Center,
-                    ) {
-                        Text(
-                            text = "Don't you have an account?",
-                            color = DarkGreen,
-                            fontSize = 14.sp,
-                        )
-
-                        TextButton(onClick = { /* TODO */ }) {
-                            Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
-                        }
-                    }
-                } else {
-                    Column(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(horizontal = 16.dp, vertical = 24.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Button(
-                            onClick = { /*TODO*/ },
-                            modifier = Modifier.fillMaxWidth(),
-                            colors =
-                                ButtonDefaults.buttonColors(
-                                    containerColor = BlueGreen,
-                                    contentColor = Color.White,
-                                ),
-                            // enabled = inputValido,
-                            shape = RoundedCornerShape(30.dp),
-                        ) {
-                            Text(
-                                text = "log in",
-                                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
-                            )
-                        }
-                        Row(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.Center,
-                        ) {
-                            Text(
-                                text = "Don't you have an account?",
-                                color = DarkGreen,
-                                fontSize = 14.sp,
-                            )
-
-                            TextButton(onClick = { /* TODO */ }) {
-                                Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
-                            }
-                        }
-                        // Spacer(modifier = Modifier.height(200.dp))
-                    }
-                }
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(text = "Don't you have an account?", color = DarkGreen, fontSize = 14.sp)
+            TextButton(onClick = { navController.navigate("register") }) {
+                Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
             }
         }
     }
