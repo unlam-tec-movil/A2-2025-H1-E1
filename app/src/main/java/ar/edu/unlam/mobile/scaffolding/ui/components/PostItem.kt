@@ -166,7 +166,11 @@ fun TitlePostItem(title: String) {
 
 @Composable
 fun BodyPostItem(body: String) {
-    Text(text = body, modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp), fontSize = 16.sp)
+    Text(
+        text = body,
+        modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp),
+        fontSize = 16.sp,
+    )
 }
 
 @Composable

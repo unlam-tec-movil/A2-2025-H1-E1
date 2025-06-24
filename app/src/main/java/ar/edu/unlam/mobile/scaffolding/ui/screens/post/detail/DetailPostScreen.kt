@@ -63,7 +63,13 @@ fun DetailPostScreen(
                         .fillMaxSize()
                         .background(Green),
             ) {
-                post?.let { PostItem(it, Modifier.padding(vertical = 20.dp, horizontal = 25.dp), controller) }
+                post?.let {
+                    PostItem(
+                        it,
+                        Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                        controller,
+                    )
+                }
 
                 Text(
                     text = "Comentarios",

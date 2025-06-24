@@ -38,9 +38,6 @@ import ar.edu.unlam.mobile.scaffolding.R
 @Preview()
 @Composable
 fun UserScreen(userId: String = "User gay") {
-
-
-
     Column(
         modifier =
             Modifier
