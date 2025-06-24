@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
-import android.graphics.drawable.Icon
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
