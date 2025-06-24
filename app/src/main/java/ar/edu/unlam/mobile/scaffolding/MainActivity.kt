@@ -98,6 +98,7 @@ fun MainScreen() {
                 }
             }
         },
+
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.

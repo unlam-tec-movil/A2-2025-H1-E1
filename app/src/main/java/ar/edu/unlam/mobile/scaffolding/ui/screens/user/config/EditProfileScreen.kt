@@ -1,5 +1,8 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user.config
 
+import android.net.Uri
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -28,23 +31,41 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
+import coil.compose.rememberAsyncImagePainter
 
 @Preview
 @Composable
-fun Edit(controller: NavHostController = rememberNavController()) {
-    //  var username by remember { mutableStateOf("@Hola4576") }
-    //  var name by remember { mutableStateOf("Tungtung Sahur") }
-    //  var bio by remember { mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj") }
+fun Edit(controller: NavHostController = rememberNavController(),
+         userViewModel: EditProfileViewModel = EditProfileViewModel()) {
+
+     var username by remember { mutableStateOf("@Hola4576") }
+      var name by remember { mutableStateOf("Tungtung Sahur") }
+      var bio by remember { mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj") }
+
+    val context = LocalContext.current
+    var imageUri by remember { mutableStateOf<Uri?>(null)}
+    val launcher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.GetContent()
+    ) { uri: Uri? ->
+        imageUri = uri
+    }
 
     // Fondo superior verde
     Column(
@@ -58,10 +79,11 @@ fun Edit(controller: NavHostController = rememberNavController()) {
                     .fillMaxWidth()
                     .height(50.dp),
         ) {
+
             // botón de cerrar
             IconButton(
                 onClick =
-                    { },
+                    {controller.navigate("user/{id}")},
                 modifier =
                     Modifier
                         .align(Alignment.TopStart),
@@ -74,7 +96,7 @@ fun Edit(controller: NavHostController = rememberNavController()) {
 
             // guardar
             Button(
-                onClick = {},
+                onClick = {  },
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
@@ -87,9 +109,7 @@ fun Edit(controller: NavHostController = rememberNavController()) {
         }
 
         // Banner verde con icono de cámara
-
         // Foto de perfil
-
         Box(
             modifier =
                 Modifier
@@ -122,8 +142,19 @@ fun Edit(controller: NavHostController = rememberNavController()) {
                             .offset(y = 80.dp)
                             .clip(CircleShape)
                             .border(0.1.dp, Color.White, CircleShape)
-                            .clickable(onClick = { /* Acción */ }),
+                            .clickable(onClick = {  launcher.launch("image/*") }),
                 )
+
+                imageUri?.let {
+                    Image(
+                        painter = rememberAsyncImagePainter(it),
+                        contentDescription = "Imagen seleccionada",
+                        modifier = Modifier
+                            .size(200.dp)
+                            .clip(CircleShape)
+                            .border(2.dp, Color.Gray, CircleShape)
+                    )
+                }
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
@@ -146,27 +177,68 @@ fun Edit(controller: NavHostController = rememberNavController()) {
                     .fillMaxSize()
                     .padding(16.dp),
         ) {
-            listOf(
-                "Usuario" to "@Hola4576",
-                "Nombre" to "Tungtung Sahur",
-                "Biografía" to "Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgr fgjkaerjnuoj.",
-            ).forEach { (titulo, valor) ->
+
+            Text(
+                text = "Usuario",
+                style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+            )
+            TextField(
+                value = username,
+                onValueChange = {username = it},
+                modifier =
+                    Modifier
+                        .fillMaxWidth() ,
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color(0xFF386A5F),
+                        disabledTextColor = LocalContentColor.current,
+                        disabledLabelColor = Color.Gray,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.Gray,
+                        unfocusedContainerColor = Color.White,
+                        focusedLabelColor = Color.White,
+                    ),
+            )
+
+            Text(
+                text = "Nombre",
+                style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+            )
+            TextField(
+                value = name,
+                onValueChange = {name = it},
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                ,
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color(0xFF386A5F),
+                        disabledTextColor = LocalContentColor.current,
+                        disabledLabelColor = Color.Gray,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.Gray,
+                        unfocusedContainerColor = Color.White,
+                        focusedLabelColor = Color.White,
+                    ),
+            )
+
                 Column(modifier = Modifier.padding(vertical = 8.dp)) {
                     Text(
-                        text = titulo,
+                        text = "Biografía",
                         style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
                     )
                     TextField(
-                        value = valor,
-                        onValueChange = {},
-                        readOnly = true,
+                        value = bio,
+                        onValueChange = {bio = it},
                         modifier =
                             Modifier
                                 .fillMaxWidth()
-                                .height(if (titulo == "Biografía") 100.dp else 56.dp),
+                                .height( 100.dp),
                         colors =
                             TextFieldDefaults.colors(
-                                focusedTextColor = Color.Black,
                                 unfocusedTextColor = Color(0xFF386A5F),
                                 disabledTextColor = LocalContentColor.current,
                                 disabledLabelColor = Color.Gray,
@@ -179,5 +251,4 @@ fun Edit(controller: NavHostController = rememberNavController()) {
                 }
             }
         }
-    }
 }

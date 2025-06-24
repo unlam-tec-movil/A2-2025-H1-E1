@@ -97,6 +97,9 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1") // o la última versión
+
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.0")
 

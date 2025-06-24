@@ -22,6 +22,7 @@ import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -33,45 +34,27 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.models.Post
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
 @Composable
 fun UserScreen(
     userId: String = "User gay",
     controller: NavHostController = rememberNavController(),
-) {
-    val posts =
-        remember {
-            mutableStateListOf(
-                Post(
-                    1,
-                    1,
-                    "Título 1",
-                    "Este es el contenido del post 1.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    2,
-                    1,
-                    "Título 2",
-                    "Este es el contenido del post 2.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
-                Post(
-                    4,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
-            )
-        }
+    viewmodel : UserViewModel = hiltViewModel()) {
+
+    val userState = viewmodel.user.collectAsStateWithLifecycle()
+
+    val name = when (val state = userState.value) {
+        is UserUiState.Success -> state.user.name
+        else -> "Usuario desconocido"
+    }
 
     Column(
         modifier =
@@ -117,8 +100,9 @@ fun UserScreen(
                         .clickable(onClick = { controller.navigate("edit profile") }),
             )
         }
+
         Text(
-            text = "User",
+            text = name,
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = TextStyle(fontSize = 30.sp),
         )
@@ -174,21 +158,7 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
 
-        // Posts del pibe
-        //  ListPost(posts, controller)
-
         Spacer(modifier = Modifier.height(200.dp))
 
-        FloatingActionButton(
-            onClick = { },
-            modifier =
-                Modifier
-                    .padding(16.dp)
-                    .align(Alignment.End)
-                    .clip(CircleShape),
-            containerColor = Color(0xFF4B877A),
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
-        }
     }
 }
