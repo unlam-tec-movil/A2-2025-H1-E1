@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -16,7 +17,6 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,114 +28,79 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.data.models.Comment
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
-import ar.edu.unlam.mobile.scaffolding.ui.components.ListComment
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
+import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 
 @Composable
 fun DetailPostScreen(
     controller: NavHostController,
     idPost: Int,
+    viewModel: FeedViewModel = hiltViewModel(),
 ) {
-    val comments =
-        remember {
-            mutableStateListOf(
-                Comment(1, 1, 1, "Comentario del post numero 1"),
-                Comment(2, 1, 1, "Comentario del post numero 1"),
-                Comment(3, 1, 2, "Comentario del post numero 2"),
-                Comment(4, 1, 3, "Comentario del post numero 3"),
-                Comment(5, 1, 1, "Comentario del post numero 1"),
-            )
+    val postState = viewModel.posts.collectAsStateWithLifecycle()
+
+    when (val state = postState.value) {
+        is PostUiState.Error -> Text("Error: ${state.message}")
+        PostUiState.Loading -> {
+            Box(Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
         }
 
-    val posts =
-        remember {
-            mutableStateListOf(
-                Post(
-                    1,
-                    1,
-                    "Título 1",
-                    "Este es el contenido del post 1.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    2,
-                    1,
-                    "Título 2",
-                    "Este es el contenido del post 2.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
-                Post(
-                    4,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
-            )
-        }
+        is PostUiState.Success -> {
+            val post = state.list.find { it.id == idPost }
+            val filteredComments = state.list.filter { it.parentId == idPost }
 
-    posts.find { it.id == idPost }
-
-    val filteredComments = comments.filter { it.idPost == idPost }
-
-    Column(
-        modifier =
-            Modifier
-                .fillMaxSize()
-                .background(Green),
-    ) {
-//        post?.let {
-//            PostItem(
-//                post = it,
-//                modifier = Modifier.padding(vertical = 10.dp, horizontal = 25.dp),
-//                navController = controller,
-//            )
-//        } ?: run {
-//            Text("Post no encontrado", color = Color.White, modifier = Modifier.padding(16.dp))
-//        }
-
-        Text(
-            text = "Comentarios",
-            fontWeight = FontWeight.SemiBold,
-            color = Color.White,
-            fontSize = 18.sp,
-            modifier =
-                Modifier
-                    .padding(vertical = 8.dp)
-                    .padding(start = 20.dp),
-        )
-
-        if (filteredComments.size == 0) {
-            Box(
+            Column(
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .background(Color.White),
-                contentAlignment = Alignment.Center,
+                        .fillMaxSize()
+                        .background(Green),
             ) {
+                post?.let { PostItem(it, Modifier.padding(vertical = 20.dp, horizontal = 25.dp), controller) }
+
                 Text(
-                    "Sin Comentarios",
-                    textAlign = TextAlign.Center,
-                    color = Green,
-                    fontWeight = FontWeight.Bold,
+                    text = "Comentarios",
+                    fontWeight = FontWeight.SemiBold,
+                    color = Color.White,
+                    fontSize = 18.sp,
+                    modifier =
+                        Modifier
+                            .padding(vertical = 8.dp)
+                            .padding(start = 20.dp),
+                )
+
+                if (filteredComments.isEmpty()) {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .background(Color.White),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            "Sin Comentarios",
+                            textAlign = TextAlign.Center,
+                            color = Green,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                } else {
+                    ListPost(filteredComments, navController = controller)
+                }
+
+                InputComment(
+                    modifier = Modifier.padding(0.dp),
                 )
             }
-        } else {
-            ListComment(
-                comments = filteredComments,
-                modifier = Modifier.weight(1f),
-            )
         }
-
-        InputComment(
-            modifier = Modifier.padding(0.dp),
-        )
     }
 }
 

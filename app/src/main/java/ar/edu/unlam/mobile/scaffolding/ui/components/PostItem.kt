@@ -24,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,13 +34,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
@@ -60,13 +56,8 @@ fun PostItem(
         colors = CardDefaults.cardColors(containerColor = Color.White),
     ) {
         Column(modifier) {
-            HeaderPostItem(post.author, "mailDePrueba", post.avatarUrl)
-            TitlePostItem("tittle")
+            HeaderPostItem(post.author, post.avatarUrl)
             BodyPostItem(post.message)
-//            if (!post.) {
-//                ImagePostItem(post.urlPostImage)
-//            }
-
             ButtonsPost(post.likes, 1, navController, post.id)
         }
     }
@@ -86,8 +77,6 @@ fun ButtonsPost(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.weight(0.1f))
-
         IconButton(onClick = {
             isLiked = !isLiked
         }) {
@@ -146,8 +135,6 @@ fun ButtonsPost(
                 modifier = Modifier.size(30.dp),
             )
         }
-
-        Spacer(modifier = Modifier.weight(0.1f))
     }
 }
 
@@ -179,13 +166,12 @@ fun TitlePostItem(title: String) {
 
 @Composable
 fun BodyPostItem(body: String) {
-    Text(text = body, modifier = Modifier.padding(vertical = 2.dp), fontSize = 16.sp)
+    Text(text = body, modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp), fontSize = 16.sp)
 }
 
 @Composable
 fun HeaderPostItem(
     userName: String,
-    userMail: String,
     userImage: String?,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -200,20 +186,8 @@ fun HeaderPostItem(
             horizontalAlignment = Alignment.Start,
         ) {
             UserName(userName)
-            UserMail(userMail)
         }
     }
-}
-
-@Composable
-fun UserMail(userMail: String) {
-    Text(
-        text = "@$userMail",
-        textAlign = TextAlign.Start,
-        fontWeight = FontWeight.Bold,
-        color = GrayLight,
-        fontSize = 12.sp,
-    )
 }
 
 @Composable
@@ -246,50 +220,4 @@ fun ListPost(
             Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewListPost() {
-    remember {
-        mutableStateListOf(
-            Post(
-                1,
-                1,
-                "Título 1",
-                "Este es el contenido del post 1.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                2,
-                1,
-                "Título 2",
-                "Este es el contenido del post 2.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                3,
-                1,
-                "Título 3",
-                "Este es el contenido del post 3.",
-            ),
-            Post(
-                4,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                5,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-            ),
-        )
-    }
-
-    rememberNavController()
-
-//    ListPost(posts, navController)
 }

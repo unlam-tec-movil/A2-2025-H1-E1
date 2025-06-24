@@ -9,6 +9,7 @@ import retrofit2.http.Header
 import retrofit2.http.POST
 
 interface AuthApiService {
+
     @POST("/api/v1/login")
     suspend fun login(
         @Header("Application-Token") token: String,
