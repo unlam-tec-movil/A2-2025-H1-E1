@@ -24,7 +24,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -35,66 +34,32 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
-import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 
 @Composable
-fun PostItem(
-    post: Tuit,
-    modifier: Modifier,
-    navController: NavController,
-) {
-    Card(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
-        shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-    ) {
-        Column(modifier) {
-            HeaderPostItem(post.author, "mailDePrueba", post.avatarUrl)
-            TitlePostItem("tittle")
-            BodyPostItem(post.message)
-//            if (!post.) {
-//                ImagePostItem(post.urlPostImage)
-//            }
-
-            ButtonsPost(post.likes, 1, navController, post.id)
-        }
-    }
-}
-
-@Composable
 fun ButtonsPost(
-    likes: Int?,
-    comments: Int?,
+    post: Tuit,
     navController: NavController,
-    id: Int,
+    favoriteViewModel: FavoriteViewModel,
 ) {
     var isLiked by remember { mutableStateOf(false) }
-    var isBookmark by remember { mutableStateOf(false) }
+    val isBookmarked = favoriteViewModel.isFavorite(post.id)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.Center,
     ) {
-        Spacer(modifier = Modifier.weight(0.1f))
-
         IconButton(onClick = {
             isLiked = !isLiked
         }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
@@ -102,7 +67,7 @@ fun ButtonsPost(
                     modifier = Modifier.size(30.dp),
                 )
                 Text(
-                    text = "$likes",
+                    text = "${post.likes}",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -113,41 +78,48 @@ fun ButtonsPost(
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(onClick = {
-            navController.navigate("comments/$id")
-        }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Icon(
-                    Icons.Default.Comment,
-                    "Comentar",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(30.dp),
-                )
-                Text(
-                    text = "$comments",
-                    color = GrayLight,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        IconButton(onClick = {
-            isBookmark = !isBookmark
+            navController.navigate("comments/${post.id}")
         }) {
             Icon(
-                Icons.Default.Bookmark,
-                "Guardar",
-                tint = if (isBookmark) Green else Color.Gray,
+                Icons.Default.Comment,
+                "Comentar",
+                tint = Color.Gray,
                 modifier = Modifier.size(30.dp),
             )
         }
 
-        Spacer(modifier = Modifier.weight(0.1f))
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(onClick = {
+            favoriteViewModel.toggleFavorite(post)
+        }) {
+            Icon(
+                Icons.Default.Bookmark,
+                "Guardar",
+                tint = if (isBookmarked) Green else Color.Gray,
+                modifier = Modifier.size(30.dp),
+            )
+        }
+    }
+}
+
+@Composable
+fun PostItem(
+    post: Tuit,
+    modifier: Modifier,
+    navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+    ) {
+        Column(modifier) {
+            HeaderPostItem(post.author, post.avatarUrl)
+            BodyPostItem(post.message)
+            ButtonsPost(post, navController, favoriteViewModel)
+        }
     }
 }
 
@@ -179,13 +151,16 @@ fun TitlePostItem(title: String) {
 
 @Composable
 fun BodyPostItem(body: String) {
-    Text(text = body, modifier = Modifier.padding(vertical = 2.dp), fontSize = 16.sp)
+    Text(
+        text = body,
+        modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp),
+        fontSize = 16.sp,
+    )
 }
 
 @Composable
 fun HeaderPostItem(
     userName: String,
-    userMail: String,
     userImage: String?,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
@@ -200,20 +175,8 @@ fun HeaderPostItem(
             horizontalAlignment = Alignment.Start,
         ) {
             UserName(userName)
-            UserMail(userMail)
         }
     }
-}
-
-@Composable
-fun UserMail(userMail: String) {
-    Text(
-        text = "@$userMail",
-        textAlign = TextAlign.Start,
-        fontWeight = FontWeight.Bold,
-        color = GrayLight,
-        fontSize = 12.sp,
-    )
 }
 
 @Composable
@@ -230,6 +193,7 @@ fun UserName(userName: String) {
 fun ListPost(
     posts: List<Tuit>,
     navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
 ) {
     LazyColumn(
         modifier =
@@ -242,54 +206,8 @@ fun ListPost(
                 post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 navController,
+                favoriteViewModel = favoriteViewModel,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun PreviewListPost() {
-    remember {
-        mutableStateListOf(
-            Post(
-                1,
-                1,
-                "Título 1",
-                "Este es el contenido del post 1.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                2,
-                1,
-                "Título 2",
-                "Este es el contenido del post 2.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                3,
-                1,
-                "Título 3",
-                "Este es el contenido del post 3.",
-            ),
-            Post(
-                4,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-                "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-            ),
-            Post(
-                5,
-                1,
-                "Título 4",
-                "Este es el contenido del post 4.",
-            ),
-        )
-    }
-
-    rememberNavController()
-
-//    ListPost(posts, navController)
 }

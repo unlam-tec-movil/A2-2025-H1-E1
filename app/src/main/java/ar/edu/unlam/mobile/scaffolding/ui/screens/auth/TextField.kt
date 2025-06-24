@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 
 @Composable
 fun MyTextField(
@@ -44,7 +45,7 @@ fun MyTextField(
         OutlinedTextField(
             value = text,
             onValueChange = onValueChange,
-            label = { Text(text = label) },
+            placeholder = { Text(text = label, color = BlueGreen) },
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             readOnly = readOnly,

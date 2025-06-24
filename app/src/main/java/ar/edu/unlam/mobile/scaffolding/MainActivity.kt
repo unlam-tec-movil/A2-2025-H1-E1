@@ -25,8 +25,9 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.LoginScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.notification.NotificationScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
@@ -71,15 +72,19 @@ fun MainScreen() {
 
     Scaffold(
         topBar = {
-            if (showBottomBar) {
+            if (showBottomBar && currentRoute != "login" && currentRoute != "register") {
                 TopBar("UNLAM", {})
             }
         },
         bottomBar = {
-            if (showBottomBar) BottomBar(controller = controller)
+            if (showBottomBar && currentRoute != "login" && currentRoute != "register") {
+                BottomBar(
+                    controller = controller,
+                )
+            }
         },
         floatingActionButton = {
-            if (showBottomBar && currentRoute != "comments/{idPost}") {
+            if (showBottomBar && currentRoute != "comments/{idPost}" && currentRoute != "login" && currentRoute != "register") {
                 FloatingActionButton(
                     onClick = { controller.navigate("newPost") },
                     containerColor = Green,
@@ -110,11 +115,15 @@ fun MainScreen() {
                 // Home es el componente en sí que es el destino de navegación.
                 FeedScreen(modifier = Modifier, controller)
             }
-            composable("nofitication") {
-                NotificationScreen()
-            }
             composable("favorite") {
-                FavoriteScreen()
+                FavoriteScreen(navController = controller)
+            }
+            composable("login") {
+                LoginScreen(navController = controller)
+            }
+
+            composable("register") {
+                RegisterScreen(navController = controller)
             }
             composable("edit profile") {
                 Edit(controller)
