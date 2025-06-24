@@ -31,6 +31,8 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import androidx.lifecycle.viewmodel.compose.viewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
@@ -45,6 +47,11 @@ fun DetailPostScreen(
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
 
+    val homeBackStackEntry = remember(controller.currentBackStackEntry) {
+        controller.getBackStackEntry("home")
+    }
+    val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
+
     when (val state = postState.value) {
         is PostUiState.Error -> Text("Error: ${state.message}")
         PostUiState.Loading -> {
@@ -58,16 +65,16 @@ fun DetailPostScreen(
             val filteredComments = state.list.filter { it.parentId == idPost }
 
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(Green),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
             ) {
                 post?.let {
-                    PostItem(
-                        it,
-                        Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                        controller,
+                    ar.edu.unlam.mobile.scaffolding.ui.components.PostItem(
+                        post = it,
+                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                        navController = controller,
+                        favoriteViewModel = favoriteViewModel
                     )
                 }
 
@@ -76,30 +83,32 @@ fun DetailPostScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White,
                     fontSize = 18.sp,
-                    modifier =
-                        Modifier
-                            .padding(vertical = 8.dp)
-                            .padding(start = 20.dp),
+                    modifier = Modifier
+                        .padding(vertical = 8.dp)
+                        .padding(start = 20.dp),
                 )
 
                 if (filteredComments.isEmpty()) {
                     Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .background(Color.White),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(Color.White),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             "Sin Comentarios",
                             textAlign = TextAlign.Center,
-                            color = Green,
+                            color = ar.edu.unlam.mobile.scaffolding.ui.theme.Green,
                             fontWeight = FontWeight.Bold,
                         )
                     }
                 } else {
-                    ListPost(filteredComments, navController = controller)
+                    ar.edu.unlam.mobile.scaffolding.ui.components.ListPost(
+                        posts = filteredComments,
+                        navController = controller,
+                        favoriteViewModel = favoriteViewModel
+                    )
                 }
 
                 InputComment(
@@ -109,6 +118,8 @@ fun DetailPostScreen(
         }
     }
 }
+
+
 
 @Composable
 fun InputComment(modifier: Modifier = Modifier) {

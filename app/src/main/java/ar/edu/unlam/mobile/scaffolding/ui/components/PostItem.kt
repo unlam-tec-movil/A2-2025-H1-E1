@@ -38,40 +38,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 
-@Composable
-fun PostItem(
-    post: Tuit,
-    modifier: Modifier,
-    navController: NavController,
-) {
-    Card(
-        modifier =
-            Modifier
-                .fillMaxWidth(),
-        shape = RoundedCornerShape(0.dp),
-        colors = CardDefaults.cardColors(containerColor = Color.White),
-    ) {
-        Column(modifier) {
-            HeaderPostItem(post.author, post.avatarUrl)
-            BodyPostItem(post.message)
-            ButtonsPost(post.likes, 1, navController, post.id)
-        }
-    }
-}
 
 @Composable
 fun ButtonsPost(
-    likes: Int?,
-    comments: Int?,
+    post: Tuit,
     navController: NavController,
-    id: Int,
+    favoriteViewModel: FavoriteViewModel,
 ) {
     var isLiked by remember { mutableStateOf(false) }
-    var isBookmark by remember { mutableStateOf(false) }
+    val isBookmarked = favoriteViewModel.isFavorite(post.id)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
@@ -80,10 +60,7 @@ fun ButtonsPost(
         IconButton(onClick = {
             isLiked = !isLiked
         }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
@@ -91,7 +68,7 @@ fun ButtonsPost(
                     modifier = Modifier.size(30.dp),
                 )
                 Text(
-                    text = "$likes",
+                    text = "${post.likes}",
                     color = GrayLight,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp,
@@ -102,41 +79,51 @@ fun ButtonsPost(
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(onClick = {
-            navController.navigate("comments/$id")
+            navController.navigate("comments/${post.id}")
         }) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.fillMaxWidth(),
-            ) {
-                Icon(
-                    Icons.Default.Comment,
-                    "Comentar",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(30.dp),
-                )
-                Text(
-                    text = "$comments",
-                    color = GrayLight,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
-                )
-            }
+            Icon(
+                Icons.Default.Comment,
+                "Comentar",
+                tint = Color.Gray,
+                modifier = Modifier.size(30.dp),
+            )
         }
 
         Spacer(modifier = Modifier.weight(1f))
 
         IconButton(onClick = {
-            isBookmark = !isBookmark
+            favoriteViewModel.toggleFavorite(post)
         }) {
             Icon(
                 Icons.Default.Bookmark,
                 "Guardar",
-                tint = if (isBookmark) Green else Color.Gray,
+                tint = if (isBookmarked) Green else Color.Gray,
                 modifier = Modifier.size(30.dp),
             )
         }
     }
 }
+
+@Composable
+fun PostItem(
+    post: Tuit,
+    modifier: Modifier,
+    navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
+) {
+    Card(
+        modifier = Modifier.fillMaxWidth(),
+        shape = RoundedCornerShape(0.dp),
+        colors = CardDefaults.cardColors(containerColor = Color.White),
+    ) {
+        Column(modifier) {
+            HeaderPostItem(post.author, post.avatarUrl)
+            BodyPostItem(post.message)
+            ButtonsPost(post, navController, favoriteViewModel)
+        }
+    }
+}
+
 
 @Composable
 fun ImagePostItem(imageUrl: String) {
@@ -208,6 +195,7 @@ fun UserName(userName: String) {
 fun ListPost(
     posts: List<Tuit>,
     navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
 ) {
     LazyColumn(
         modifier =
@@ -220,8 +208,9 @@ fun ListPost(
                 post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 navController,
+                favoriteViewModel = favoriteViewModel,
             )
-            Spacer(modifier = Modifier.padding(vertical = 2.dp))
         }
     }
 }
+
