@@ -30,13 +30,13 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NavHostController
 import androidx.lifecycle.viewmodel.compose.viewModel
-import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
+import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 
 @Composable
@@ -47,9 +47,10 @@ fun DetailPostScreen(
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
 
-    val homeBackStackEntry = remember(controller.currentBackStackEntry) {
-        controller.getBackStackEntry("home")
-    }
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
 
     when (val state = postState.value) {
@@ -65,16 +66,17 @@ fun DetailPostScreen(
             val filteredComments = state.list.filter { it.parentId == idPost }
 
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
             ) {
                 post?.let {
                     ar.edu.unlam.mobile.scaffolding.ui.components.PostItem(
                         post = it,
                         modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                         navController = controller,
-                        favoriteViewModel = favoriteViewModel
+                        favoriteViewModel = favoriteViewModel,
                     )
                 }
 
@@ -83,17 +85,19 @@ fun DetailPostScreen(
                     fontWeight = FontWeight.SemiBold,
                     color = Color.White,
                     fontSize = 18.sp,
-                    modifier = Modifier
-                        .padding(vertical = 8.dp)
-                        .padding(start = 20.dp),
+                    modifier =
+                        Modifier
+                            .padding(vertical = 8.dp)
+                            .padding(start = 20.dp),
                 )
 
                 if (filteredComments.isEmpty()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .background(Color.White),
+                        modifier =
+                            Modifier
+                                .fillMaxWidth()
+                                .weight(1f)
+                                .background(Color.White),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -107,7 +111,7 @@ fun DetailPostScreen(
                     ar.edu.unlam.mobile.scaffolding.ui.components.ListPost(
                         posts = filteredComments,
                         navController = controller,
-                        favoriteViewModel = favoriteViewModel
+                        favoriteViewModel = favoriteViewModel,
                     )
                 }
 
@@ -118,8 +122,6 @@ fun DetailPostScreen(
         }
     }
 }
-
-
 
 @Composable
 fun InputComment(modifier: Modifier = Modifier) {

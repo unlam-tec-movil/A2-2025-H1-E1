@@ -43,7 +43,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 
-
 @Composable
 fun ButtonsPost(
     post: Tuit,
@@ -123,7 +122,6 @@ fun PostItem(
         }
     }
 }
-
 
 @Composable
 fun ImagePostItem(imageUrl: String) {
@@ -213,4 +211,3 @@ fun ListPost(
         }
     }
 }
-

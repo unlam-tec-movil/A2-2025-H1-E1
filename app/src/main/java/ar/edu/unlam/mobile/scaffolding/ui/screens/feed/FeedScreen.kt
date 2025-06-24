@@ -22,10 +22,10 @@ fun FeedScreen(
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
 
-    val homeBackStackEntry = remember(controller.currentBackStackEntry) {
-        controller.getBackStackEntry("home")
-    }
-
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
 
     val favoriteViewModel: FavoriteViewModel = hiltViewModel(homeBackStackEntry)
 
@@ -41,13 +41,8 @@ fun FeedScreen(
             ListPost(
                 posts = state.list,
                 navController = controller,
-                favoriteViewModel = favoriteViewModel
+                favoriteViewModel = favoriteViewModel,
             )
         }
     }
 }
-
-
-
-
-

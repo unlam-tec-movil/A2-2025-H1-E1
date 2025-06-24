@@ -19,8 +19,5 @@ class FavoriteViewModel : ViewModel() {
             }
     }
 
-    fun isFavorite(postId: Int): Boolean {
-        return _favorites.value.any { it.id == postId }
-    }
+    fun isFavorite(postId: Int): Boolean = _favorites.value.any { it.id == postId }
 }
-
