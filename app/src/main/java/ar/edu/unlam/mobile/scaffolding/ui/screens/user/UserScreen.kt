@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user
 
+
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -16,15 +17,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,13 +33,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
-import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 
 @Preview()
 @Composable
 fun UserScreen(
-    userId: String = "User gay",
+    userId: String = "U23112ak34",
     controller: NavHostController = rememberNavController(),
     viewmodel : UserViewModel = hiltViewModel()) {
 
@@ -55,6 +47,8 @@ fun UserScreen(
         is UserUiState.Success -> state.user.name
         else -> "Usuario desconocido"
     }
+
+    val currentUserId = "U23112ak34"
 
     Column(
         modifier =
@@ -69,8 +63,8 @@ fun UserScreen(
                     .height(160.dp)
                     .background(Color(0xFF4B877A)),
         )
-        // Foto de perfil
 
+        // Foto de perfil
         Box(
             modifier =
                 Modifier
@@ -87,18 +81,36 @@ fun UserScreen(
                         .border(0.1.dp, Color.White, CircleShape)
                         .clickable(onClick = {}),
             )
-            Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "editar perfil",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = { controller.navigate("edit profile") }),
-            )
+
+            if (userId == currentUserId) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = "Editar Perfil",
+                    modifier =
+                        Modifier
+                            .size(45.dp)
+                            .align(Alignment.BottomEnd)
+                            .offset(6.dp, 6.dp)
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = { controller.navigate("edit profile") }),
+                )
+            }
+            else {
+                Image(
+                    painter = painterResource(id = R.drawable.unlamlogo),
+                    contentDescription = "Seguir",
+                    modifier =
+                        Modifier
+                            .size(45.dp)
+                            .align(Alignment.BottomEnd)
+                            .offset(6.dp, 6.dp)
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .clickable(onClick = { /* PONER LOGICA PARA SEGUIR */ }),
+                )
+            }
+
         }
 
         Text(
@@ -108,11 +120,10 @@ fun UserScreen(
         )
         Text(
             text = "@$userId",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            // style = TextStyle(color = Color.Gray)
+            modifier = Modifier.align(Alignment.CenterHorizontally)
         )
         Text(
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
+            "Descripcion del usuario",
             modifier = Modifier.align(Alignment.CenterHorizontally),
         )
 
