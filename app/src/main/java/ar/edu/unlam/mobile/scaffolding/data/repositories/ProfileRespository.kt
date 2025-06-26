@@ -15,20 +15,20 @@ class ProfileRespository
         // TODO: Implementa UserRepository para perfil, favoritos, etc.
 
         val applicationToken = BuildConfig.API_KEY
-        val userToken = BuildConfig.USER_TOKEN
 
-        suspend fun getProfile(): ProfileResponse = profileApiService.getProfile(userToken = userToken, token = applicationToken)
+        suspend fun getProfile(userToken: String): ProfileResponse = profileApiService.getProfile(userToken = userToken, token = applicationToken)
 
         suspend fun updateProfile(
             name: String,
             password: String,
             avatarUrl: String,
+            userToken: String
         ) = profileApiService.updateProfile(
             token = applicationToken,
             request = ProfileRequest(name, password, avatarUrl),
         )
 
-        suspend fun getFeed(): List<Tuit> =
+        suspend fun getFeed(userToken: String): List<Tuit> =
             profileApiService.getFeed(
                 userToken = userToken,
                 token = applicationToken,

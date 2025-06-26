@@ -21,14 +21,10 @@ class FeedViewModel
         private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
         val posts: StateFlow<PostUiState> get() = _posts
 
-        init {
-            getPosts()
-        }
-
-        private fun getPosts() {
+        fun getPosts(userToken: String) {
             viewModelScope.launch {
                 try {
-                    _posts.value = PostUiState.Success(profileRepository.getFeed())
+                    _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
                 } catch (e: Exception) {
                     _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
                 }

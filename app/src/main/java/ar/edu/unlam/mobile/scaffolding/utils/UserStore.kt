@@ -17,7 +17,7 @@ class UserStore (private val context: Context) {
         val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "datos")
         val DATOS_USUARIO = stringPreferencesKey("datos_usuario")
         val IS_LOGGED_IN = booleanPreferencesKey("is_logged_in")
-
+        val USER_TOKEN = stringPreferencesKey("user_token")
     }
         val leerDatosUsuario: Flow<String> = context.dataStore.data
             .map {
@@ -25,6 +25,9 @@ class UserStore (private val context: Context) {
     }
     val leerEstadoLogin: Flow<Boolean> = context.dataStore.data
         .map { it[IS_LOGGED_IN] ?: false }
+
+    val leerTokenUsuario: Flow<String> = context.dataStore.data
+        .map { it[USER_TOKEN] ?: "" }
 
     suspend fun escribirDatosUsuario(datosUsuario : String){
         context.dataStore.edit {
@@ -36,6 +39,12 @@ class UserStore (private val context: Context) {
     suspend fun escribirEstadoLogin(loggedIn: Boolean) {
         context.dataStore.edit {
             it[IS_LOGGED_IN] = loggedIn
+        }
+    }
+
+    suspend fun escribirTokenUsuario(token: String) {
+        context.dataStore.edit {
+            it[USER_TOKEN] = token
         }
     }
 

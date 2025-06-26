@@ -20,24 +20,47 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
-@Preview()
 @Composable
-fun UserScreen(userId: String = "User gay") {
+fun UserScreen(
+    userId: String = "User",
+    viewModel: UserViewModel = hiltViewModel()
+) {
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            viewModel.loadProfile(token)
+        }
+    }
+
     Column(
         modifier =
             Modifier
@@ -53,8 +76,8 @@ fun UserScreen(userId: String = "User gay") {
                     .height(160.dp)
                     .background(Color(0xFF4B877A)),
         )
+        
         // Foto de perfil
-
         Box(
             modifier =
                 Modifier
@@ -84,20 +107,34 @@ fun UserScreen(userId: String = "User gay") {
                         .clickable(onClick = { }),
             )
         }
-        Text(
-            text = "User",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(fontSize = 30.sp),
-        )
-        Text(
-            text = "@$userId",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            // style = TextStyle(color = Color.Gray)
-        )
-        Text(
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
+
+        when (val state = profileState) {
+            is ProfileUiState.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                )
+            }
+            is ProfileUiState.Success -> {
+                val profile = state.profile
+                Text(
+                    text = profile.name,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(fontSize = 30.sp),
+                )
+                Text(
+                    text = profile.email,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(color = Color.Gray, fontSize = 16.sp)
+                )
+            }
+            is ProfileUiState.Error -> {
+                Text(
+                    text = "Error: ${state.message}",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(color = Color.Red)
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
         Row {

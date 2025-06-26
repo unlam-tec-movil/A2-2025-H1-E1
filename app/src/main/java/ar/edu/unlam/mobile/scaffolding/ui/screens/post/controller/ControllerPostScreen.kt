@@ -42,6 +42,9 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.collectAsState
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 // TODO: ViewModel para manejar estado del posteo nuevo.
 @Composable
@@ -52,6 +55,11 @@ fun ControllerPostScreen(
 ) {
     val state by viewModel.newPost.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
 
     LaunchedEffect(state) {
         if (state is NewPostUiState.Success) {
@@ -65,7 +73,7 @@ fun ControllerPostScreen(
         text = text,
         state = state,
         onTextChange = { text = it },
-        onPostClick = { viewModel.newPost(text) },
+        onPostClick = { viewModel.newPost(text, token) },
         onCloseClick = navigateToHome,
     )
 }

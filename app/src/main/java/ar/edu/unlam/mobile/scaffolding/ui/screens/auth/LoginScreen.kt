@@ -77,8 +77,10 @@ fun LoginScreen(
     val userStore = remember { UserStore(context) }
     val coroutineScope = rememberCoroutineScope()
 
-    val savedUser by userStore.leerDatosUsuario.collectAsState(initial = "")
-    val estaLogueado by userStore.leerEstadoLogin.collectAsState(initial = false)
+    val savedUserState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val savedUser = savedUserState.value
+    val estaLogueadoState = userStore.leerEstadoLogin.collectAsState(initial = false)
+    val estaLogueado = estaLogueadoState.value
 
     LaunchedEffect(estaLogueado) {
         if (estaLogueado) {
@@ -140,6 +142,10 @@ fun LoginScreen(
 
         is Resource.Success -> {
             LaunchedEffect(Unit) {
+                val token = (loginState as Resource.Success).data.token
+                coroutineScope.launch {
+                    userStore.escribirTokenUsuario(token)
+                }
                 if (rememberUser) {
                     userStore.escribirDatosUsuario(username)
                     userStore.escribirEstadoLogin(true)
