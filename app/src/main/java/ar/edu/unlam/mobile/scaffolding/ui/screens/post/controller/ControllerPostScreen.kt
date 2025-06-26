@@ -23,6 +23,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -42,6 +44,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 // TODO: ViewModel para manejar estado del posteo nuevo.
 @Composable
@@ -52,6 +55,11 @@ fun ControllerPostScreen(
 ) {
     val state by viewModel.newPost.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
+
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
 
     LaunchedEffect(state) {
         if (state is NewPostUiState.Success) {
@@ -65,7 +73,7 @@ fun ControllerPostScreen(
         text = text,
         state = state,
         onTextChange = { text = it },
-        onPostClick = { viewModel.newPost(text) },
+        onPostClick = { viewModel.newPost(text, token) },
         onCloseClick = navigateToHome,
     )
 }
