@@ -15,25 +15,48 @@ class PostRespository
 
         val applicationToken = BuildConfig.API_KEY
 
-        suspend fun postTuit(message: String, userToken: String): Result<Unit> =
+        suspend fun postTuit(
+            message: String,
+            userToken: String,
+        ): Result<Unit> =
             postApiService.postTuit(
                 userToken = userToken,
                 token = applicationToken,
                 request = TuitRequest(message),
             )
 
-        suspend fun getTuits(id: Int, userToken: String): List<Tuit> = postApiService.getTuits(tuitId = id, userToken = userToken, token = applicationToken)
-
-        suspend fun likeTuit(id: Int, userToken: String) = postApiService.likeTuit(tuitId = id, userToken = userToken, token = applicationToken)
-
-        suspend fun unlikeTuit(id: Int, userToken: String) =
-            postApiService.unlikeTuit(
+        suspend fun getTuits(
+            id: Int,
+            userToken: String,
+        ): List<Tuit> =
+            postApiService.getTuits(
                 tuitId = id,
                 userToken = userToken,
                 token = applicationToken,
             )
 
-        suspend fun getReplies(id: Int, userToken: String): List<Tuit> =
+        suspend fun likeTuit(
+            id: Int,
+            userToken: String,
+        ) = postApiService.likeTuit(
+            tuitId = id,
+            userToken = userToken,
+            token = applicationToken,
+        )
+
+        suspend fun unlikeTuit(
+            id: Int,
+            userToken: String,
+        ) = postApiService.unlikeTuit(
+            tuitId = id,
+            userToken = userToken,
+            token = applicationToken,
+        )
+
+        suspend fun getReplies(
+            id: Int,
+            userToken: String,
+        ): List<Tuit> =
             postApiService.getReplies(
                 tuitId = id,
                 userToken = userToken,

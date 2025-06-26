@@ -36,7 +36,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -47,7 +46,7 @@ import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 @Composable
 fun UserScreen(
     userId: String = "User",
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: UserViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
@@ -76,7 +75,7 @@ fun UserScreen(
                     .height(160.dp)
                     .background(Color(0xFF4B877A)),
         )
-        
+
         // Foto de perfil
         Box(
             modifier =
@@ -111,9 +110,10 @@ fun UserScreen(
         when (val state = profileState) {
             is ProfileUiState.Loading -> {
                 CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally)
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
             }
+
             is ProfileUiState.Success -> {
                 val profile = state.profile
                 Text(
@@ -124,14 +124,15 @@ fun UserScreen(
                 Text(
                     text = profile.email,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    style = TextStyle(color = Color.Gray, fontSize = 16.sp)
+                    style = TextStyle(color = Color.Gray, fontSize = 16.sp),
                 )
             }
+
             is ProfileUiState.Error -> {
                 Text(
                     text = "Error: ${state.message}",
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    style = TextStyle(color = Color.Red)
+                    style = TextStyle(color = Color.Red),
                 )
             }
         }

@@ -126,5 +126,4 @@ dependencies {
     testImplementation(libs.google.dagger.hilt.android.testing)
 
     implementation(libs.androidx.datastore.preferences)
-
 }

@@ -19,7 +19,10 @@ class ControllerPostViewModel
         private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
         val newPost: StateFlow<NewPostUiState> get() = _newPost
 
-        fun newPost(message: String, userToken: String) {
+        fun newPost(
+            message: String,
+            userToken: String,
+        ) {
             if (message.isBlank()) {
                 _newPost.value = NewPostUiState.Error("El texto no puede estar vacío")
                 return

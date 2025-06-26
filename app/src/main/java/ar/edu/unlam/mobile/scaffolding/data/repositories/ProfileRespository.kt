@@ -16,13 +16,17 @@ class ProfileRespository
 
         val applicationToken = BuildConfig.API_KEY
 
-        suspend fun getProfile(userToken: String): ProfileResponse = profileApiService.getProfile(userToken = userToken, token = applicationToken)
+        suspend fun getProfile(userToken: String): ProfileResponse =
+            profileApiService.getProfile(
+                userToken = userToken,
+                token = applicationToken,
+            )
 
         suspend fun updateProfile(
             name: String,
             password: String,
             avatarUrl: String,
-            userToken: String
+            userToken: String,
         ) = profileApiService.updateProfile(
             token = applicationToken,
             request = ProfileRequest(name, password, avatarUrl),

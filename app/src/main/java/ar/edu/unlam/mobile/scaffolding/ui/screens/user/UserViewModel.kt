@@ -16,7 +16,6 @@ class UserViewModel
     constructor(
         private val profileRepository: ProfileRespository,
     ) : ViewModel() {
-        
         private val _profileState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
         val profileState: StateFlow<ProfileUiState> = _profileState
 
@@ -35,6 +34,12 @@ class UserViewModel
 
 sealed interface ProfileUiState {
     object Loading : ProfileUiState
-    data class Success(val profile: ProfileResponse) : ProfileUiState
-    data class Error(val message: String) : ProfileUiState
+
+    data class Success(
+        val profile: ProfileResponse,
+    ) : ProfileUiState
+
+    data class Error(
+        val message: String,
+    ) : ProfileUiState
 }

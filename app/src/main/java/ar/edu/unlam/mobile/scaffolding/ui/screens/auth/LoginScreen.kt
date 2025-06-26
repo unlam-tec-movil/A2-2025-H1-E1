@@ -29,7 +29,6 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -50,7 +49,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -98,9 +96,10 @@ fun LoginScreen(
     }
 
     Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.Black),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.Black),
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -159,6 +158,7 @@ fun LoginScreen(
                 }
             }
         }
+
         is Resource.Failure -> {
             LaunchedEffect(loginState) {
                 val error = (loginState as Resource.Failure).throwable.message
@@ -264,7 +264,6 @@ fun LoginCard(
     }
 }
 
-
 @Composable
 fun TitleSection() {
     Text(
@@ -304,7 +303,7 @@ fun RememberAndForgotRow(
                     CheckboxDefaults.colors(
                         checkedColor = BlueGreen,
                         uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White
+                        checkmarkColor = Color.White,
                     ),
             )
             Spacer(modifier = Modifier.width(4.dp))
@@ -322,7 +321,7 @@ fun FooterButtonSection(
         onClick = { onLoginClick() },
         modifier =
             Modifier.width(300.dp),
-             //   .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+        //   .padding(top = 40.dp, start = 16.dp, end = 16.dp),
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = BlueGreen,
@@ -371,7 +370,10 @@ fun FooterButtonColumn(
                 ),
             shape = RoundedCornerShape(30.dp),
         ) {
-            Text("Iniciar sesión", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
+            Text(
+                "Iniciar sesión",
+                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
+            )
         }
 
         Row(
