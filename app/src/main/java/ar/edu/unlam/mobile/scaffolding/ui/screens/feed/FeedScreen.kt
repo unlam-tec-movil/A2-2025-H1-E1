@@ -13,6 +13,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -24,6 +25,7 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import kotlinx.coroutines.launch
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 
 @Composable
 fun FeedScreen(
@@ -37,7 +39,7 @@ fun FeedScreen(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val coroutineScope = rememberCoroutineScope()
-
+    
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
             viewModel.getPosts(token)
@@ -78,6 +80,27 @@ fun FeedScreen(
             is PostUiState.Success -> {
                 ListPost(posts = state.list, navController = controller)
             }
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
+
+    val favoriteViewModel: FavoriteViewModel = hiltViewModel(homeBackStackEntry)
+
+    when (val state = postState.value) {
+        is PostUiState.Error -> Text("Error: ${state.message}")
+        PostUiState.Loading -> {
+            Box(Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
+        is PostUiState.Success -> {
+            ListPost(
+                posts = state.list,
+                navController = controller,
+                favoriteViewModel = favoriteViewModel,
+            )
         }
     }
 }
