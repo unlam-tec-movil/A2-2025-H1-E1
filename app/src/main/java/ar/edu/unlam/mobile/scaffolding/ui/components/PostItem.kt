@@ -211,3 +211,21 @@ fun ListPost(
         }
     }
 }
+
+@Composable
+fun ListPost(
+    post: Tuit,
+    navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
+) {
+
+    PostItem(
+        post,
+        modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+        navController,
+        favoriteViewModel = favoriteViewModel,
+    )
+
+
+}
+

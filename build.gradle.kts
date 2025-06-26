@@ -6,4 +6,5 @@ plugins {
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.ktlint) apply false
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.9.23"
 }

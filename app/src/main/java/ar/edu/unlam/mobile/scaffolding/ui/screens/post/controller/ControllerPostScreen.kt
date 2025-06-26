@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +22,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,6 +53,8 @@ fun ControllerPostScreen(
     navigateToHome: () -> Unit,
 ) {
     val state by viewModel.newPost.collectAsStateWithLifecycle()
+    val draftSaved by viewModel.draftSaved.collectAsStateWithLifecycle()
+    var showDiscardDialog by remember { mutableStateOf(false) }
     var text by remember { mutableStateOf("") }
 
     LaunchedEffect(state) {
@@ -60,14 +64,48 @@ fun ControllerPostScreen(
         }
     }
 
+    LaunchedEffect(draftSaved) {
+        if (draftSaved) {
+            navigateToHome()
+        }
+    }
     ControllerPostScreen(
         modifier = modifier,
         text = text,
         state = state,
         onTextChange = { text = it },
         onPostClick = { viewModel.newPost(text) },
-        onCloseClick = navigateToHome,
+        onCloseClick = {
+            if (text.isNotBlank()) {
+                showDiscardDialog = true
+            } else {
+                navigateToHome()
+            }
+        },
     )
+    if (showDiscardDialog) {
+        AlertDialog(
+            onDismissRequest = { showDiscardDialog = false },
+            title = { Text("¿Guardar como borrador?") },
+            text = { Text("¿Querés guardar el tuit como borrador o descartarlo?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDiscardDialog = false
+                    viewModel.draftTuit(text)
+                }) {
+                    Text("Guardar")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = {
+                    showDiscardDialog = false
+                    navigateToHome()
+                }) {
+                    Text("Descartar")
+                }
+            },
+        )
+    }
 }
 
 @Composable

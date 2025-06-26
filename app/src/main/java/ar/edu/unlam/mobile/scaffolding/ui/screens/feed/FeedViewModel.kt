@@ -2,9 +2,12 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.data.repositories.ProfileRespository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -20,6 +23,11 @@ class FeedViewModel
 
         private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
         val posts: StateFlow<PostUiState> get() = _posts
+
+    val feedPagingData: Flow<PagingData<Tuit>> =
+        profileRepository.getFeedPagingData()
+            .cachedIn(viewModelScope)
+
 
         init {
             getPosts()
