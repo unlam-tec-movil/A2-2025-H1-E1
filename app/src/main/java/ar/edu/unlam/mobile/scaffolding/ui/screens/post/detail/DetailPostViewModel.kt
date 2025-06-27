@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRespository
+import ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,18 +19,21 @@ class DetailPostViewModel
     ) : ViewModel() {
         private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
         val comments: StateFlow<CommentsState> get() = _comments
+        
+        private val _sendCommentState = MutableStateFlow<SendCommentState>(SendCommentState.Idle)
+        val sendCommentState: StateFlow<SendCommentState> get() = _sendCommentState
+        
+        private var userToken: String = ""
 
-        fun getComments(idTuit: Int) {
+        fun getComments(idTuit: Int, userToken: String) {
+            this.userToken = userToken
             viewModelScope.launch {
                 try {
-                    val result = postRespository.getReplies(idTuit)
-                    if (result.isNotEmpty()) {
-                        _comments.value = CommentsState.Success(result)
-                    } else {
-                        _comments.value = CommentsState.Error("No se encontraron comentarios")
-                    }
+                    _comments.value = CommentsState.Loading
+                    val result = postRespository.getReplies(idTuit, userToken)
+                    _comments.value = CommentsState.Success(result)
                 } catch (e: Exception) {
-                    _comments.value = CommentsState.Error(e.message ?: "Error desconocido")
+                    _comments.value = CommentsState.Error(ErrorHandler.handlePostError(e))
                 }
             }
         }
@@ -40,12 +44,18 @@ class DetailPostViewModel
         ) {
             viewModelScope.launch {
                 try {
-                    postRespository.replyToTuit(idTuit, message)
-                    getComments(idTuit) // Refresca los comentarios
+                    _sendCommentState.value = SendCommentState.Loading
+                    postRespository.replyToTuit(idTuit, message, userToken)
+                    _sendCommentState.value = SendCommentState.Success
+                    getComments(idTuit, userToken) // Refresca los comentarios
                 } catch (e: Exception) {
-                    // Puedes manejar el error si quieres
+                    _sendCommentState.value = SendCommentState.Error(ErrorHandler.handleCommentError(e))
                 }
             }
+        }
+        
+        fun clearSendCommentState() {
+            _sendCommentState.value = SendCommentState.Idle
         }
     }
 
@@ -55,4 +65,11 @@ sealed interface CommentsState {
     data class Success(val comments: List<Tuit>) : CommentsState
 
     data class Error(val message: String) : CommentsState
+}
+
+sealed interface SendCommentState {
+    object Idle : SendCommentState
+    object Loading : SendCommentState
+    object Success : SendCommentState
+    data class Error(val message: String) : SendCommentState
 }
