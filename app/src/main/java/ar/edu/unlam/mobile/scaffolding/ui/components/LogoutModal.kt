@@ -35,10 +35,11 @@ fun LogoutModal(
 ) {
     Dialog(
         onDismissRequest = onDismiss,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-        ),
+        properties =
+            DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+            ),
     ) {
         Card(
             modifier =
@@ -46,12 +47,14 @@ fun LogoutModal(
                     .fillMaxWidth()
                     .padding(16.dp),
             shape = RoundedCornerShape(16.dp),
-            colors = CardDefaults.cardColors(
-                containerColor = Color.White,
-            ),
-            elevation = CardDefaults.cardElevation(
-                defaultElevation = 8.dp,
-            ),
+            colors =
+                CardDefaults.cardColors(
+                    containerColor = Color.White,
+                ),
+            elevation =
+                CardDefaults.cardElevation(
+                    defaultElevation = 8.dp,
+                ),
         ) {
             Column(
                 modifier = Modifier.padding(24.dp),
@@ -102,9 +105,10 @@ fun LogoutModal(
                     Button(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Gray,
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color.Gray,
+                            ),
                     ) {
                         Text("Cancelar")
                     }
@@ -112,9 +116,10 @@ fun LogoutModal(
                     Button(
                         onClick = onConfirmLogout,
                         modifier = Modifier.weight(1f),
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = Color.Red,
-                        ),
+                        colors =
+                            ButtonDefaults.buttonColors(
+                                containerColor = Color.Red,
+                            ),
                     ) {
                         Text("Cerrar Sesión")
                     }
@@ -122,4 +127,4 @@ fun LogoutModal(
             }
         }
     }
-} 
+}

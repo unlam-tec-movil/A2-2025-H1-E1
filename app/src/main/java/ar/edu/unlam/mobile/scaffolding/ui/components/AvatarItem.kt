@@ -26,10 +26,11 @@ fun AvatarItem(
 ) {
     if (avatarUrl != null && avatarUrl.isNotEmpty()) {
         AsyncImage(
-            model = ImageRequest.Builder(LocalContext.current)
-                .data(avatarUrl)
-                .crossfade(true)
-                .build(),
+            model =
+                ImageRequest.Builder(LocalContext.current)
+                    .data(avatarUrl)
+                    .crossfade(true)
+                    .build(),
             contentDescription = "User_image",
             contentScale = ContentScale.Crop,
             modifier =
