@@ -14,27 +14,49 @@ class PostRespository
         // TODO: Implementa PostRepository usando datos remotos y locales.
 
         val applicationToken = BuildConfig.API_KEY
-        val userToken = BuildConfig.USER_TOKEN
 
-        suspend fun postTuit(message: String): Result<Unit> =
+        suspend fun postTuit(
+            message: String,
+            userToken: String,
+        ): Result<Unit> =
             postApiService.postTuit(
                 userToken = userToken,
                 token = applicationToken,
                 request = TuitRequest(message),
             )
 
-        suspend fun getTuits(id: Int): List<Tuit> = postApiService.getTuits(tuitId = id, userToken = userToken, token = applicationToken)
-
-        suspend fun likeTuit(id: Int) = postApiService.likeTuit(tuitId = id, userToken = userToken, token = applicationToken)
-
-        suspend fun unlikeTuit(id: Int) =
-            postApiService.unlikeTuit(
+        suspend fun getTuits(
+            id: Int,
+            userToken: String,
+        ): List<Tuit> =
+            postApiService.getTuits(
                 tuitId = id,
                 userToken = userToken,
                 token = applicationToken,
             )
 
-        suspend fun getReplies(id: Int): List<Tuit> =
+        suspend fun likeTuit(
+            id: Int,
+            userToken: String,
+        ) = postApiService.likeTuit(
+            tuitId = id,
+            userToken = userToken,
+            token = applicationToken,
+        )
+
+        suspend fun unlikeTuit(
+            id: Int,
+            userToken: String,
+        ) = postApiService.unlikeTuit(
+            tuitId = id,
+            userToken = userToken,
+            token = applicationToken,
+        )
+
+        suspend fun getReplies(
+            id: Int,
+            userToken: String,
+        ): List<Tuit> =
             postApiService.getReplies(
                 tuitId = id,
                 userToken = userToken,
@@ -44,6 +66,7 @@ class PostRespository
         suspend fun replyToTuit(
             id: Int,
             message: String,
+            userToken: String,
         ) = postApiService.replyToTuit(
             tuitId = id,
             userToken = userToken,

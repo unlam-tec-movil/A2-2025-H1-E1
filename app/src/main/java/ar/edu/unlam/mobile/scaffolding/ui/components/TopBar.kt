@@ -11,25 +11,45 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 @Composable
 fun TopBar(
     title: String = "",
     onActionClick: () -> Unit = {},
+    onLogout: () -> Unit = {},
+    viewModel: UserViewModel = hiltViewModel(),
 ) {
+    var showLogoutModal by remember { mutableStateOf(false) }
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            viewModel.loadProfile(token)
+        }
+    }
+
     Row(
         modifier =
             Modifier
@@ -64,8 +84,31 @@ fun TopBar(
                     .padding(start = 8.dp),
         )
 
-        IconButton(onClick = onActionClick) {
-            AvatarItem()
+        IconButton(
+            onClick = {
+                showLogoutModal = true
+                onActionClick()
+            },
+        ) {
+            when (val state = profileState) {
+                is ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.Success -> {
+                    AvatarItem(avatarUrl = state.profile.avatarUrl, size = 50)
+                }
+                else -> {
+                    AvatarItem(size = 50)
+                }
+            }
         }
+    }
+
+    // LogoutModal
+    if (showLogoutModal) {
+        LogoutModal(
+            onDismiss = { showLogoutModal = false },
+            onConfirmLogout = {
+                showLogoutModal = false
+                onLogout()
+            },
+        )
     }
 }

@@ -221,7 +221,7 @@ fun HeaderPostItem(
     userImage: String?,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        AvatarItem()
+        AvatarItem(avatarUrl = userImage, size = 50)
         Column(
             modifier =
                 Modifier
