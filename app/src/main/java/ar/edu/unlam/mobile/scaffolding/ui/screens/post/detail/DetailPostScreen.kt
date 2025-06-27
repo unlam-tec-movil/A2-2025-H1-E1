@@ -70,10 +70,11 @@ fun DetailPostScreen(
 
         is PostUiState.Success -> {
             val post = state.list.find { it.id == idPost }
-            val filteredComments = when (val comments = commentState.value) {
-                is CommentsState.Success -> comments.comments
-                else -> emptyList()
-            }
+            val filteredComments =
+                when (val comments = commentState.value) {
+                    is CommentsState.Success -> comments.comments
+                    else -> emptyList()
+                }
 
             Column(
                 modifier =
@@ -130,7 +131,7 @@ fun DetailPostScreen(
                 InputComment(
                     modifier = Modifier.padding(0.dp),
                     idPost = idPost,
-                    detailPostViewModel = detailPostViewModel
+                    detailPostViewModel = detailPostViewModel,
                 )
             }
         }
@@ -141,7 +142,7 @@ fun DetailPostScreen(
 fun InputComment(
     modifier: Modifier = Modifier,
     idPost: Int,
-    detailPostViewModel: DetailPostViewModel
+    detailPostViewModel: DetailPostViewModel,
 ) {
     var comment by remember { mutableStateOf("") }
 
