@@ -32,8 +32,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
-import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
-import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
@@ -77,6 +75,7 @@ fun DetailPostScreen(
                         modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
+                        onLikeClick = { viewModel.onLikeClicked(it) },
                     )
                 }
 
@@ -112,6 +111,7 @@ fun DetailPostScreen(
                         posts = filteredComments,
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
+                        onLikeClick = { viewModel.onLikeClicked(it) },
                     )
                 }
 
