@@ -129,6 +129,8 @@ fun DetailPostScreen(
 
                 InputComment(
                     modifier = Modifier.padding(0.dp),
+                    idPost = idPost,
+                    detailPostViewModel = detailPostViewModel
                 )
             }
         }
@@ -136,7 +138,11 @@ fun DetailPostScreen(
 }
 
 @Composable
-fun InputComment(modifier: Modifier = Modifier) {
+fun InputComment(
+    modifier: Modifier = Modifier,
+    idPost: Int,
+    detailPostViewModel: DetailPostViewModel
+) {
     var comment by remember { mutableStateOf("") }
 
     Row(
@@ -179,6 +185,10 @@ fun InputComment(modifier: Modifier = Modifier) {
 
         IconButton(
             onClick = {
+                if (comment.isNotBlank()) {
+                    detailPostViewModel.sendComment(idPost, comment)
+                    comment = "" // Limpiar campo
+                }
             },
         ) {
             Icon(

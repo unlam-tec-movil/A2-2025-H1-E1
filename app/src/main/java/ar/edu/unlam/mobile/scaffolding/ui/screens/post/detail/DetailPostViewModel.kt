@@ -36,6 +36,17 @@ class DetailPostViewModel @Inject constructor(
         }
     }
 
+    fun sendComment(idTuit: Int, message: String) {
+        viewModelScope.launch {
+            try {
+                postRespository.replyToTuit(idTuit, message)
+                getComments(idTuit) // Refresca los comentarios
+            } catch (e: Exception) {
+                // Puedes manejar el error si quieres
+            }
+        }
+    }
+
 
 
 
