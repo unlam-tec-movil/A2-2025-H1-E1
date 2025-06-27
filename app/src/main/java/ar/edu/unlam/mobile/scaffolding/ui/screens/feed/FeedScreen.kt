@@ -57,7 +57,7 @@ fun FeedScreen(
                     posts = state.list,
                     navController = controller,
                     favoriteViewModel = favoriteViewModel,
-                    onLikeClick = { viewModel.onLikeClicked(it) }
+                    onLikeClick = { viewModel.onLikeClicked(it) },
                 )
             }
         }
