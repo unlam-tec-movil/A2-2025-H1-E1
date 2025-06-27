@@ -20,8 +20,10 @@ class FeedViewModel
     ) : ViewModel() {
         private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
         val posts: StateFlow<PostUiState> get() = _posts
+        private var userToken: String = ""
 
         fun getPosts(userToken: String) {
+            this.userToken = userToken
             viewModelScope.launch {
                 try {
                     _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
@@ -37,9 +39,9 @@ class FeedViewModel
                     val liked = !tuit.liked
 
                     if (liked) {
-                        postRespository.likeTuit(tuit.id)
+                        postRespository.likeTuit(tuit.id, userToken)
                     } else {
-                        postRespository.unlikeTuit(tuit.id)
+                        postRespository.unlikeTuit(tuit.id, userToken)
                     }
 
                     val updatedList =
