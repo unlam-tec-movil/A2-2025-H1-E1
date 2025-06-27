@@ -16,6 +16,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,6 +33,8 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
+import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
@@ -42,8 +45,14 @@ fun DetailPostScreen(
     controller: NavHostController,
     idPost: Int,
     viewModel: FeedViewModel = hiltViewModel(),
+    detailPostViewModel: DetailPostViewModel = hiltViewModel(),
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
+    val commentState = detailPostViewModel.comments.collectAsStateWithLifecycle()
+
+    LaunchedEffect(idPost) {
+        detailPostViewModel.getComments(idPost)
+    }
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -61,7 +70,10 @@ fun DetailPostScreen(
 
         is PostUiState.Success -> {
             val post = state.list.find { it.id == idPost }
-            val filteredComments = state.list.filter { it.parentId == idPost }
+            val filteredComments = when (val comments = commentState.value) {
+                is CommentsState.Success -> comments.comments
+                else -> emptyList()
+            }
 
             Column(
                 modifier =
@@ -70,7 +82,7 @@ fun DetailPostScreen(
                         .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
             ) {
                 post?.let {
-                    ar.edu.unlam.mobile.scaffolding.ui.components.PostItem(
+                    PostItem(
                         post = it,
                         modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                         navController = controller,
@@ -102,12 +114,12 @@ fun DetailPostScreen(
                         Text(
                             "Sin Comentarios",
                             textAlign = TextAlign.Center,
-                            color = ar.edu.unlam.mobile.scaffolding.ui.theme.Green,
+                            color = Green,
                             fontWeight = FontWeight.Bold,
                         )
                     }
                 } else {
-                    ar.edu.unlam.mobile.scaffolding.ui.components.ListPost(
+                    ListPost(
                         posts = filteredComments,
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,

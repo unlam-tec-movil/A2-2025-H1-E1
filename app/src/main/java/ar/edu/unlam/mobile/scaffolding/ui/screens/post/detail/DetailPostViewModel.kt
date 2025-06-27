@@ -1,5 +1,49 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail
 
-class DetailPostViewModel {
-    // TODO: Pantalla para ver los detalles de una publicación.
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRespository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.ProfileRespository
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import javax.inject.Inject
+
+@HiltViewModel
+class DetailPostViewModel @Inject constructor(
+    private val postRespository: PostRespository,
+) : ViewModel() {
+
+
+    private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
+    val comments: StateFlow<CommentsState> get() = _comments
+
+    fun getComments(idTuit: Int) {
+        viewModelScope.launch {
+            try {
+                val result = postRespository.getReplies(idTuit)
+                if (result.isNotEmpty()) {
+                    _comments.value = CommentsState.Success(result)
+                } else {
+                    _comments.value = CommentsState.Error("No se encontraron comentarios")
+                }
+            } catch (e: Exception) {
+                _comments.value = CommentsState.Error(e.message ?: "Error desconocido")
+            }
+        }
+    }
+
+
+
+
+
+}
+
+sealed interface CommentsState {
+    object Loading : CommentsState
+    data class Success(val comments: List<Tuit>) : CommentsState
+    data class Error(val message: String) : CommentsState
 }
