@@ -90,7 +90,7 @@ fun DetailPostScreen(
         Box(Modifier.fillMaxSize()) {
             Text(
                 "Error: ${(postState.value as PostUiState.Error).message}",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
             )
         }
         return
@@ -101,7 +101,7 @@ fun DetailPostScreen(
         Box(Modifier.fillMaxSize()) {
             Text(
                 "Error al cargar comentarios: ${(commentState.value as CommentsState.Error).message}",
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
             )
         }
         return
@@ -133,11 +133,12 @@ fun DetailPostScreen(
             } ?: run {
                 // Si no se encuentra el post, mostrar mensaje
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
-                        .background(Color.White),
-                    contentAlignment = Alignment.Center
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(Color.White),
+                    contentAlignment = Alignment.Center,
                 ) {
                     Text(
                         "Post no encontrado",

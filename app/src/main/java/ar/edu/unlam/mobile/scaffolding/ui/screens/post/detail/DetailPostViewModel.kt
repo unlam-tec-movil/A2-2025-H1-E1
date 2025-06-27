@@ -19,13 +19,16 @@ class DetailPostViewModel
     ) : ViewModel() {
         private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
         val comments: StateFlow<CommentsState> get() = _comments
-        
+
         private val _sendCommentState = MutableStateFlow<SendCommentState>(SendCommentState.Idle)
         val sendCommentState: StateFlow<SendCommentState> get() = _sendCommentState
-        
+
         private var userToken: String = ""
 
-        fun getComments(idTuit: Int, userToken: String) {
+        fun getComments(
+            idTuit: Int,
+            userToken: String,
+        ) {
             this.userToken = userToken
             viewModelScope.launch {
                 try {
@@ -53,7 +56,7 @@ class DetailPostViewModel
                 }
             }
         }
-        
+
         fun clearSendCommentState() {
             _sendCommentState.value = SendCommentState.Idle
         }
@@ -69,7 +72,10 @@ sealed interface CommentsState {
 
 sealed interface SendCommentState {
     object Idle : SendCommentState
+
     object Loading : SendCommentState
+
     object Success : SendCommentState
+
     data class Error(val message: String) : SendCommentState
 }
