@@ -1,7 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller
 
 import android.util.Log
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -34,7 +32,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -42,7 +39,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
@@ -53,40 +51,40 @@ fun ControllerPostScreen(
     viewModel: ControllerPostViewModel = hiltViewModel(),
     navigateToHome: () -> Unit,
 ) {
-    val state by viewModel.newPost.collectAsStateWithLifecycle()
     var text by remember { mutableStateOf("") }
-
+    val state by viewModel.newPost.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+    val userViewModel: UserViewModel = hiltViewModel()
+    val profileState by userViewModel.profileState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            userViewModel.loadProfile(token)
+        }
+    }
 
     LaunchedEffect(state) {
         if (state is NewPostUiState.Success) {
-            Log.i("Screen", "Succes")
+            Log.i("Screen", "Success")
             navigateToHome()
         }
     }
 
-    ControllerPostScreen(
-        modifier = modifier,
-        text = text,
-        state = state,
-        onTextChange = { text = it },
-        onPostClick = { viewModel.newPost(text, token) },
-        onCloseClick = navigateToHome,
-    )
-}
+    val onCloseClick = {
+        navigateToHome()
+    }
 
-@Composable
-fun ControllerPostScreen(
-    modifier: Modifier,
-    text: String,
-    state: NewPostUiState,
-    onTextChange: (String) -> Unit,
-    onPostClick: () -> Unit,
-    onCloseClick: () -> Unit,
-) {
+    val onPostClick = {
+        viewModel.newPost(text, token)
+    }
+
+    val onTextChange = { newText: String ->
+        text = newText
+    }
+
     Scaffold { innerPading ->
         Column(modifier.padding(innerPading)) {
             Row(
@@ -109,7 +107,14 @@ fun ControllerPostScreen(
             }
 
             Row {
-                CircularProfileIconPreview()
+                when (val profileStateValue = profileState) {
+                    is ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.Success -> {
+                        AvatarItem(avatarUrl = profileStateValue.profile.avatarUrl, size = 50)
+                    }
+                    else -> {
+                        AvatarItem(size = 50)
+                    }
+                }
                 BasicTextField(
                     value = text,
                     onValueChange = { onTextChange(it) },
@@ -134,10 +139,10 @@ fun ControllerPostScreen(
                     },
                 )
             }
-            when (state) {
+            when (val currentState = state) {
                 is NewPostUiState.Error ->
                     Text(
-                        text = state.message,
+                        text = currentState.message,
                         color = Color.Red,
                     )
 
@@ -176,7 +181,7 @@ fun ControllerPostScreenPreview() {
             }
 
             Row {
-                CircularProfileIconPreview()
+                AvatarItem(size = 50)
                 BasicTextField(
                     value = text,
                     onValueChange = { text = it },
@@ -203,17 +208,4 @@ fun ControllerPostScreenPreview() {
             }
         }
     }
-}
-
-@Composable
-fun CircularProfileIconPreview() {
-    Image(
-        painter = painterResource(id = R.drawable.ic_launcher_background),
-        contentDescription = "Profile Icon",
-        modifier =
-            Modifier
-                .padding(start = 10.dp)
-                .clip(CircleShape)
-                .size(50.dp),
-    )
 }
