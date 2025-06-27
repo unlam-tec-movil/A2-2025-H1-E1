@@ -16,7 +16,6 @@ class FeedViewModel
     constructor(
         private val profileRepository: ProfileRespository,
     ) : ViewModel() {
-        // TODO: ViewModel para manejar el estado del feed.
 
         private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
         val posts: StateFlow<PostUiState> get() = _posts

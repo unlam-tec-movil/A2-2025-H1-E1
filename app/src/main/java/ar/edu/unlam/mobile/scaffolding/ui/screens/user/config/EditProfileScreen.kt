@@ -43,20 +43,28 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import coil.compose.rememberAsyncImagePainter
 
 @Preview
 @Composable
 fun Edit(controller: NavHostController = rememberNavController(),
-         userViewModel: EditProfileViewModel = EditProfileViewModel()) {
+         userEditViewModel: EditProfileViewModel = hiltViewModel()) {
 
-     var username by remember { mutableStateOf("@Hola4576") }
-      var name by remember { mutableStateOf("Tungtung Sahur") }
+    val userState = userEditViewModel.user.collectAsStateWithLifecycle()
+    var username = when (val state = userState.value) {
+        is UserUiState.Success -> state.user.name
+        else -> "nombre desconocido"
+    }
+
+     //by remember { mutableStateOf("@Hola4576") }
+    var user by remember { mutableStateOf("@$username") }
+    var name by remember { mutableStateOf(username) }
       var bio by remember { mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj") }
 
     val context = LocalContext.current
@@ -96,7 +104,8 @@ fun Edit(controller: NavHostController = rememberNavController(),
 
             // guardar
             Button(
-                onClick = {  },
+                onClick = { userEditViewModel.updateUser(name,user,bio)
+                    controller.navigate("user/{id}")},
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
@@ -109,7 +118,6 @@ fun Edit(controller: NavHostController = rememberNavController(),
         }
 
         // Banner verde con icono de cámara
-        // Foto de perfil
         Box(
             modifier =
                 Modifier
@@ -124,7 +132,8 @@ fun Edit(controller: NavHostController = rememberNavController(),
                         .background(Color(0xFF386A5F)),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = {}) {
+                IconButton(onClick = {
+                }) {
                     Icon(
                         imageVector = Icons.Default.PhotoCamera,
                         contentDescription = "Cambiar banner",
@@ -183,11 +192,11 @@ fun Edit(controller: NavHostController = rememberNavController(),
                 style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
             )
             TextField(
-                value = username,
-                onValueChange = {username = it},
+                value = user,
+                onValueChange = {user = it},
                 modifier =
                     Modifier
-                        .fillMaxWidth() ,
+                        .fillMaxWidth(),
                 colors =
                     TextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
