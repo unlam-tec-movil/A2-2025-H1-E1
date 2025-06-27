@@ -10,8 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,7 +23,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -45,10 +42,8 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
-import ar.edu.unlam.mobile.scaffolding.ui.theme.LightGreen
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
 
 @Composable
@@ -73,12 +68,11 @@ fun ButtonsPost(
     Row(
         modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
     ) {
-
         // Filita de like
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.weight(1f).padding(0.dp)
+            modifier = Modifier.weight(1f).padding(0.dp),
         ) {
             IconButton(
                 onClick = { onLikeClick(post) },
@@ -87,7 +81,7 @@ fun ButtonsPost(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
                     tint = if (post.liked) Green else Color.Gray,
-                    modifier = Modifier.size(30.dp)
+                    modifier = Modifier.size(30.dp),
                 )
             }
             Text(
@@ -102,7 +96,7 @@ fun ButtonsPost(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(
                 onClick = { navController.navigate("comments/${post.id}") },
@@ -120,7 +114,7 @@ fun ButtonsPost(
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.End
+            horizontalArrangement = Arrangement.End,
         ) {
             IconButton(
                 onClick = { favoriteViewModel.toggleFavorite(post) },
@@ -144,7 +138,6 @@ fun PostItem(
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
 ) {
-
     var countLike by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
@@ -158,7 +151,6 @@ fun PostItem(
             countLike = 0
             isCooldown = true
 
-
             scope.launch {
                 delay(1000L)
                 isCooldown = false
@@ -170,7 +162,7 @@ fun PostItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = {likedAuto()}
+        onClick = { likedAuto() },
     ) {
         Column(modifier) {
             HeaderPostItem(post.author, post.avatarUrl)
@@ -221,7 +213,7 @@ fun HeaderPostItem(
     userImage: String?,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
-        AvatarItem()
+        AvatarItem(avatarUrl = userImage, size = 50)
         Column(
             modifier =
                 Modifier
@@ -265,7 +257,7 @@ fun ListPost(
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                 navController,
                 favoriteViewModel = favoriteViewModel,
-                onLikeClick = onLikeClick
+                onLikeClick = onLikeClick,
             )
             Spacer(modifier = Modifier.height(5.dp))
         }

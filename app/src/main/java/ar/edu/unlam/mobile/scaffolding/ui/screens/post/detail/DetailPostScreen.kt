@@ -87,7 +87,7 @@ fun DetailPostScreen(
                         modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
-                        onLikeClick = {viewModel.onLikeClicked(it)}
+                        onLikeClick = { viewModel.onLikeClicked(it) },
                     )
                 }
 

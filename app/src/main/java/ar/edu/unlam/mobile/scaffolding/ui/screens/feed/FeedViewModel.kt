@@ -13,58 +13,56 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FeedViewModel
-@Inject
-constructor(
-    private val profileRepository: ProfileRespository,
-    private val postRespository: PostRespository,
-) : ViewModel() {
-    // TODO: ViewModel para manejar el estado del feed.
+    @Inject
+    constructor(
+        private val profileRepository: ProfileRespository,
+        private val postRespository: PostRespository,
+    ) : ViewModel() {
+        private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
+        val posts: StateFlow<PostUiState> get() = _posts
+        private var userToken: String = ""
 
-    private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
-    val posts: StateFlow<PostUiState> get() = _posts
+        fun getPosts(userToken: String) {
+            this.userToken = userToken
+            viewModelScope.launch {
+                try {
+                    _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
+                } catch (e: Exception) {
+                    _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                }
+            }
+        }
 
-    init {
-        getPosts()
-    }
+        fun onLikeClicked(tuit: Tuit) {
+            viewModelScope.launch {
+                try {
+                    val liked = !tuit.liked
 
-    private fun getPosts() {
-        viewModelScope.launch {
-            try {
-                _posts.value = PostUiState.Success(profileRepository.getFeed())
-            } catch (e: Exception) {
-                _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                    if (liked) {
+                        postRespository.likeTuit(tuit.id, userToken)
+                    } else {
+                        postRespository.unlikeTuit(tuit.id, userToken)
+                    }
+
+                    val updatedList =
+                        (_posts.value as? PostUiState.Success)?.list?.map {
+                            if (it.id == tuit.id) {
+                                it.copy(
+                                    liked = liked,
+                                    likes = if (liked) it.likes + 1 else it.likes - 1,
+                                )
+                            } else {
+                                it
+                            }
+                        }
+
+                    _posts.value = PostUiState.Success(updatedList ?: emptyList())
+                } catch (e: Exception) {
+                    _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                }
             }
         }
     }
-
-    fun onLikeClicked(tuit: Tuit) {
-        viewModelScope.launch {
-            try {
-                val liked = !tuit.liked
-
-                if (liked) {
-                    postRespository.likeTuit(tuit.id)
-                } else {
-                    postRespository.unlikeTuit(tuit.id)
-                }
-
-                val updatedList = (_posts.value as? PostUiState.Success)?.list?.map {
-                    if (it.id == tuit.id) {
-                        it.copy(
-                            liked = liked,
-                            likes = if (liked) it.likes + 1 else it.likes - 1
-                        )
-                    } else it
-                }
-
-                _posts.value = PostUiState.Success(updatedList ?: emptyList())
-            } catch (e: Exception) {
-                _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
-            }
-        }
-    }
-
-}
 
 sealed interface PostUiState {
     object Loading : PostUiState
