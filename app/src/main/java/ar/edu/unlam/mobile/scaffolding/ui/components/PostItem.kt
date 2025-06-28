@@ -292,3 +292,21 @@ fun ListPost(
         }
     }
 }
+
+@Composable
+fun ListPost(
+    post: Tuit,
+    navController: NavController,
+    favoriteViewModel: FavoriteViewModel,
+    onLikeClick: (Tuit) -> Unit,
+    currentUserId: String,
+) {
+    PostItem(
+        post = post,
+        modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+        navController = navController,
+        favoriteViewModel = favoriteViewModel,
+        onLikeClick = onLikeClick,
+        currentUserId = currentUserId,
+    )
+}

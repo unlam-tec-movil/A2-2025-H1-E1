@@ -2,7 +2,11 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRespository
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.DraftEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntity
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.repository.DraftRepository
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.repository.UserRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -13,11 +17,22 @@ import javax.inject.Inject
 class ControllerPostViewModel
     @Inject
     constructor(
-        private val postRepository: PostRespository,
+        private val postRepository: PostRepository,
+        private val draftRespository: DraftRepository,
+        private val userRepository: UserRepository,
     ) : ViewModel() {
-        // TODO: Pantalla para crear una nueva publicación.
         private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
         val newPost: StateFlow<NewPostUiState> get() = _newPost
+
+        private val _draftSaved = MutableStateFlow(false)
+        val draftSaved: StateFlow<Boolean> = _draftSaved
+
+        init {
+            viewModelScope.launch {
+                // Inserta un usuario de prueba en la base local
+                userRepository.insertUser(UserEntity("alexis", "a", "a"))
+            }
+        }
 
         fun newPost(
             message: String,
@@ -40,6 +55,16 @@ class ControllerPostViewModel
                     }
                 } catch (e: Exception) {
                     _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
+                }
+            }
+        }
+
+        fun draftTuit(text: String?) {
+            viewModelScope.launch {
+                if (!text.isNullOrBlank()) {
+                    // TODO: Obtener el email dinámicamente desde DataStore
+                    draftRespository.insertDraft(DraftEntity(text = text, userEmail = "alexis"))
+                    _draftSaved.value = true
                 }
             }
         }

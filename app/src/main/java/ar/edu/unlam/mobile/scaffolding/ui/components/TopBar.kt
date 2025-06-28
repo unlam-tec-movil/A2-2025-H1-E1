@@ -53,7 +53,7 @@ fun TopBar(
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            viewModel.loadProfile(token)
+            viewModel.loadProfile()
         }
     }
 

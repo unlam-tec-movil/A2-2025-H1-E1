@@ -2,9 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRespository
-import ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,67 +13,65 @@ import javax.inject.Inject
 class DetailPostViewModel
     @Inject
     constructor(
-        private val postRespository: PostRespository,
+        private val postRepository: PostRepository,
     ) : ViewModel() {
-        private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
-        val comments: StateFlow<CommentsState> get() = _comments
+        private val _replies = MutableStateFlow<RepliesUiState>(RepliesUiState.Loading)
+        val replies: StateFlow<RepliesUiState> get() = _replies
 
-        private val _sendCommentState = MutableStateFlow<SendCommentState>(SendCommentState.Idle)
-        val sendCommentState: StateFlow<SendCommentState> get() = _sendCommentState
+        private val _replySent = MutableStateFlow<ReplySentUiState>(ReplySentUiState.Init)
+        val replySent: StateFlow<ReplySentUiState> get() = _replySent
 
-        private var userToken: String = ""
-
-        fun getComments(
+        fun getReplies(
             idTuit: Int,
             userToken: String,
         ) {
-            this.userToken = userToken
             viewModelScope.launch {
                 try {
-                    _comments.value = CommentsState.Loading
-                    val result = postRespository.getReplies(idTuit, userToken)
-                    _comments.value = CommentsState.Success(result)
+                    val result = postRepository.getReplies(idTuit, userToken)
+                    _replies.value = RepliesUiState.Success(result)
                 } catch (e: Exception) {
-                    _comments.value = CommentsState.Error(ErrorHandler.handlePostError(e))
+                    _replies.value = RepliesUiState.Error(e.message ?: "Error desconocido")
                 }
             }
         }
 
-        fun sendComment(
+        fun replyToTuit(
             idTuit: Int,
             message: String,
+            userToken: String,
         ) {
+            if (message.isBlank()) {
+                _replySent.value = ReplySentUiState.Error("El texto no puede estar vacío")
+                return
+            }
+
             viewModelScope.launch {
+                _replySent.value = ReplySentUiState.Loading
+
                 try {
-                    _sendCommentState.value = SendCommentState.Loading
-                    postRespository.replyToTuit(idTuit, message, userToken)
-                    _sendCommentState.value = SendCommentState.Success
-                    getComments(idTuit, userToken) // Refresca los comentarios
+                    postRepository.replyToTuit(idTuit, message, userToken)
+                    _replySent.value = ReplySentUiState.Success
                 } catch (e: Exception) {
-                    _sendCommentState.value = SendCommentState.Error(ErrorHandler.handleCommentError(e))
+                    _replySent.value = ReplySentUiState.Error(e.message ?: "Error desconocido")
                 }
             }
-        }
-
-        fun clearSendCommentState() {
-            _sendCommentState.value = SendCommentState.Idle
         }
     }
 
-sealed interface CommentsState {
-    object Loading : CommentsState
+sealed interface RepliesUiState {
+    object Loading : RepliesUiState
 
-    data class Success(val comments: List<Tuit>) : CommentsState
+    data class Success(val replies: List<ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit>) : RepliesUiState
 
-    data class Error(val message: String) : CommentsState
+    data class Error(val message: String) : RepliesUiState
 }
 
-sealed interface SendCommentState {
-    object Idle : SendCommentState
+sealed interface ReplySentUiState {
+    object Init : ReplySentUiState
 
-    object Loading : SendCommentState
+    object Loading : ReplySentUiState
 
-    object Success : SendCommentState
+    object Success : ReplySentUiState
 
-    data class Error(val message: String) : SendCommentState
+    data class Error(val message: String) : ReplySentUiState
 }

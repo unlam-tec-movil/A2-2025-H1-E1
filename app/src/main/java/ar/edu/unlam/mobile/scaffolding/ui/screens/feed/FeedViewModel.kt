@@ -2,10 +2,13 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRespository
-import ar.edu.unlam.mobile.scaffolding.data.repositories.ProfileRespository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.PostRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.ProfileRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
@@ -15,18 +18,25 @@ import javax.inject.Inject
 class FeedViewModel
     @Inject
     constructor(
-        private val profileRepository: ProfileRespository,
-        private val postRespository: PostRespository,
+        private val profileRepository: ProfileRepository,
+        private val postRepository: PostRepository,
     ) : ViewModel() {
+        // Para Paging
+        val feedPagingData: Flow<PagingData<Tuit>> =
+            profileRepository.getFeedPagingData().cachedIn(viewModelScope)
+
+        // Para el estado manual de post (como en develop)
         private val _posts = MutableStateFlow<PostUiState>(PostUiState.Loading)
         val posts: StateFlow<PostUiState> get() = _posts
+
         private var userToken: String = ""
 
         fun getPosts(userToken: String) {
             this.userToken = userToken
             viewModelScope.launch {
                 try {
-                    _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
+                    val posts = profileRepository.getFeed()
+                    _posts.value = PostUiState.Success(posts)
                 } catch (e: Exception) {
                     _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
                 }
@@ -39,9 +49,9 @@ class FeedViewModel
                     val liked = !tuit.liked
 
                     if (liked) {
-                        postRespository.likeTuit(tuit.id, userToken)
+                        postRepository.likeTuit(tuit.id, userToken)
                     } else {
-                        postRespository.unlikeTuit(tuit.id, userToken)
+                        postRepository.unlikeTuit(tuit.id, userToken)
                     }
 
                     val updatedList =
@@ -67,11 +77,7 @@ class FeedViewModel
 sealed interface PostUiState {
     object Loading : PostUiState
 
-    data class Success(
-        val list: List<Tuit>,
-    ) : PostUiState
+    data class Success(val list: List<Tuit>) : PostUiState
 
-    data class Error(
-        val message: String,
-    ) : PostUiState
+    data class Error(val message: String) : PostUiState
 }

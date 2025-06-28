@@ -47,7 +47,7 @@ fun Edit(
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            userEditViewModel.loadProfile(token)
+            userEditViewModel.loadProfile()
         }
     }
 
@@ -97,7 +97,7 @@ fun Edit(
 
             Button(
                 onClick = {
-                    userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
+                    userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "")
                     controller.navigate("user/{id}")
                 },
                 modifier =

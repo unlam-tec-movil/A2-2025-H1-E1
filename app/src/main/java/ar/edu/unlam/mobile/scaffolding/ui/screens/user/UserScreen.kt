@@ -50,7 +50,7 @@ fun UserScreen(
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            viewModel.loadProfile(token)
+            viewModel.loadProfile()
         }
     }
 
