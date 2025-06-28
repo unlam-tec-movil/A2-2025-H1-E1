@@ -9,6 +9,5 @@ interface UserDao {
     // TODO: Interfaz DAO para manejo de usuarios favoritos u offline.
 
     @Upsert
-    suspend  fun insertUser(user: UserEntity)
-
+    suspend fun insertUser(user: UserEntity)
 }

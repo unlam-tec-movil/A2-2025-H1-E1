@@ -12,50 +12,53 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ProfileRepository @Inject constructor(
-    private val profileApiService: ProfileApiService,
-) {
-    private val applicationToken = BuildConfig.API_KEY
-    private val userToken = BuildConfig.USER_TOKEN
-    private val onlyParents = false
+class ProfileRepository
+    @Inject
+    constructor(
+        private val profileApiService: ProfileApiService,
+    ) {
+        private val applicationToken = BuildConfig.API_KEY
+        private val userToken = BuildConfig.USER_TOKEN
+        private val onlyParents = false
 
-    suspend fun getProfile(): ProfileResponse =
-        profileApiService.getProfile(
-            userToken = userToken,
-            token = applicationToken
-        )
+        suspend fun getProfile(): ProfileResponse =
+            profileApiService.getProfile(
+                userToken = userToken,
+                token = applicationToken,
+            )
 
-    suspend fun updateProfile(
-        name: String,
-        password: String,
-        avatarUrl: String,
-    ) = profileApiService.updateProfile(
-        token = applicationToken,
-        request = ProfileRequest(name, password, avatarUrl)
-    )
-
-    suspend fun getFeed(): List<Tuit> =
-        profileApiService.getFeed(
-            userToken = userToken,
+        suspend fun updateProfile(
+            name: String,
+            password: String,
+            avatarUrl: String,
+        ) = profileApiService.updateProfile(
             token = applicationToken,
-            page = 1,
-            parents = false,
+            request = ProfileRequest(name, password, avatarUrl),
         )
 
-    fun getFeedPagingData(): Flow<PagingData<Tuit>> {
-        return Pager(
-            config = PagingConfig(
-                pageSize = 10,
-                enablePlaceholders = false
-            ),
-            pagingSourceFactory = {
-                TuitPagingSource(
-                    api = profileApiService,
-                    applicationToken = applicationToken,
-                    userToken = userToken,
-                    onlyParents = onlyParents
-                )
-            }
-        ).flow
+        suspend fun getFeed(): List<Tuit> =
+            profileApiService.getFeed(
+                userToken = userToken,
+                token = applicationToken,
+                page = 1,
+                parents = false,
+            )
+
+        fun getFeedPagingData(): Flow<PagingData<Tuit>> {
+            return Pager(
+                config =
+                    PagingConfig(
+                        pageSize = 10,
+                        enablePlaceholders = false,
+                    ),
+                pagingSourceFactory = {
+                    TuitPagingSource(
+                        api = profileApiService,
+                        applicationToken = applicationToken,
+                        userToken = userToken,
+                        onlyParents = onlyParents,
+                    )
+                },
+            ).flow
+        }
     }
-}

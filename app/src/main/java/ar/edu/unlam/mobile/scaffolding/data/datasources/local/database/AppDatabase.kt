@@ -7,7 +7,8 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.UserEntit
 
 // TODO: Clase Room Database que expone DAOs.
 @Database(entities = [DraftEntity::class, UserEntity::class], version = 1)
-abstract class AppDatabase(): RoomDatabase() {
+abstract class AppDatabase() : RoomDatabase() {
     abstract fun draftDao(): DraftDao
+
     abstract fun userDao(): UserDao
 }

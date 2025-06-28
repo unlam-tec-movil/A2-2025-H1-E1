@@ -11,12 +11,11 @@ interface DraftDao {
     // TODO: Interfaz DAO para operaciones CRUD sobre borradores.
 
     @Upsert
-   suspend fun insertDraft(draft: DraftEntity)
+    suspend fun insertDraft(draft: DraftEntity)
 
     @Delete
     suspend fun deleteDraft(draft: DraftEntity)
 
     @Query("SELECT * FROM draft_posts WHERE userEmail = :email")
-     fun getDraftsByUser(email: String) : List<DraftEntity>
-
+    fun getDraftsByUser(email: String): List<DraftEntity>
 }

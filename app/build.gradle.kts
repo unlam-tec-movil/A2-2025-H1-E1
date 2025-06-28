@@ -8,7 +8,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.kotlin.compose.compiler)
-    id ("kotlin-kapt")
+    id("kotlin-kapt")
     id("org.jetbrains.kotlin.plugin.serialization")
 }
 
@@ -134,7 +134,7 @@ dependencies {
 
     // Room
     implementation("androidx.room:room-runtime:2.6.1")
-    kapt("androidx.room:room-compiler:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
 
     // Paging
@@ -143,5 +143,4 @@ dependencies {
 
     // Datastore Preferences
     implementation(libs.androidx.datastore.preferences)
-
 }

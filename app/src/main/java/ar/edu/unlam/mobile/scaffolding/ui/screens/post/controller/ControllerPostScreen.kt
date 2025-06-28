@@ -70,7 +70,7 @@ fun ControllerPostScreen(
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            userViewModel.loadProfile(token)
+            userViewModel.loadProfile()
         }
     }
 
@@ -87,22 +87,87 @@ fun ControllerPostScreen(
         }
     }
 
-    ControllerPostScreen(
-        modifier = modifier,
-        text = text,
-        state = state,
-        onTextChange = { text = it },
-        onPostClick = {
-            viewModel.newPost(text, token)
-        },
-        onCloseClick = {
-            if (text.isNotBlank()) {
-                showDiscardDialog = true
-            } else {
-                navigateToHome()
+    Scaffold { innerPading ->
+        Column(modifier.padding(innerPading)) {
+            Row(
+                modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                IconButton(onClick = {
+                    if (text.isNotBlank()) {
+                        showDiscardDialog = true
+                    } else {
+                        navigateToHome()
+                    }
+                }) {
+                    Icon(
+                        imageVector = Icons.Default.Close,
+                        contentDescription = null,
+                        modifier = modifier.size(28.dp),
+                    )
+                }
+                Button(
+                    colors = ButtonDefaults.buttonColors(Green),
+                    modifier = modifier.padding(end = 8.dp),
+                    onClick = {
+                        viewModel.newPost(text, token)
+                    },
+                    enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                ) {
+                    Text("Publicar", fontWeight = FontWeight.Bold)
+                }
             }
-        },
-    )
+
+            Row {
+                when (val profileStateValue = userState) {
+                    is UserUiState.Loading -> {
+                        AvatarItem(size = 50)
+                    }
+
+                    is UserUiState.Success -> {
+                        AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
+                    }
+
+                    is UserUiState.Error -> {
+                        AvatarItem(size = 50)
+                    }
+                }
+                BasicTextField(
+                    value = text,
+                    onValueChange = { text = it },
+                    modifier =
+                        modifier
+                            .fillMaxWidth()
+                            .height(150.dp)
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
+                            .clip(RoundedCornerShape(8.dp)),
+                    textStyle =
+                        TextStyle(
+                            color = Color.Black,
+                            fontSize = 18.sp,
+                        ),
+                    cursorBrush = SolidColor(Color.Gray),
+                    decorationBox = { innerTextField ->
+                        if (text.isEmpty()) {
+                            Text("¿Qué está pasando?", color = Color.Gray, fontSize = 15.sp)
+                        }
+                        innerTextField()
+                    },
+                )
+            }
+            when (val currentState = state) {
+                is NewPostUiState.Error ->
+                    Text(
+                        text = currentState.message,
+                        color = Color.Red,
+                    )
+
+                NewPostUiState.Loading -> CircularProgressIndicator()
+                else -> {}
+            }
+        }
+    }
 
     if (showDiscardDialog) {
         AlertDialog(
@@ -129,79 +194,6 @@ fun ControllerPostScreen(
     }
 }
 
-    Scaffold { innerPading ->
-        Column(modifier.padding(innerPading)) {
-            Row(
-                modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                IconButton(onClick = onCloseClick) {
-                    Icon(
-                        imageVector = (Icons.Default.Close),
-                        contentDescription = null,
-                        modifier = modifier.size(28.dp),
-                    )
-                }
-                Button(
-                    colors = ButtonDefaults.buttonColors(Green),
-                    modifier = modifier.padding(end = 8.dp),
-                    onClick = onPostClick,
-                    enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
-            }
-
-            Row {
-                when (val profileStateValue = userState) {
-                    is UserUiState.Loading -> {
-                        AvatarItem(size = 50)
-                    }
-
-                    is UserUiState.Success -> {
-                        AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
-                    }
-
-                    is UserUiState.Error -> {
-                        AvatarItem(size = 50)
-                    }
-                }
-                BasicTextField(
-                    value = text,
-                    onValueChange = { onTextChange(it) },
-                    modifier =
-                        modifier
-                            .fillMaxWidth()
-                            .height(150.dp)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                    textStyle =
-                        TextStyle(
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                        ),
-                    cursorBrush = SolidColor(Color.Gray),
-                    decorationBox = { innerTextField ->
-                        if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
-                        }
-                        innerTextField()
-                    },
-                )
-            }
-            when (val currentState = state) {
-                is NewPostUiState.Error ->
-                    Text(
-                        text = currentState.message,
-                        color = Color.Red,
-                    )
-
-                NewPostUiState.Loading -> CircularProgressIndicator()
-                else -> {}
-            }
-        }
-    }
-}
-
 @Composable
 @Preview(showBackground = true)
 fun ControllerPostScreenPreview() {
@@ -215,7 +207,7 @@ fun ControllerPostScreenPreview() {
             ) {
                 IconButton(onClick = {}) {
                     Icon(
-                        imageVector = (Icons.Default.Close),
+                        imageVector = Icons.Default.Close,
                         contentDescription = null,
                         modifier = Modifier.size(28.dp),
                     )
@@ -226,7 +218,9 @@ fun ControllerPostScreenPreview() {
                     onClick = {
                         TODO()
                     },
-                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
+                ) {
+                    Text("Publicar", fontWeight = FontWeight.Bold)
+                }
             }
 
             Row {
@@ -249,7 +243,7 @@ fun ControllerPostScreenPreview() {
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
+                            Text("¿Qué está pasando?", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },

@@ -12,10 +12,10 @@ import androidx.room.PrimaryKey
             entity = UserEntity::class,
             parentColumns = ["email"],
             childColumns = ["userEmail"],
-            onDelete = ForeignKey.CASCADE
-        )
+            onDelete = ForeignKey.CASCADE,
+        ),
     ],
-    indices = [Index(value = ["userEmail"])]
+    indices = [Index(value = ["userEmail"])],
 )
 data class DraftEntity(
     @PrimaryKey(autoGenerate = true)
@@ -23,5 +23,5 @@ data class DraftEntity(
     val text: String,
     val userEmail: String,
     val createdAt: Long = System.currentTimeMillis(),
-    val updatedAt: Long = System.currentTimeMillis()
+    val updatedAt: Long = System.currentTimeMillis(),
 )

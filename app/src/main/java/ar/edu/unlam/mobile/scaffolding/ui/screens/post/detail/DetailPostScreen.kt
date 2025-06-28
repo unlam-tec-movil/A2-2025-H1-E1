@@ -51,7 +51,7 @@ fun DetailPostScreen(
     detailPostViewModel: DetailPostViewModel = hiltViewModel(),
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
-    val commentState = detailPostViewModel.comments.collectAsStateWithLifecycle()
+    val repliesState = detailPostViewModel.replies.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
@@ -61,7 +61,7 @@ fun DetailPostScreen(
     // Cargar comentarios cuando el token esté disponible
     LaunchedEffect(idPost, token) {
         if (token.isNotEmpty()) {
-            detailPostViewModel.getComments(idPost, token)
+            detailPostViewModel.getReplies(idPost, token)
         }
     }
 
@@ -79,7 +79,7 @@ fun DetailPostScreen(
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
 
     // Mostrar estado de carga mientras se obtienen los datos
-    if (postState.value is PostUiState.Loading || commentState.value is CommentsState.Loading) {
+    if (postState.value is PostUiState.Loading || repliesState.value is RepliesUiState.Loading) {
         Box(Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
@@ -98,10 +98,10 @@ fun DetailPostScreen(
     }
 
     // Mostrar error de comentarios si hay problemas
-    if (commentState.value is CommentsState.Error) {
+    if (repliesState.value is RepliesUiState.Error) {
         Box(Modifier.fillMaxSize()) {
             Text(
-                "Error al cargar comentarios: ${(commentState.value as CommentsState.Error).message}",
+                "Error al cargar comentarios: ${(repliesState.value as RepliesUiState.Error).message}",
                 modifier = Modifier.align(Alignment.Center),
             )
         }
@@ -111,9 +111,9 @@ fun DetailPostScreen(
     // Mostrar contenido cuando los datos estén disponibles
     if (postState.value is PostUiState.Success) {
         val post = (postState.value as PostUiState.Success).list.find { it.id == idPost }
-        val filteredComments =
-            when (val comments = commentState.value) {
-                is CommentsState.Success -> comments.comments
+        val filteredReplies =
+            when (val replies = repliesState.value) {
+                is RepliesUiState.Success -> replies.replies
                 else -> emptyList()
             }
 
@@ -162,7 +162,7 @@ fun DetailPostScreen(
                         .padding(start = 20.dp),
             )
 
-            if (filteredComments.isEmpty()) {
+            if (filteredReplies.isEmpty()) {
                 Box(
                     modifier =
                         Modifier
@@ -180,7 +180,7 @@ fun DetailPostScreen(
                 }
             } else {
                 ListPost(
-                    posts = filteredComments,
+                    posts = filteredReplies,
                     navController = controller,
                     favoriteViewModel = favoriteViewModel,
                     onLikeClick = { viewModel.onLikeClicked(it) },
@@ -192,6 +192,7 @@ fun DetailPostScreen(
                 modifier = Modifier.padding(0.dp),
                 idPost = idPost,
                 detailPostViewModel = detailPostViewModel,
+                userToken = token,
             )
         }
     }
@@ -202,6 +203,7 @@ fun InputComment(
     modifier: Modifier = Modifier,
     idPost: Int,
     detailPostViewModel: DetailPostViewModel,
+    userToken: String,
 ) {
     var comment by remember { mutableStateOf("") }
 
@@ -246,7 +248,7 @@ fun InputComment(
         IconButton(
             onClick = {
                 if (comment.isNotBlank()) {
-                    detailPostViewModel.sendComment(idPost, comment)
+                    detailPostViewModel.replyToTuit(idPost, comment, userToken)
                     comment = "" // Limpiar campo
                 }
             },
