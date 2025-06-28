@@ -53,6 +53,10 @@ fun UserScreen(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val currentUserId = currentUserIdState.value
+
+    val isCurrentUser = userId == currentUserId
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -91,19 +95,26 @@ fun UserScreen(
                         .size(95.dp)
                         .clip(CircleShape)
                         .border(0.1.dp, Color.White, CircleShape)
-                        .clickable(onClick = { /* Acción */ }),
+                        .clickable(onClick = { /* Accion */ }),
             )
             Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "editar perfil",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = { }),
+                painter = painterResource(
+                    id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo
+                ),
+                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
+                modifier = Modifier
+                    .size(45.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(6.dp, 6.dp)
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .clickable(onClick = {
+                        if (isCurrentUser) {
+                            /* Accion para editar perfil */
+                        } else {
+                            /* Accion para seguir usuario */
+                        }
+                    })
             )
         }
 
@@ -176,16 +187,17 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(200.dp))
 
-        FloatingActionButton(
-            onClick = { },
-            modifier =
-                Modifier
+        if (isCurrentUser) {
+            FloatingActionButton(
+                onClick = { /* Accin para nuevo post */ },
+                modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.End)
                     .clip(CircleShape),
-            containerColor = Color(0xFF4B877A),
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+                containerColor = Color(0xFF4B877A),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+            }
         }
     }
 }
