@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
@@ -58,7 +59,7 @@ fun ControllerPostScreen(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userViewModel: UserViewModel = hiltViewModel()
-    val profileState by userViewModel.profileState.collectAsStateWithLifecycle()
+    val userState by userViewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -107,11 +108,16 @@ fun ControllerPostScreen(
             }
 
             Row {
-                when (val profileStateValue = profileState) {
-                    is ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.Success -> {
-                        AvatarItem(avatarUrl = profileStateValue.profile.avatarUrl, size = 50)
+                when (val profileStateValue = userState) {
+                    is UserUiState.Loading -> {
+                        AvatarItem(size = 50)
                     }
-                    else -> {
+
+                    is UserUiState.Success -> {
+                        AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
+                    }
+
+                    is UserUiState.Error -> {
                         AvatarItem(size = 50)
                     }
                 }

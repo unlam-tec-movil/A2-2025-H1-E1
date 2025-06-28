@@ -54,6 +54,7 @@ fun FeedScreen(
                     CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                 }
             }
+
             is PostUiState.Success -> {
                 ListPost(
                     posts = state.list,
