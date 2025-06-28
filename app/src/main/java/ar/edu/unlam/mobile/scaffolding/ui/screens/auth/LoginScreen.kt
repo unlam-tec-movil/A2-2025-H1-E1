@@ -29,6 +29,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -37,7 +38,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -56,8 +56,6 @@ import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 import ar.edu.unlam.mobile.scaffolding.utils.Resource
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
-import kotlinx.coroutines.launch
 
 @Composable
 fun LoginScreen(
@@ -65,35 +63,12 @@ fun LoginScreen(
     viewModel: LoginViewModel = hiltViewModel(),
 ) {
     val isImeVisible by rememberImeState()
-
     var rememberUser by remember { mutableStateOf(false) }
     var username by remember { mutableStateOf("") }
     var password by remember { mutableStateOf("") }
     val loginState by viewModel.loginState.collectAsState()
 
     val context = LocalContext.current
-    val userStore = remember { UserStore(context) }
-    val coroutineScope = rememberCoroutineScope()
-
-    val savedUserState = userStore.leerDatosUsuario.collectAsState(initial = "")
-    val savedUser = savedUserState.value
-    val estaLogueadoState = userStore.leerEstadoLogin.collectAsState(initial = false)
-    val estaLogueado = estaLogueadoState.value
-
-    LaunchedEffect(estaLogueado) {
-        if (estaLogueado) {
-            navController.navigate("home") {
-                popUpTo("login") { inclusive = true }
-            }
-        }
-    }
-
-    LaunchedEffect(savedUser) {
-        if (savedUser.isNotEmpty()) {
-            username = savedUser
-            rememberUser = true
-        }
-    }
 
     Box(
         modifier =
@@ -110,49 +85,25 @@ fun LoginScreen(
             LoginCard(
                 isImeVisible = isImeVisible,
                 rememberUser = rememberUser,
-                onRememberUserChange = { checked ->
-                    rememberUser = checked
-                    coroutineScope.launch {
-                        if (!checked) {
-                            coroutineScope.launch {
-                                userStore.escribirDatosUsuario("")
-                                userStore.escribirEstadoLogin(false)
-                            }
-                        }
-                    }
-                },
+                onRememberUserChange = { rememberUser = it },
                 username = username,
                 onUsernameChange = { username = it },
                 password = password,
                 onPasswordChange = { password = it },
-                onLoginClick = {
-                    viewModel.login(username, password)
-                },
-                navController = navController,
+                onLoginClick = { viewModel.login(username, password) },
+                navController,
             )
         }
     }
 
     // Estadito de carga o error. TODO: Usar un toast personalizado
     when (loginState) {
-//        is Resource.Loading -> {
-//            CircularProgressIndicator()
-//        }
+        is Resource.Loading -> {
+            CircularProgressIndicator()
+        }
 
         is Resource.Success -> {
             LaunchedEffect(Unit) {
-                val token = (loginState as Resource.Success).data.token
-                coroutineScope.launch {
-                    userStore.escribirTokenUsuario(token)
-                }
-                if (rememberUser) {
-                    userStore.escribirDatosUsuario(username)
-                    userStore.escribirEstadoLogin(true)
-                } else {
-                    userStore.escribirDatosUsuario("")
-                    userStore.escribirEstadoLogin(false)
-                }
-
                 navController.navigate("home") {
                     popUpTo("login") { inclusive = true }
                 }
@@ -228,13 +179,13 @@ fun LoginCard(
                 .background(Color.White),
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-        Spacer(modifier = Modifier.height(50.dp))
+        Spacer(modifier = Modifier.height(30.dp))
         TitleSection()
         Spacer(modifier = Modifier.height(10.dp))
 
         MyTextField(
             modifier = Modifier.padding(horizontal = 16.dp),
-            label = "E-mail",
+            label = "Username",
             text = username,
             keyboardOptions = KeyboardOptions(),
             keyboardActions = KeyboardActions(),
@@ -245,7 +196,7 @@ fun LoginCard(
 
         MyTextField(
             modifier = Modifier.padding(horizontal = 16.dp),
-            label = "Contraseña",
+            label = "Password",
             text = password,
             keyboardOptions = KeyboardOptions(),
             keyboardActions = KeyboardActions(),
@@ -267,7 +218,7 @@ fun LoginCard(
 @Composable
 fun TitleSection() {
     Text(
-        text = "¡Bienvenido!",
+        text = "Welcome back!",
         fontFamily = FontFamily.Default,
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold,
@@ -275,7 +226,7 @@ fun TitleSection() {
     )
     Spacer(modifier = Modifier.height(5.dp))
     Text(
-        text = "Ingresa a tu cuenta",
+        text = "Login to your account",
         fontFamily = FontFamily.Default,
         fontSize = 15.sp,
         color = Color.Gray,
@@ -303,11 +254,10 @@ fun RememberAndForgotRow(
                     CheckboxDefaults.colors(
                         checkedColor = BlueGreen,
                         uncheckedColor = Color.Gray,
-                        checkmarkColor = Color.White,
                     ),
             )
             Spacer(modifier = Modifier.width(4.dp))
-            Text(text = "Recuérdame", color = Color.Black, fontSize = 14.sp)
+            Text(text = "Remember me", color = Color.Black, fontSize = 14.sp)
         }
     }
 }
@@ -320,8 +270,9 @@ fun FooterButtonSection(
     Button(
         onClick = { onLoginClick() },
         modifier =
-            Modifier.width(300.dp),
-        //   .padding(top = 40.dp, start = 16.dp, end = 16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(top = 40.dp, start = 16.dp, end = 16.dp),
         colors =
             ButtonDefaults.buttonColors(
                 containerColor = BlueGreen,
@@ -329,7 +280,7 @@ fun FooterButtonSection(
             ),
         shape = RoundedCornerShape(30.dp),
     ) {
-        Text("Iniciar sesión", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
+        Text("log in", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
     }
 
     Row(
@@ -340,9 +291,9 @@ fun FooterButtonSection(
         horizontalArrangement = Arrangement.Center,
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(text = "¿No tienes una cuenta?", color = DarkGreen, fontSize = 14.sp)
+        Text(text = "Don't you have an account?", color = DarkGreen, fontSize = 14.sp)
         TextButton(onClick = { navController.navigate("register") }) {
-            Text("Regístrate", color = DarkGreen, fontWeight = FontWeight.Bold)
+            Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
         }
     }
 }
@@ -362,7 +313,7 @@ fun FooterButtonColumn(
     ) {
         Button(
             onClick = { onLoginClick() },
-            modifier = Modifier.width(300.dp),
+            modifier = Modifier.fillMaxWidth(),
             colors =
                 ButtonDefaults.buttonColors(
                     containerColor = BlueGreen,
@@ -370,10 +321,7 @@ fun FooterButtonColumn(
                 ),
             shape = RoundedCornerShape(30.dp),
         ) {
-            Text(
-                "Iniciar sesión",
-                style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
-            )
+            Text("log in", style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)))
         }
 
         Row(
@@ -384,9 +332,9 @@ fun FooterButtonColumn(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            Text(text = "¿No tienes una cuenta?", color = DarkGreen, fontSize = 14.sp)
+            Text(text = "Don't you have an account?", color = DarkGreen, fontSize = 14.sp)
             TextButton(onClick = { navController.navigate("register") }) {
-                Text("Regístrate", color = DarkGreen, fontWeight = FontWeight.Bold)
+                Text("Sign in", color = DarkGreen, fontWeight = FontWeight.Bold)
             }
         }
     }

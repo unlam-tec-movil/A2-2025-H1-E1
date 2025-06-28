@@ -6,7 +6,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -37,6 +41,11 @@ fun UserScreen(
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+
+    val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val currentUserId = currentUserIdState.value
+    val isCurrentUser = userId == currentUserId
+
     val userState by viewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
@@ -73,12 +82,16 @@ fun UserScreen(
                     Modifier
                         .size(120.dp)
                         .clip(CircleShape)
-                        .border(0.1.dp, Color.White, CircleShape),
+                        .border(0.1.dp, Color.White, CircleShape)
+                        .clickable(onClick = { /* Acción */ }),
             )
 
             Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "Editar Perfil",
+                painter =
+                    painterResource(
+                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
+                    ),
+                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
                 modifier =
                     Modifier
                         .size(45.dp)
@@ -86,7 +99,13 @@ fun UserScreen(
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable { controller.navigate("edit profile") },
+                        .clickable(onClick = {
+                            if (isCurrentUser) {
+                                // Acción para editar perfil
+                            } else {
+                                // Acción para seguir usuario
+                            }
+                        }),
             )
         }
 
@@ -143,14 +162,28 @@ fun UserScreen(
             }
         }
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF4B877A)),
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
         Spacer(modifier = Modifier.height(200.dp))
+
+        if (isCurrentUser) {
+            FloatingActionButton(
+                onClick = { /* Acción para nuevo post */ },
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .align(Alignment.End)
+                        .clip(CircleShape),
+                containerColor = Color(0xFF4B877A),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+            }
+        } else {
+            Box(
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .background(Color(0xFF4B877A)),
+            )
+            Spacer(modifier = Modifier.height(30.dp))
+        }
     }
 }
