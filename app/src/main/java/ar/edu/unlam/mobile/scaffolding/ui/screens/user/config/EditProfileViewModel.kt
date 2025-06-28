@@ -40,8 +40,7 @@ class EditProfileViewModel
         ) {
             viewModelScope.launch {
                 try {
-                    profileRepository.updateProfile(name, password, avatarUrl)
-                    // Reload profile after update
+                    profileRepository.updateProfile(name, password, avatarUrl, userToken)
                     val profile = profileRepository.getProfile(userToken)
                     _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
