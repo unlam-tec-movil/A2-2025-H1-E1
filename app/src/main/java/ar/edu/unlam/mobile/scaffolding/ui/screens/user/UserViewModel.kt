@@ -11,25 +11,26 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class UserViewModel @Inject constructor(
-    private val profileRepository: ProfileRespository,
-) : ViewModel() {
+class UserViewModel
+    @Inject
+    constructor(
+        private val profileRepository: ProfileRespository,
+    ) : ViewModel() {
+        private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
+        val user: StateFlow<UserUiState> get() = _user
 
-    private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
-    val user: StateFlow<UserUiState> get() = _user
-
-    fun loadProfile(userToken: String) {
-        viewModelScope.launch {
-            try {
-                _user.value = UserUiState.Loading
-                val profile = profileRepository.getProfile(userToken)
-                _user.value = UserUiState.Success(profile)
-            } catch (e: Exception) {
-                _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+        fun loadProfile(userToken: String) {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserUiState.Loading
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserUiState.Success(profile)
+                } catch (e: Exception) {
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                }
             }
         }
     }
-}
 
 sealed interface UserUiState {
     object Loading : UserUiState

@@ -35,7 +35,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPost
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
-
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.Edit
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
@@ -124,7 +123,6 @@ fun MainScreen() {
                 }
             }
         },
-
     ) { paddingValue ->
         // NavHost es el componente que funciona como contenedor de los otros componentes que
         // podrán ser destinos de navegación.

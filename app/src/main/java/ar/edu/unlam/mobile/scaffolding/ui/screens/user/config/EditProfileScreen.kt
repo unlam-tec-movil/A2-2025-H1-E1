@@ -53,27 +53,32 @@ import coil.compose.rememberAsyncImagePainter
 
 @Preview
 @Composable
-fun Edit(controller: NavHostController = rememberNavController(),
-         userEditViewModel: EditProfileViewModel = hiltViewModel()) {
-
+fun Edit(
+    controller: NavHostController = rememberNavController(),
+    userEditViewModel: EditProfileViewModel = hiltViewModel(),
+) {
     val userState = userEditViewModel.user.collectAsStateWithLifecycle()
-    var username = when (val state = userState.value) {
-        is UserUiState.Success -> state.user.name
-        else -> "nombre desconocido"
-    }
+    var username =
+        when (val state = userState.value) {
+            is UserUiState.Success -> state.user.name
+            else -> "nombre desconocido"
+        }
 
-     //by remember { mutableStateOf("@Hola4576") }
+    // by remember { mutableStateOf("@Hola4576") }
     var user by remember { mutableStateOf("@$username") }
     var name by remember { mutableStateOf(username) }
-      var bio by remember { mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj") }
+    var bio by remember {
+        mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj")
+    }
 
     val context = LocalContext.current
-    var imageUri by remember { mutableStateOf<Uri?>(null)}
-    val launcher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        imageUri = uri
-    }
+    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    val launcher =
+        rememberLauncherForActivityResult(
+            contract = ActivityResultContracts.GetContent(),
+        ) { uri: Uri? ->
+            imageUri = uri
+        }
 
     // Fondo superior verde
     Column(
@@ -87,11 +92,10 @@ fun Edit(controller: NavHostController = rememberNavController(),
                     .fillMaxWidth()
                     .height(50.dp),
         ) {
-
             // botón de cerrar
             IconButton(
                 onClick =
-                    {controller.navigate("user/{id}")},
+                    { controller.navigate("user/{id}") },
                 modifier =
                     Modifier
                         .align(Alignment.TopStart),
@@ -104,8 +108,10 @@ fun Edit(controller: NavHostController = rememberNavController(),
 
             // guardar
             Button(
-                onClick = { userEditViewModel.updateUser(name,user,bio)
-                    controller.navigate("user/{id}")},
+                onClick = {
+                    userEditViewModel.updateUser(name, user, bio)
+                    controller.navigate("user/{id}")
+                },
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
@@ -151,17 +157,18 @@ fun Edit(controller: NavHostController = rememberNavController(),
                             .offset(y = 80.dp)
                             .clip(CircleShape)
                             .border(0.1.dp, Color.White, CircleShape)
-                            .clickable(onClick = {  launcher.launch("image/*") }),
+                            .clickable(onClick = { launcher.launch("image/*") }),
                 )
 
                 imageUri?.let {
                     Image(
                         painter = rememberAsyncImagePainter(it),
                         contentDescription = "Imagen seleccionada",
-                        modifier = Modifier
-                            .size(200.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, Color.Gray, CircleShape)
+                        modifier =
+                            Modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                                .border(2.dp, Color.Gray, CircleShape),
                     )
                 }
                 Icon(
@@ -186,14 +193,13 @@ fun Edit(controller: NavHostController = rememberNavController(),
                     .fillMaxSize()
                     .padding(16.dp),
         ) {
-
             Text(
                 text = "Usuario",
                 style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
             )
             TextField(
                 value = user,
-                onValueChange = {user = it},
+                onValueChange = { user = it },
                 modifier =
                     Modifier
                         .fillMaxWidth(),
@@ -216,11 +222,10 @@ fun Edit(controller: NavHostController = rememberNavController(),
             )
             TextField(
                 value = name,
-                onValueChange = {name = it},
+                onValueChange = { name = it },
                 modifier =
                     Modifier
-                        .fillMaxWidth()
-                ,
+                        .fillMaxWidth(),
                 colors =
                     TextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
@@ -234,30 +239,30 @@ fun Edit(controller: NavHostController = rememberNavController(),
                     ),
             )
 
-                Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                    Text(
-                        text = "Biografía",
-                        style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
-                    )
-                    TextField(
-                        value = bio,
-                        onValueChange = {bio = it},
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .height( 100.dp),
-                        colors =
-                            TextFieldDefaults.colors(
-                                unfocusedTextColor = Color(0xFF386A5F),
-                                disabledTextColor = LocalContentColor.current,
-                                disabledLabelColor = Color.Gray,
-                                focusedIndicatorColor = Color.Gray,
-                                unfocusedIndicatorColor = Color.Gray,
-                                unfocusedContainerColor = Color.White,
-                                focusedLabelColor = Color.White,
-                            ),
-                    )
-                }
+            Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                Text(
+                    text = "Biografía",
+                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                )
+                TextField(
+                    value = bio,
+                    onValueChange = { bio = it },
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                    colors =
+                        TextFieldDefaults.colors(
+                            unfocusedTextColor = Color(0xFF386A5F),
+                            disabledTextColor = LocalContentColor.current,
+                            disabledLabelColor = Color.Gray,
+                            focusedIndicatorColor = Color.Gray,
+                            unfocusedIndicatorColor = Color.Gray,
+                            unfocusedContainerColor = Color.White,
+                            focusedLabelColor = Color.White,
+                        ),
+                )
             }
         }
+    }
 }

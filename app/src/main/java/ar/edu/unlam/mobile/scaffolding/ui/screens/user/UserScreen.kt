@@ -46,42 +46,47 @@ fun UserScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.White),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .background(Color(0xFF4B877A)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color(0xFF4B877A)),
         )
 
         Box(
-            modifier = Modifier
-                .offset(y = (-40).dp)
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .offset(y = (-40).dp)
+                    .align(Alignment.CenterHorizontally),
         ) {
             val avatarUrl = (profileState as? Success)?.profile?.avatarUrl
             AsyncImage(
                 model = avatarUrl ?: R.drawable.profile_photo,
                 contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(0.1.dp, Color.White, CircleShape)
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(0.1.dp, Color.White, CircleShape),
             )
 
             Image(
                 painter = painterResource(id = R.drawable.ic_edit),
                 contentDescription = "Editar Perfil",
-                modifier = Modifier
-                    .size(45.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(6.dp, 6.dp)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .clickable { controller.navigate("edit profile") },
+                modifier =
+                    Modifier
+                        .size(45.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(6.dp, 6.dp)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .clickable { controller.navigate("edit profile") },
             )
         }
 
@@ -139,9 +144,10 @@ fun UserScreen(
         }
 
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .background(Color(0xFF4B877A)),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .background(Color(0xFF4B877A)),
         )
 
         Spacer(modifier = Modifier.height(30.dp))

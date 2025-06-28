@@ -17,42 +17,45 @@ class EditProfileViewModel
     constructor(
         private val profileRepository: ProfileRespository,
     ) : ViewModel() {
+        private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
+        val user: StateFlow<UserUiState> get() = _user
 
-    private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
-    val user : StateFlow<UserUiState> get() = _user
+        init {
+            getUser()
+        }
 
-    init {
-        getUser()
-    }
-        fun updateUser(name : String, password : String, avatarUrl : String) {
-        viewModelScope.launch {
-            try {
-           profileRepository.updateProfile(name,password,avatarUrl)
-            } catch (e: Exception) {
-
+        fun updateUser(
+            name: String,
+            password: String,
+            avatarUrl: String,
+        ) {
+            viewModelScope.launch {
+                try {
+                    profileRepository.updateProfile(name, password, avatarUrl)
+                } catch (e: Exception) {
+                }
             }
         }
-    }
 
-    private fun getUser() {
-        viewModelScope.launch {
-            try {
-                _user.value = UserUiState.Success(profileRepository.getProfile())
-            } catch (e: Exception) {
-                _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+        private fun getUser() {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserUiState.Success(profileRepository.getProfile())
+                } catch (e: Exception) {
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                }
             }
         }
+
+        sealed interface UserUiState {
+            object Loading : UserUiState
+
+            data class Success(
+                val user: ProfileResponse,
+            ) : UserUiState
+
+            data class Error(
+                val message: String,
+            ) : UserUiState
+        }
     }
-
-    sealed interface UserUiState {
-        object Loading : UserUiState
-
-        data class Success(
-            val user: ProfileResponse,
-        ) : UserUiState
-
-        data class Error(
-            val message: String,
-        ) : UserUiState
-    }
-}
