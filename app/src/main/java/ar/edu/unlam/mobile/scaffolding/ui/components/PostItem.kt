@@ -24,7 +24,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +35,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,7 +44,6 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -148,7 +145,7 @@ fun PostItem(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
-    currentUserId: String
+    currentUserId: String,
 ) {
     var countLike by remember { mutableIntStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
@@ -182,7 +179,7 @@ fun PostItem(
                 currentUserId = currentUserId,
                 userName = post.author,
                 userImage = post.avatarUrl,
-                navController = navController
+                navController = navController,
             )
             BodyPostItem(post.message)
             ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
@@ -231,16 +228,17 @@ fun HeaderPostItem(
     currentUserId: String,
     userName: String,
     userImage: String?,
-    navController: NavController
+    navController: NavController,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                if (userId != currentUserId) {
-                    navController.navigate("user/$userId")
-                }
-            }
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (userId != currentUserId) {
+                        navController.navigate("user/$userId")
+                    }
+                },
     ) {
         AvatarItem(avatarUrl = userImage, size = 50)
         Column(
@@ -273,7 +271,7 @@ fun ListPost(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
-    currentUserId: String
+    currentUserId: String,
 ) {
     LazyColumn(
         modifier =
@@ -288,7 +286,7 @@ fun ListPost(
                 navController = navController,
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = onLikeClick,
-                currentUserId = currentUserId
+                currentUserId = currentUserId,
             )
             Spacer(modifier = Modifier.height(5.dp))
         }

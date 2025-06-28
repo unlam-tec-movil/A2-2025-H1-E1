@@ -87,23 +87,25 @@ fun UserScreen(
             )
 
             Image(
-                painter = painterResource(
-                    id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo
-                ),
+                painter =
+                    painterResource(
+                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
+                    ),
                 contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
-                modifier = Modifier
-                    .size(45.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(6.dp, 6.dp)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .clickable(onClick = {
-                        if (isCurrentUser) {
-                            /* Acción para editar perfil */
-                        } else {
-                            /* Acción para seguir usuario */
-                        }
-                    })
+                modifier =
+                    Modifier
+                        .size(45.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(6.dp, 6.dp)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .clickable(onClick = {
+                            if (isCurrentUser) {
+                                // Acción para editar perfil
+                            } else {
+                                // Acción para seguir usuario
+                            }
+                        }),
             )
         }
 
@@ -165,10 +167,11 @@ fun UserScreen(
         if (isCurrentUser) {
             FloatingActionButton(
                 onClick = { /* Acción para nuevo post */ },
-                modifier = Modifier
-                    .padding(16.dp)
-                    .align(Alignment.End)
-                    .clip(CircleShape),
+                modifier =
+                    Modifier
+                        .padding(16.dp)
+                        .align(Alignment.End)
+                        .clip(CircleShape),
                 containerColor = Color(0xFF4B877A),
             ) {
                 Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)

@@ -30,13 +30,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
-import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 
 @Composable
 fun TopBar(

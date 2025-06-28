@@ -2,7 +2,6 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.currentCompositionErrors
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -31,12 +30,11 @@ fun FavoriteScreen(
     val userStore = remember { UserStore(context) }
     val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
 
-
     ListPost(
         posts = favorites.value,
         navController = navController,
         favoriteViewModel = favoriteViewModel,
         onLikeClick = { viewModel.onLikeClicked(it) },
-        currentUserId = currentUserId
+        currentUserId = currentUserId,
     )
 }

@@ -61,7 +61,7 @@ fun FeedScreen(
                     navController = controller,
                     favoriteViewModel = favoriteViewModel,
                     onLikeClick = { viewModel.onLikeClicked(it) },
-                    currentUserId = currentUserId
+                    currentUserId = currentUserId,
                 )
             }
         }

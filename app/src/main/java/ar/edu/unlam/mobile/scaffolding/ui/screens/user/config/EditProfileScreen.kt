@@ -74,14 +74,16 @@ fun Edit(
         }
 
     Column(
-        modifier = Modifier
-            .fillMaxWidth()
-            .background(Color.White),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .background(Color.White),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(50.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(50.dp),
         ) {
             IconButton(
                 onClick = { controller.navigate("user/{id}") },
@@ -98,9 +100,10 @@ fun Edit(
                     userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
                     controller.navigate("user/{id}")
                 },
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .clip(RoundedCornerShape(20.dp)),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomEnd)
+                        .clip(RoundedCornerShape(20.dp)),
                 shape = RoundedCornerShape(20.dp),
                 colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF386A5F)),
             ) {
@@ -109,15 +112,17 @@ fun Edit(
         }
 
         Box(
-            modifier = Modifier
-                .offset(y = (-0).dp)
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .offset(y = (-0).dp)
+                    .align(Alignment.CenterHorizontally),
         ) {
             Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color(0xFF386A5F)),
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .height(160.dp)
+                        .background(Color(0xFF386A5F)),
                 contentAlignment = Alignment.Center,
             ) {
                 IconButton(
@@ -134,22 +139,24 @@ fun Edit(
                 Image(
                     painter = painterResource(id = R.drawable.profile_photo),
                     contentDescription = "Profile photo",
-                    modifier = Modifier
-                        .size(95.dp)
-                        .offset(y = 80.dp)
-                        .clip(CircleShape)
-                        .border(0.1.dp, Color.White, CircleShape)
-                        .clickable(onClick = { launcher.launch("image/*") }),
+                    modifier =
+                        Modifier
+                            .size(95.dp)
+                            .offset(y = 80.dp)
+                            .clip(CircleShape)
+                            .border(0.1.dp, Color.White, CircleShape)
+                            .clickable(onClick = { launcher.launch("image/*") }),
                 )
 
                 imageUri?.let {
                     Image(
                         painter = rememberAsyncImagePainter(it),
                         contentDescription = "Imagen seleccionada",
-                        modifier = Modifier
-                            .size(200.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, Color.Gray, CircleShape),
+                        modifier =
+                            Modifier
+                                .size(200.dp)
+                                .clip(CircleShape)
+                                .border(2.dp, Color.Gray, CircleShape),
                     )
                 }
 
@@ -157,9 +164,10 @@ fun Edit(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
                     tint = Color.White,
-                    modifier = Modifier
-                        .size(35.dp)
-                        .offset(y = 80.dp),
+                    modifier =
+                        Modifier
+                            .size(35.dp)
+                            .offset(y = 80.dp),
                 )
             }
             Spacer(modifier = Modifier.height(32.dp))
@@ -167,9 +175,10 @@ fun Edit(
 
         Spacer(modifier = Modifier.height(80.dp))
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(16.dp),
         ) {
             Text(
                 text = "Usuario",
@@ -179,16 +188,17 @@ fun Edit(
                 value = user,
                 onValueChange = { user = it },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color(0xFF386A5F),
-                    disabledTextColor = LocalContentColor.current,
-                    disabledLabelColor = Color.Gray,
-                    focusedIndicatorColor = Color.Gray,
-                    unfocusedIndicatorColor = Color.Gray,
-                    unfocusedContainerColor = Color.White,
-                    focusedLabelColor = Color.White,
-                ),
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color(0xFF386A5F),
+                        disabledTextColor = LocalContentColor.current,
+                        disabledLabelColor = Color.Gray,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.Gray,
+                        unfocusedContainerColor = Color.White,
+                        focusedLabelColor = Color.White,
+                    ),
             )
 
             Text(
@@ -199,16 +209,17 @@ fun Edit(
                 value = name,
                 onValueChange = { name = it },
                 modifier = Modifier.fillMaxWidth(),
-                colors = TextFieldDefaults.colors(
-                    focusedTextColor = Color.Black,
-                    unfocusedTextColor = Color(0xFF386A5F),
-                    disabledTextColor = LocalContentColor.current,
-                    disabledLabelColor = Color.Gray,
-                    focusedIndicatorColor = Color.Gray,
-                    unfocusedIndicatorColor = Color.Gray,
-                    unfocusedContainerColor = Color.White,
-                    focusedLabelColor = Color.White,
-                ),
+                colors =
+                    TextFieldDefaults.colors(
+                        focusedTextColor = Color.Black,
+                        unfocusedTextColor = Color(0xFF386A5F),
+                        disabledTextColor = LocalContentColor.current,
+                        disabledLabelColor = Color.Gray,
+                        focusedIndicatorColor = Color.Gray,
+                        unfocusedIndicatorColor = Color.Gray,
+                        unfocusedContainerColor = Color.White,
+                        focusedLabelColor = Color.White,
+                    ),
             )
 
             Column(modifier = Modifier.padding(vertical = 8.dp)) {
@@ -219,18 +230,20 @@ fun Edit(
                 TextField(
                     value = bio,
                     onValueChange = { bio = it },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(100.dp),
-                    colors = TextFieldDefaults.colors(
-                        unfocusedTextColor = Color(0xFF386A5F),
-                        disabledTextColor = LocalContentColor.current,
-                        disabledLabelColor = Color.Gray,
-                        focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.Gray,
-                        unfocusedContainerColor = Color.White,
-                        focusedLabelColor = Color.White,
-                    ),
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                    colors =
+                        TextFieldDefaults.colors(
+                            unfocusedTextColor = Color(0xFF386A5F),
+                            disabledTextColor = LocalContentColor.current,
+                            disabledLabelColor = Color.Gray,
+                            focusedIndicatorColor = Color.Gray,
+                            unfocusedIndicatorColor = Color.Gray,
+                            unfocusedContainerColor = Color.White,
+                            focusedLabelColor = Color.White,
+                        ),
                 )
             }
         }
