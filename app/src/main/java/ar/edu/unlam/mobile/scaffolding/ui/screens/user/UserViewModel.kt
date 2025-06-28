@@ -16,30 +16,30 @@ class UserViewModel
     constructor(
         private val profileRepository: ProfileRespository,
     ) : ViewModel() {
-        private val _profileState = MutableStateFlow<ProfileUiState>(ProfileUiState.Loading)
-        val profileState: StateFlow<ProfileUiState> = _profileState
+        private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
+        val user: StateFlow<UserUiState> get() = _user
 
         fun loadProfile(userToken: String) {
             viewModelScope.launch {
                 try {
-                    _profileState.value = ProfileUiState.Loading
+                    _user.value = UserUiState.Loading
                     val profile = profileRepository.getProfile(userToken)
-                    _profileState.value = ProfileUiState.Success(profile)
+                    _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
-                    _profileState.value = ProfileUiState.Error(e.message ?: "Error desconocido")
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
                 }
             }
         }
     }
 
-sealed interface ProfileUiState {
-    object Loading : ProfileUiState
+sealed interface UserUiState {
+    object Loading : UserUiState
 
     data class Success(
-        val profile: ProfileResponse,
-    ) : ProfileUiState
+        val user: ProfileResponse,
+    ) : UserUiState
 
     data class Error(
         val message: String,
-    ) : ProfileUiState
+    ) : UserUiState
 }

@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
@@ -42,7 +43,7 @@ fun TopBar(
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
-    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val userState by viewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -90,11 +91,16 @@ fun TopBar(
                 onActionClick()
             },
         ) {
-            when (val state = profileState) {
-                is ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.Success -> {
-                    AvatarItem(avatarUrl = state.profile.avatarUrl, size = 50)
+            when (val state = userState) {
+                is UserUiState.Loading -> {
+                    AvatarItem(size = 50)
                 }
-                else -> {
+
+                is UserUiState.Success -> {
+                    AvatarItem(avatarUrl = state.user.avatarUrl, size = 50)
+                }
+
+                is UserUiState.Error -> {
                     AvatarItem(size = 50)
                 }
             }
