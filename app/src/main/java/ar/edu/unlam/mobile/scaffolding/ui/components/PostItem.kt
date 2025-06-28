@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,63 +48,89 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 @Composable
 fun ButtonsPost(
     post: Tuit,
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
+    onLikeClick: (Tuit) -> Unit,
 ) {
-    var isLiked by remember { mutableStateOf(false) }
     val isBookmarked = favoriteViewModel.isFavorite(post.id)
 
+    fun formatLikes(likes: Long): String {
+        return when {
+            likes >= 100_000_000_000 -> "∞"
+            likes >= 1_000_000_000 -> "${likes / 1_000_000_000}MilM"
+            likes >= 1_000_000 -> "${likes / 1_000_000}M"
+            likes >= 1_000 -> "${likes / 1_000}K"
+            else -> likes.toString()
+        }
+    }
+
     Row(
-        modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Center,
+        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
     ) {
-        IconButton(onClick = {
-            isLiked = !isLiked
-        }) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
+        // Filita de like
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start,
+            modifier = Modifier.weight(1f).padding(0.dp),
+        ) {
+            IconButton(
+                onClick = { onLikeClick(post) },
+            ) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
-                    tint = if (isLiked) Green else Color.Gray,
+                    tint = if (post.liked) Green else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
-                Text(
-                    text = "${post.likes}",
-                    color = GrayLight,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 18.sp,
+            }
+            Text(
+                text = "${formatLikes(post.likes)}",
+                color = if (post.liked) Green else Color.Gray,
+                fontWeight = FontWeight.Bold,
+                fontSize = 16.sp,
+            )
+        }
+
+        // Filita de Comentarios
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.Center,
+        ) {
+            IconButton(
+                onClick = { navController.navigate("comments/${post.id}") },
+            ) {
+                Icon(
+                    Icons.Default.Comment,
+                    "Comentar",
+                    tint = Color.Gray,
+                    modifier = Modifier.size(30.dp),
                 )
             }
         }
 
-        Spacer(modifier = Modifier.weight(1f))
-
-        IconButton(onClick = {
-            navController.navigate("comments/${post.id}")
-        }) {
-            Icon(
-                Icons.Default.Comment,
-                "Comentar",
-                tint = Color.Gray,
-                modifier = Modifier.size(30.dp),
-            )
-        }
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        IconButton(onClick = {
-            favoriteViewModel.toggleFavorite(post)
-        }) {
-            Icon(
-                Icons.Default.Bookmark,
-                "Guardar",
-                tint = if (isBookmarked) Green else Color.Gray,
-                modifier = Modifier.size(30.dp),
-            )
+        // Filita de de guardar
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.weight(1f),
+            horizontalArrangement = Arrangement.End,
+        ) {
+            IconButton(
+                onClick = { favoriteViewModel.toggleFavorite(post) },
+            ) {
+                Icon(
+                    Icons.Default.Bookmark,
+                    "Guardar",
+                    tint = if (isBookmarked) Green else Color.Gray,
+                    modifier = Modifier.size(30.dp),
+                )
+            }
         }
     }
 }
@@ -141,6 +168,7 @@ fun PostItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
+        onClick = { likedAuto() },
     ) {
         Column(modifier) {
             HeaderPostItem(
@@ -151,7 +179,7 @@ fun PostItem(
                 navController = navController
             )
             BodyPostItem(post.message)
-            ButtonsPost(post, navController, favoriteViewModel)
+            ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
         }
     }
 }
@@ -256,6 +284,7 @@ fun ListPost(
                 onLikeClick = onLikeClick,
                 currentUserId = currentUserId
             )
+            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }

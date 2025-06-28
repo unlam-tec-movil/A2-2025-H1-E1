@@ -18,6 +18,7 @@ import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 fun FavoriteScreen(
     modifier: Modifier = Modifier,
     navController: NavController,
+    viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val homeBackStackEntry =
         remember(navController.currentBackStackEntry) {
