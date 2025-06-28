@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,14 +27,12 @@ fun FeedScreen(
 ) {
     val feedItems = viewModel.feedPagingData.collectAsLazyPagingItems()
 
-
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
             controller.getBackStackEntry("home")
         }
 
     val favoriteViewModel: FavoriteViewModel = hiltViewModel(homeBackStackEntry)
-
 
     LazyColumn(modifier = modifier.fillMaxSize()) {
         items(feedItems.itemCount) { index ->
@@ -52,14 +51,12 @@ fun FeedScreen(
                 loadState.refresh is LoadState.Loading -> {
                     item {
                         Box(
-                            modifier = Modifier
-                                .fillParentMaxSize(),
+                            modifier = Modifier.fillParentMaxSize(),
                             contentAlignment = Alignment.Center
                         ) {
                             CircularProgressIndicator()
                         }
                     }
-
                 }
 
                 loadState.refresh is LoadState.Error -> {
@@ -84,5 +81,4 @@ fun FeedScreen(
             }
         }
     }
-
 }

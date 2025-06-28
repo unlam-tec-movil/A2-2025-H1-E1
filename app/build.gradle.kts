@@ -99,10 +99,13 @@ dependencies {
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
 
+    // Gson
+    implementation("com.google.code.gson:gson:2.10.1") // o la última versión
+
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.0")
 
-    // Imágenes por URL
+    // ImÃ¡genes por URL
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Iconos
@@ -127,12 +130,16 @@ dependencies {
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
 
-    //Room
+    // Room
     implementation("androidx.room:room-runtime:2.6.1")
     kapt("androidx.room:room-compiler:2.6.1")
     implementation("androidx.room:room-ktx:2.6.1")
-    //Paging
+
+    // Paging
     implementation("androidx.paging:paging-runtime:3.3.0")
     implementation("androidx.paging:paging-compose:3.3.0")
+
+    // Datastore Preferences
+    implementation(libs.androidx.datastore.preferences)
 
 }

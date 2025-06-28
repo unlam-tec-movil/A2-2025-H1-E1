@@ -12,19 +12,18 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class ProfileRespository
-@Inject
-constructor(
+class ProfileRepository @Inject constructor(
     private val profileApiService: ProfileApiService,
 ) {
-    // TODO: Implementa UserRepository para perfil, favoritos, etc.
-
-    val applicationToken = BuildConfig.API_KEY
-    val userToken = BuildConfig.USER_TOKEN
-    val onlyParents = false
+    private val applicationToken = BuildConfig.API_KEY
+    private val userToken = BuildConfig.USER_TOKEN
+    private val onlyParents = false
 
     suspend fun getProfile(): ProfileResponse =
-        profileApiService.getProfile(userToken = userToken, token = applicationToken)
+        profileApiService.getProfile(
+            userToken = userToken,
+            token = applicationToken
+        )
 
     suspend fun updateProfile(
         name: String,
@@ -32,7 +31,7 @@ constructor(
         avatarUrl: String,
     ) = profileApiService.updateProfile(
         token = applicationToken,
-        request = ProfileRequest(name, password, avatarUrl),
+        request = ProfileRequest(name, password, avatarUrl)
     )
 
     suspend fun getFeed(): List<Tuit> =
@@ -55,10 +54,8 @@ constructor(
                     applicationToken = applicationToken,
                     userToken = userToken,
                     onlyParents = onlyParents
-
-                    )
+                )
             }
         ).flow
     }
 }
-
