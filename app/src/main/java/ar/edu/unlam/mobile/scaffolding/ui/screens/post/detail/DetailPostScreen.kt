@@ -56,6 +56,7 @@ fun DetailPostScreen(
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+    val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
 
     // Cargar comentarios cuando el token esté disponible
     LaunchedEffect(idPost, token) {
@@ -129,6 +130,7 @@ fun DetailPostScreen(
                     navController = controller,
                     favoriteViewModel = favoriteViewModel,
                     onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId,
                 )
             } ?: run {
                 // Si no se encuentra el post, mostrar mensaje
@@ -182,6 +184,7 @@ fun DetailPostScreen(
                     navController = controller,
                     favoriteViewModel = favoriteViewModel,
                     onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId,
                 )
             }
 
