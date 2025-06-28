@@ -23,7 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.*
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState.*
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.AsyncImage
 
@@ -37,7 +37,7 @@ fun UserScreen(
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
-    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val userState by viewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -65,7 +65,7 @@ fun UserScreen(
                     .offset(y = (-40).dp)
                     .align(Alignment.CenterHorizontally),
         ) {
-            val avatarUrl = (profileState as? Success)?.profile?.avatarUrl
+            val avatarUrl = (userState as? Success)?.user?.avatarUrl
             AsyncImage(
                 model = avatarUrl ?: R.drawable.profile_photo,
                 contentDescription = "Imagen de perfil",
@@ -90,7 +90,7 @@ fun UserScreen(
             )
         }
 
-        when (val state = profileState) {
+        when (val state = userState) {
             is Loading -> {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
@@ -98,9 +98,9 @@ fun UserScreen(
             }
 
             is Success -> {
-                val profile = state.profile
+                val user = state.user
                 Text(
-                    text = profile.name,
+                    text = user.name,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = TextStyle(fontSize = 30.sp),
                 )
@@ -109,7 +109,7 @@ fun UserScreen(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                 )
                 Text(
-                    text = profile.email,
+                    text = user.email,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = TextStyle(color = Color.Gray, fontSize = 16.sp),
                 )

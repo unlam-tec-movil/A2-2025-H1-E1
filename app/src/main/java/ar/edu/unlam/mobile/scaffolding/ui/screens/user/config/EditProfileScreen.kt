@@ -31,6 +31,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -57,7 +58,19 @@ fun Edit(
     controller: NavHostController = rememberNavController(),
     userEditViewModel: EditProfileViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+
     val userState = userEditViewModel.user.collectAsStateWithLifecycle()
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            userEditViewModel.loadProfile(token)
+        }
+    }
+
     var username =
         when (val state = userState.value) {
             is UserUiState.Success -> state.user.name
@@ -71,7 +84,6 @@ fun Edit(
         mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj")
     }
 
-    val context = LocalContext.current
     var imageUri by remember { mutableStateOf<Uri?>(null) }
     val launcher =
         rememberLauncherForActivityResult(
@@ -109,7 +121,7 @@ fun Edit(
             // guardar
             Button(
                 onClick = {
-                    userEditViewModel.updateUser(name, user, bio)
+                    userEditViewModel.updateUser(name, user, bio, token)
                     controller.navigate("user/{id}")
                 },
                 modifier =

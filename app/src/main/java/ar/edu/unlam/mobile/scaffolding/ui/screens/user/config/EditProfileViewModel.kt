@@ -20,27 +20,30 @@ class EditProfileViewModel
         private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
         val user: StateFlow<UserUiState> get() = _user
 
-        init {
-            getUser()
+        fun loadProfile(userToken: String) {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserUiState.Loading
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserUiState.Success(profile)
+                } catch (e: Exception) {
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                }
+            }
         }
 
         fun updateUser(
             name: String,
             password: String,
             avatarUrl: String,
+            userToken: String,
         ) {
             viewModelScope.launch {
                 try {
                     profileRepository.updateProfile(name, password, avatarUrl)
-                } catch (e: Exception) {
-                }
-            }
-        }
-
-        private fun getUser() {
-            viewModelScope.launch {
-                try {
-                    _user.value = UserUiState.Success(profileRepository.getProfile())
+                    // Reload profile after update
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
                     _user.value = UserUiState.Error(e.message ?: "Error desconocido")
                 }
