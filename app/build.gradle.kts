@@ -100,7 +100,7 @@ dependencies {
     // Splash Screen
     implementation("androidx.core:core-splashscreen:1.0.0")
 
-    // Imágenes por URL
+    // ImÃ¡genes por URL
     implementation("io.coil-kt:coil-compose:2.6.0")
 
     // Iconos
@@ -124,6 +124,4 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
-
-    implementation(libs.androidx.datastore.preferences)
 }

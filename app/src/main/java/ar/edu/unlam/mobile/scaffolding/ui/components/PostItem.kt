@@ -2,7 +2,6 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -24,19 +23,15 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -46,91 +41,64 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @Composable
 fun ButtonsPost(
     post: Tuit,
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
-    onLikeClick: (Tuit) -> Unit,
 ) {
+    var isLiked by remember { mutableStateOf(false) }
     val isBookmarked = favoriteViewModel.isFavorite(post.id)
 
-    fun formatLikes(likes: Long): String {
-        return when {
-            likes >= 100_000_000_000 -> "∞"
-            likes >= 1_000_000_000 -> "${likes / 1_000_000_000}MilM"
-            likes >= 1_000_000 -> "${likes / 1_000_000}M"
-            likes >= 1_000 -> "${likes / 1_000}K"
-            else -> likes.toString()
-        }
-    }
-
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
     ) {
-        // Filita de like
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.weight(1f).padding(0.dp),
-        ) {
-            IconButton(
-                onClick = { onLikeClick(post) },
-            ) {
+        IconButton(onClick = {
+            isLiked = !isLiked
+        }) {
+            Row(verticalAlignment = Alignment.CenterVertically) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
-                    tint = if (post.liked) Green else Color.Gray,
+                    tint = if (isLiked) Green else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
+                Text(
+                    text = "${post.likes}",
+                    color = GrayLight,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 18.sp,
+                )
             }
-            Text(
-                text = "${formatLikes(post.likes)}",
-                color = if (post.liked) Green else Color.Gray,
-                fontWeight = FontWeight.Bold,
-                fontSize = 16.sp,
+        }
+
+        Spacer(modifier = Modifier.weight(1f))
+
+        IconButton(onClick = {
+            navController.navigate("comments/${post.id}")
+        }) {
+            Icon(
+                Icons.Default.Comment,
+                "Comentar",
+                tint = Color.Gray,
+                modifier = Modifier.size(30.dp),
             )
         }
 
-        // Filita de Comentarios
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            IconButton(
-                onClick = { navController.navigate("comments/${post.id}") },
-            ) {
-                Icon(
-                    Icons.Default.Comment,
-                    "Comentar",
-                    tint = Color.Gray,
-                    modifier = Modifier.size(30.dp),
-                )
-            }
-        }
+        Spacer(modifier = Modifier.weight(1f))
 
-        // Filita de de guardar
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.weight(1f),
-            horizontalArrangement = Arrangement.End,
-        ) {
-            IconButton(
-                onClick = { favoriteViewModel.toggleFavorite(post) },
-            ) {
-                Icon(
-                    Icons.Default.Bookmark,
-                    "Guardar",
-                    tint = if (isBookmarked) Green else Color.Gray,
-                    modifier = Modifier.size(30.dp),
-                )
-            }
+        IconButton(onClick = {
+            favoriteViewModel.toggleFavorite(post)
+        }) {
+            Icon(
+                Icons.Default.Bookmark,
+                "Guardar",
+                tint = if (isBookmarked) Green else Color.Gray,
+                modifier = Modifier.size(30.dp),
+            )
         }
     }
 }
@@ -141,45 +109,16 @@ fun PostItem(
     modifier: Modifier,
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
-    onLikeClick: (Tuit) -> Unit,
-    currentUserId: String
 ) {
-    var countLike by remember { mutableIntStateOf(0) }
-    var isCooldown by remember { mutableStateOf(false) }
-    val scope = rememberCoroutineScope()
-
-    fun likedAuto() {
-        if (isCooldown) return
-
-        countLike += 1
-        if (countLike == 2) {
-            onLikeClick(post)
-            countLike = 0
-            isCooldown = true
-
-            scope.launch {
-                delay(1000L)
-                isCooldown = false
-            }
-        }
-    }
-
     Card(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = { likedAuto() },
     ) {
         Column(modifier) {
-            HeaderPostItem(
-                userId = post.author,
-                currentUserId = currentUserId,
-                userName = post.author,
-                userImage = post.avatarUrl,
-                navController = navController
-            )
+            HeaderPostItem(post.author, post.avatarUrl)
             BodyPostItem(post.message)
-            ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
+            ButtonsPost(post, navController, favoriteViewModel)
         }
     }
 }
@@ -221,22 +160,11 @@ fun BodyPostItem(body: String) {
 
 @Composable
 fun HeaderPostItem(
-    userId: String,
-    currentUserId: String,
     userName: String,
     userImage: String?,
-    navController: NavController
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                if (userId != currentUserId) {
-                    navController.navigate("user/$userId")
-                }
-            }
-    ) {
-        AvatarItem(avatarUrl = userImage, size = 50)
+    Row(modifier = Modifier.fillMaxWidth()) {
+        AvatarItem()
         Column(
             modifier =
                 Modifier
@@ -254,7 +182,7 @@ fun HeaderPostItem(
 @Composable
 fun UserName(userName: String) {
     Text(
-        text = userName,
+        text = "$userName",
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
@@ -266,8 +194,6 @@ fun ListPost(
     posts: List<Tuit>,
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
-    onLikeClick: (Tuit) -> Unit,
-    currentUserId: String
 ) {
     LazyColumn(
         modifier =
@@ -277,14 +203,11 @@ fun ListPost(
     ) {
         items(posts) { post ->
             PostItem(
-                post = post,
+                post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                navController = navController,
+                navController,
                 favoriteViewModel = favoriteViewModel,
-                onLikeClick = onLikeClick,
-                currentUserId = currentUserId
             )
-            Spacer(modifier = Modifier.height(5.dp))
         }
     }
 }

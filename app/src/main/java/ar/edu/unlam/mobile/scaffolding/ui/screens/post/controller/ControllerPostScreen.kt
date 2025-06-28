@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller
 
 import android.util.Log
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -21,7 +23,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -31,7 +32,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,10 +40,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 // TODO: ViewModel para manejar estado del posteo nuevo.
 @Composable
@@ -51,40 +50,35 @@ fun ControllerPostScreen(
     viewModel: ControllerPostViewModel = hiltViewModel(),
     navigateToHome: () -> Unit,
 ) {
-    var text by remember { mutableStateOf("") }
     val state by viewModel.newPost.collectAsStateWithLifecycle()
-    val context = LocalContext.current
-    val userStore = remember { UserStore(context) }
-    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
-    val token = tokenState.value
-    val userViewModel: UserViewModel = hiltViewModel()
-    val profileState by userViewModel.profileState.collectAsStateWithLifecycle()
-
-    LaunchedEffect(token) {
-        if (token.isNotEmpty()) {
-            userViewModel.loadProfile(token)
-        }
-    }
+    var text by remember { mutableStateOf("") }
 
     LaunchedEffect(state) {
         if (state is NewPostUiState.Success) {
-            Log.i("Screen", "Success")
+            Log.i("Screen", "Succes")
             navigateToHome()
         }
     }
 
-    val onCloseClick = {
-        navigateToHome()
-    }
+    ControllerPostScreen(
+        modifier = modifier,
+        text = text,
+        state = state,
+        onTextChange = { text = it },
+        onPostClick = { viewModel.newPost(text) },
+        onCloseClick = navigateToHome,
+    )
+}
 
-    val onPostClick = {
-        viewModel.newPost(text, token)
-    }
-
-    val onTextChange = { newText: String ->
-        text = newText
-    }
-
+@Composable
+fun ControllerPostScreen(
+    modifier: Modifier,
+    text: String,
+    state: NewPostUiState,
+    onTextChange: (String) -> Unit,
+    onPostClick: () -> Unit,
+    onCloseClick: () -> Unit,
+) {
     Scaffold { innerPading ->
         Column(modifier.padding(innerPading)) {
             Row(
@@ -107,14 +101,7 @@ fun ControllerPostScreen(
             }
 
             Row {
-                when (val profileStateValue = profileState) {
-                    is ar.edu.unlam.mobile.scaffolding.ui.screens.user.ProfileUiState.Success -> {
-                        AvatarItem(avatarUrl = profileStateValue.profile.avatarUrl, size = 50)
-                    }
-                    else -> {
-                        AvatarItem(size = 50)
-                    }
-                }
+                CircularProfileIconPreview()
                 BasicTextField(
                     value = text,
                     onValueChange = { onTextChange(it) },
@@ -139,10 +126,10 @@ fun ControllerPostScreen(
                     },
                 )
             }
-            when (val currentState = state) {
+            when (state) {
                 is NewPostUiState.Error ->
                     Text(
-                        text = currentState.message,
+                        text = state.message,
                         color = Color.Red,
                     )
 
@@ -181,7 +168,7 @@ fun ControllerPostScreenPreview() {
             }
 
             Row {
-                AvatarItem(size = 50)
+                CircularProfileIconPreview()
                 BasicTextField(
                     value = text,
                     onValueChange = { text = it },
@@ -208,4 +195,17 @@ fun ControllerPostScreenPreview() {
             }
         }
     }
+}
+
+@Composable
+fun CircularProfileIconPreview() {
+    Image(
+        painter = painterResource(id = R.drawable.ic_launcher_background),
+        contentDescription = "Profile Icon",
+        modifier =
+            Modifier
+                .padding(start = 10.dp)
+                .clip(CircleShape)
+                .size(50.dp),
+    )
 }

@@ -14,11 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -36,12 +33,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.Edit
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
@@ -72,32 +67,13 @@ fun MainScreen() {
     val controller = rememberNavController()
     val currentBackStackEntry = controller.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
-    val context = LocalContext.current
-    val userStore = remember { UserStore(context) }
-    val coroutineScope = rememberCoroutineScope()
 
     val showBottomBar = currentRoute != "splash"
-
-    val handleLogout: () -> Unit = {
-        coroutineScope.launch {
-            userStore.escribirDatosUsuario("")
-            userStore.escribirEstadoLogin(false)
-            userStore.escribirTokenUsuario("")
-            kotlinx.coroutines.delay(200)
-            controller.navigate("login") {
-                popUpTo(0)
-            }
-        }
-    }
 
     Scaffold(
         topBar = {
             if (showBottomBar && currentRoute != "login" && currentRoute != "register") {
-                TopBar(
-                    title = "UNLAM",
-                    onActionClick = {},
-                    onLogout = handleLogout,
-                )
+                TopBar("UNLAM", {})
             }
         },
         bottomBar = {
@@ -149,6 +125,9 @@ fun MainScreen() {
             composable("register") {
                 RegisterScreen(navController = controller)
             }
+            composable("edit profile") {
+                Edit(controller)
+            }
 
             composable(
                 route = "comments/{idPost}",
@@ -163,7 +142,7 @@ fun MainScreen() {
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(userId = id)
+                UserScreen(userId = id, controller)
             }
 
             composable(
