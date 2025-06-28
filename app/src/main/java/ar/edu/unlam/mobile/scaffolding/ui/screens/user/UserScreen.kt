@@ -15,70 +15,63 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavHostController
-import androidx.navigation.compose.rememberNavController
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.data.models.Post
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
-@Preview()
 @Composable
 fun UserScreen(
-    userId: String = "User gay",
-    controller: NavHostController = rememberNavController(),
+    userId: String = "User",
+    viewModel: UserViewModel = hiltViewModel(),
 ) {
-    val posts =
-        remember {
-            mutableStateListOf(
-                Post(
-                    1,
-                    1,
-                    "Título 1",
-                    "Este es el contenido del post 1.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    2,
-                    1,
-                    "Título 2",
-                    "Este es el contenido del post 2.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
-                Post(
-                    4,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
-            )
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val currentUserId = currentUserIdState.value
+
+    val isCurrentUser = userId == currentUserId
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            viewModel.loadProfile(token)
         }
+    }
 
     Column(
         modifier =
             Modifier
                 .fillMaxSize()
-                .background(Color.White),
+                .background(Color.White)
+                .verticalScroll(rememberScrollState()),
     ) {
+        // Header verde
         Box(
             modifier =
                 Modifier
@@ -86,8 +79,8 @@ fun UserScreen(
                     .height(160.dp)
                     .background(Color(0xFF4B877A)),
         )
-        // Foto de perfil
 
+        // Foto de perfil
         Box(
             modifier =
                 Modifier
@@ -102,35 +95,58 @@ fun UserScreen(
                         .size(95.dp)
                         .clip(CircleShape)
                         .border(0.1.dp, Color.White, CircleShape)
-                        .clickable(onClick = {}),
+                        .clickable(onClick = { /* Accion */ }),
             )
             Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "editar perfil",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = { controller.navigate("edit profile") }),
+                painter = painterResource(
+                    id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo
+                ),
+                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
+                modifier = Modifier
+                    .size(45.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(6.dp, 6.dp)
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .clickable(onClick = {
+                        if (isCurrentUser) {
+                            /* Accion para editar perfil */
+                        } else {
+                            /* Accion para seguir usuario */
+                        }
+                    })
             )
         }
-        Text(
-            text = "User",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(fontSize = 30.sp),
-        )
-        Text(
-            text = "@$userId",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            // style = TextStyle(color = Color.Gray)
-        )
-        Text(
-            "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-        )
+
+        when (val state = profileState) {
+            is ProfileUiState.Loading -> {
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+            }
+
+            is ProfileUiState.Success -> {
+                val profile = state.profile
+                Text(
+                    text = profile.name,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(fontSize = 30.sp),
+                )
+                Text(
+                    text = profile.email,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(color = Color.Gray, fontSize = 16.sp),
+                )
+            }
+
+            is ProfileUiState.Error -> {
+                Text(
+                    text = "Error: ${state.message}",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(color = Color.Red),
+                )
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
         Row {
@@ -168,27 +184,20 @@ fun UserScreen(
                 )
             }
         }
-        Box(
-            modifier = Modifier.fillMaxWidth().background(Color(0xFF4B877A)),
-        )
-
-        Spacer(modifier = Modifier.height(30.dp))
-
-        // Posts del pibe
-        //  ListPost(posts, controller)
 
         Spacer(modifier = Modifier.height(200.dp))
 
-        FloatingActionButton(
-            onClick = { },
-            modifier =
-                Modifier
+        if (isCurrentUser) {
+            FloatingActionButton(
+                onClick = { /* Accin para nuevo post */ },
+                modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.End)
                     .clip(CircleShape),
-            containerColor = Color(0xFF4B877A),
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+                containerColor = Color(0xFF4B877A),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+            }
         }
     }
 }

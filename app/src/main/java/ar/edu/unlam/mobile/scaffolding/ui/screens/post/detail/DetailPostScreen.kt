@@ -16,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -38,14 +41,37 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 @Composable
 fun DetailPostScreen(
     controller: NavHostController,
     idPost: Int,
     viewModel: FeedViewModel = hiltViewModel(),
+    detailPostViewModel: DetailPostViewModel = hiltViewModel(),
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
+    val commentState = detailPostViewModel.comments.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
+
+
+    // Cargar comentarios cuando el token esté disponible
+    LaunchedEffect(idPost, token) {
+        if (token.isNotEmpty()) {
+            detailPostViewModel.getComments(idPost, token)
+        }
+    }
+
+    // Cargar posts si no están disponibles
+    LaunchedEffect(token) {
+        if (token.isNotEmpty() && postState.value is PostUiState.Loading) {
+            viewModel.getPosts(token)
+        }
+    }
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -53,78 +79,131 @@ fun DetailPostScreen(
         }
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
 
-    when (val state = postState.value) {
-        is PostUiState.Error -> Text("Error: ${state.message}")
-        PostUiState.Loading -> {
-            Box(Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-            }
+    // Mostrar estado de carga mientras se obtienen los datos
+    if (postState.value is PostUiState.Loading || commentState.value is CommentsState.Loading) {
+        Box(Modifier.fillMaxSize()) {
+            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
         }
+        return
+    }
 
-        is PostUiState.Success -> {
-            val post = state.list.find { it.id == idPost }
-            val filteredComments = state.list.filter { it.parentId == idPost }
+    // Mostrar error si hay problemas
+    if (postState.value is PostUiState.Error) {
+        Box(Modifier.fillMaxSize()) {
+            Text(
+                "Error: ${(postState.value as PostUiState.Error).message}",
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        return
+    }
 
-            Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
-            ) {
-                post?.let {
-                    ar.edu.unlam.mobile.scaffolding.ui.components.PostItem(
-                        post = it,
-                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                        navController = controller,
-                        favoriteViewModel = favoriteViewModel,
-                    )
-                }
+    // Mostrar error de comentarios si hay problemas
+    if (commentState.value is CommentsState.Error) {
+        Box(Modifier.fillMaxSize()) {
+            Text(
+                "Error al cargar comentarios: ${(commentState.value as CommentsState.Error).message}",
+                modifier = Modifier.align(Alignment.Center),
+            )
+        }
+        return
+    }
 
-                Text(
-                    text = "Comentarios",
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
-                    fontSize = 18.sp,
+    // Mostrar contenido cuando los datos estén disponibles
+    if (postState.value is PostUiState.Success) {
+        val post = (postState.value as PostUiState.Success).list.find { it.id == idPost }
+        val filteredComments =
+            when (val comments = commentState.value) {
+                is CommentsState.Success -> comments.comments
+                else -> emptyList()
+            }
+
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
+        ) {
+            post?.let {
+                PostItem(
+                    post = it,
+                    modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                    navController = controller,
+                    favoriteViewModel = favoriteViewModel,
+                    onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId
+                )
+            } ?: run {
+                // Si no se encuentra el post, mostrar mensaje
+                Box(
                     modifier =
                         Modifier
-                            .padding(vertical = 8.dp)
-                            .padding(start = 20.dp),
-                )
-
-                if (filteredComments.isEmpty()) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .background(Color.White),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            "Sin Comentarios",
-                            textAlign = TextAlign.Center,
-                            color = ar.edu.unlam.mobile.scaffolding.ui.theme.Green,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                } else {
-                    ar.edu.unlam.mobile.scaffolding.ui.components.ListPost(
-                        posts = filteredComments,
-                        navController = controller,
-                        favoriteViewModel = favoriteViewModel,
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(Color.White),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "Post no encontrado",
+                        textAlign = TextAlign.Center,
+                        color = Green,
+                        fontWeight = FontWeight.Bold,
                     )
                 }
+            }
 
-                InputComment(
-                    modifier = Modifier.padding(0.dp),
+            Text(
+                text = "Comentarios",
+                fontWeight = FontWeight.SemiBold,
+                color = Color.White,
+                fontSize = 18.sp,
+                modifier =
+                    Modifier
+                        .padding(vertical = 8.dp)
+                        .padding(start = 20.dp),
+            )
+
+            if (filteredComments.isEmpty()) {
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(Color.White),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "Sin Comentarios",
+                        textAlign = TextAlign.Center,
+                        color = Green,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            } else {
+                ListPost(
+                    posts = filteredComments,
+                    navController = controller,
+                    favoriteViewModel = favoriteViewModel,
+                    onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId
                 )
             }
+
+            InputComment(
+                modifier = Modifier.padding(0.dp),
+                idPost = idPost,
+                detailPostViewModel = detailPostViewModel,
+            )
         }
     }
 }
 
 @Composable
-fun InputComment(modifier: Modifier = Modifier) {
+fun InputComment(
+    modifier: Modifier = Modifier,
+    idPost: Int,
+    detailPostViewModel: DetailPostViewModel,
+) {
     var comment by remember { mutableStateOf("") }
 
     Row(
@@ -167,6 +246,10 @@ fun InputComment(modifier: Modifier = Modifier) {
 
         IconButton(
             onClick = {
+                if (comment.isNotBlank()) {
+                    detailPostViewModel.sendComment(idPost, comment)
+                    comment = "" // Limpiar campo
+                }
             },
         ) {
             Icon(
