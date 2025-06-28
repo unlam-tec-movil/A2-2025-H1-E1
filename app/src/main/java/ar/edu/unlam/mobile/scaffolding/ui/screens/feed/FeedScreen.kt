@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.feed
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -44,16 +45,8 @@ fun FeedScreen(
                 CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
-
-    Column(modifier = Modifier.fillMaxSize()) {
-        when (val state = postState.value) {
-            is PostUiState.Error -> Text("Error: ${state.message}")
-            PostUiState.Loading -> {
-                Box(Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
-            }
-            is PostUiState.Success -> {
+        is PostUiState.Success -> {
+            Column(modifier = Modifier.fillMaxSize()) {
                 ListPost(
                     posts = state.list,
                     navController = controller,
