@@ -8,35 +8,35 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import javax.inject.Inject
 
 class ProfileRespository
-    @Inject
-    constructor(
-        private val profileApiService: ProfileApiService,
-    ) {
-        // TODO: Implementa UserRepository para perfil, favoritos, etc.
+@Inject
+constructor(
+    private val profileApiService: ProfileApiService,
+) {
+    // TODO: Implementa UserRepository para perfil, favoritos, etc.
 
-        val applicationToken = BuildConfig.API_KEY
+    val applicationToken = BuildConfig.API_KEY
 
-        suspend fun getProfile(userToken: String): ProfileResponse =
-            profileApiService.getProfile(
-                userToken = userToken,
-                token = applicationToken,
-            )
-
-        suspend fun updateProfile(
-            name: String,
-            password: String,
-            avatarUrl: String,
-            userToken: String,
-        ) = profileApiService.updateProfile(
+    suspend fun getProfile(userToken: String): ProfileResponse =
+        profileApiService.getProfile(
+            userToken = userToken,
             token = applicationToken,
-            request = ProfileRequest(name, password, avatarUrl),
         )
 
-        suspend fun getFeed(userToken: String): List<Tuit> =
-            profileApiService.getFeed(
-                userToken = userToken,
-                token = applicationToken,
-                page = 1,
-                parents = false,
-            )
-    }
+    suspend fun updateProfile(
+        name: String,
+        password: String,
+        avatarUrl: String,
+        userToken: String,
+    ) = profileApiService.updateProfile(
+        token = applicationToken,
+        request = ProfileRequest(name, password, avatarUrl),
+    )
+
+    suspend fun getFeed(userToken: String): List<Tuit> =
+        profileApiService.getFeed(
+            userToken = userToken,
+            token = applicationToken,
+            page = 1,
+            parents = false,
+        )
+}

@@ -66,13 +66,17 @@ fun ButtonsPost(
     }
 
     Row(
-        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(top = 5.dp),
     ) {
         // Filita de like
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.weight(1f).padding(0.dp),
+            modifier = Modifier
+                .weight(1f)
+                .padding(0.dp),
         ) {
             IconButton(
                 onClick = { onLikeClick(post) },

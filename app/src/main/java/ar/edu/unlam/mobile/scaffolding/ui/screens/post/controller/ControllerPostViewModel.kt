@@ -11,39 +11,39 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ControllerPostViewModel
-    @Inject
-    constructor(
-        private val postRepository: PostRespository,
-    ) : ViewModel() {
-        // TODO: Pantalla para crear una nueva publicación.
-        private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
-        val newPost: StateFlow<NewPostUiState> get() = _newPost
+@Inject
+constructor(
+    private val postRepository: PostRespository,
+) : ViewModel() {
+    // TODO: Pantalla para crear una nueva publicación.
+    private val _newPost = MutableStateFlow<NewPostUiState>(NewPostUiState.Init)
+    val newPost: StateFlow<NewPostUiState> get() = _newPost
 
-        fun newPost(
-            message: String,
-            userToken: String,
-        ) {
-            if (message.isBlank()) {
-                _newPost.value = NewPostUiState.Error("El texto no puede estar vacío")
-                return
-            }
+    fun newPost(
+        message: String,
+        userToken: String,
+    ) {
+        if (message.isBlank()) {
+            _newPost.value = NewPostUiState.Error("El texto no puede estar vacío")
+            return
+        }
 
-            viewModelScope.launch {
-                _newPost.value = NewPostUiState.Loading
+        viewModelScope.launch {
+            _newPost.value = NewPostUiState.Loading
 
-                try {
-                    val result = postRepository.postTuit(message, userToken)
-                    if (result.isSuccess) {
-                        _newPost.value = NewPostUiState.Success
-                    } else {
-                        _newPost.value = NewPostUiState.Error("Error en la solicitud")
-                    }
-                } catch (e: Exception) {
-                    _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
+            try {
+                val result = postRepository.postTuit(message, userToken)
+                if (result.isSuccess) {
+                    _newPost.value = NewPostUiState.Success
+                } else {
+                    _newPost.value = NewPostUiState.Error("Error en la solicitud")
                 }
+            } catch (e: Exception) {
+                _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
             }
         }
     }
+}
 
 sealed interface NewPostUiState {
     object Init : NewPostUiState

@@ -13,54 +13,54 @@ import javax.inject.Inject
 
 @HiltViewModel
 class DetailPostViewModel
-    @Inject
-    constructor(
-        private val postRespository: PostRespository,
-    ) : ViewModel() {
-        private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
-        val comments: StateFlow<CommentsState> get() = _comments
+@Inject
+constructor(
+    private val postRespository: PostRespository,
+) : ViewModel() {
+    private val _comments = MutableStateFlow<CommentsState>(CommentsState.Loading)
+    val comments: StateFlow<CommentsState> get() = _comments
 
-        private val _sendCommentState = MutableStateFlow<SendCommentState>(SendCommentState.Idle)
-        val sendCommentState: StateFlow<SendCommentState> get() = _sendCommentState
+    private val _sendCommentState = MutableStateFlow<SendCommentState>(SendCommentState.Idle)
+    val sendCommentState: StateFlow<SendCommentState> get() = _sendCommentState
 
-        private var userToken: String = ""
+    private var userToken: String = ""
 
-        fun getComments(
-            idTuit: Int,
-            userToken: String,
-        ) {
-            this.userToken = userToken
-            viewModelScope.launch {
-                try {
-                    _comments.value = CommentsState.Loading
-                    val result = postRespository.getReplies(idTuit, userToken)
-                    _comments.value = CommentsState.Success(result)
-                } catch (e: Exception) {
-                    _comments.value = CommentsState.Error(ErrorHandler.handlePostError(e))
-                }
+    fun getComments(
+        idTuit: Int,
+        userToken: String,
+    ) {
+        this.userToken = userToken
+        viewModelScope.launch {
+            try {
+                _comments.value = CommentsState.Loading
+                val result = postRespository.getReplies(idTuit, userToken)
+                _comments.value = CommentsState.Success(result)
+            } catch (e: Exception) {
+                _comments.value = CommentsState.Error(ErrorHandler.handlePostError(e))
             }
-        }
-
-        fun sendComment(
-            idTuit: Int,
-            message: String,
-        ) {
-            viewModelScope.launch {
-                try {
-                    _sendCommentState.value = SendCommentState.Loading
-                    postRespository.replyToTuit(idTuit, message, userToken)
-                    _sendCommentState.value = SendCommentState.Success
-                    getComments(idTuit, userToken) // Refresca los comentarios
-                } catch (e: Exception) {
-                    _sendCommentState.value = SendCommentState.Error(ErrorHandler.handleCommentError(e))
-                }
-            }
-        }
-
-        fun clearSendCommentState() {
-            _sendCommentState.value = SendCommentState.Idle
         }
     }
+
+    fun sendComment(
+        idTuit: Int,
+        message: String,
+    ) {
+        viewModelScope.launch {
+            try {
+                _sendCommentState.value = SendCommentState.Loading
+                postRespository.replyToTuit(idTuit, message, userToken)
+                _sendCommentState.value = SendCommentState.Success
+                getComments(idTuit, userToken) // Refresca los comentarios
+            } catch (e: Exception) {
+                _sendCommentState.value = SendCommentState.Error(ErrorHandler.handleCommentError(e))
+            }
+        }
+    }
+
+    fun clearSendCommentState() {
+        _sendCommentState.value = SendCommentState.Idle
+    }
+}
 
 sealed interface CommentsState {
     object Loading : CommentsState

@@ -32,6 +32,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -50,6 +51,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
 
 @Preview
@@ -88,14 +90,15 @@ fun Edit(
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
-        ) { uri: Uri? ->
+        ) { uri ->
             imageUri = uri
         }
 
     // Fondo superior verde
     Column(
         modifier =
-            Modifier.fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
                 .background(Color.White),
     ) {
         Box(
@@ -121,7 +124,7 @@ fun Edit(
             // guardar
             Button(
                 onClick = {
-                    userEditViewModel.updateUser(name, user, bio, token)
+                    userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
                     controller.navigate("user/{id}")
                 },
                 modifier =
@@ -188,7 +191,8 @@ fun Edit(
                     contentDescription = "Cambiar banner",
                     tint = Color.White,
                     modifier =
-                        Modifier.size(35.dp)
+                        Modifier
+                            .size(35.dp)
                             .offset(y = 80.dp),
                 )
             }

@@ -29,6 +29,7 @@ object ErrorHandler {
                     else -> "Error del servidor (${exception.code()})"
                 }
             }
+
             else -> "$defaultMessage: ${exception.message ?: "Error desconocido"}"
         }
     }
