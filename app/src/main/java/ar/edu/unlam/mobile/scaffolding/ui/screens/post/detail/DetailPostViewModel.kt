@@ -75,4 +75,3 @@ sealed interface ReplySentUiState {
 
     data class Error(val message: String) : ReplySentUiState
 }
-
