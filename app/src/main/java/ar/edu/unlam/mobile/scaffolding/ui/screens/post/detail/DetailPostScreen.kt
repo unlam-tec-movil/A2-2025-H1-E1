@@ -46,6 +46,27 @@ fun DetailPostScreen(
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
+    val commentState = detailPostViewModel.comments.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
+
+
+    // Cargar comentarios cuando el token esté disponible
+    LaunchedEffect(idPost, token) {
+        if (token.isNotEmpty()) {
+            detailPostViewModel.getComments(idPost, token)
+        }
+    }
+
+    // Cargar posts si no están disponibles
+    LaunchedEffect(token) {
+        if (token.isNotEmpty() && postState.value is PostUiState.Loading) {
+            viewModel.getPosts(token)
+        }
+    }
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -61,9 +82,39 @@ fun DetailPostScreen(
             }
         }
 
-        is PostUiState.Success -> {
-            val post = state.list.find { it.id == idPost }
-            val filteredComments = state.list.filter { it.parentId == idPost }
+        Column(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
+        ) {
+            post?.let {
+                PostItem(
+                    post = it,
+                    modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                    navController = controller,
+                    favoriteViewModel = favoriteViewModel,
+                    onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId
+                )
+            } ?: run {
+                // Si no se encuentra el post, mostrar mensaje
+                Box(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f)
+                            .background(Color.White),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    Text(
+                        "Post no encontrado",
+                        textAlign = TextAlign.Center,
+                        color = Green,
+                        fontWeight = FontWeight.Bold,
+                    )
+                }
+            }
 
             Column(
                 modifier =
@@ -79,44 +130,13 @@ fun DetailPostScreen(
                         favoriteViewModel = favoriteViewModel,
                     )
                 }
-
-                Text(
-                    text = "Comentarios",
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color.White,
-                    fontSize = 18.sp,
-                    modifier =
-                        Modifier
-                            .padding(vertical = 8.dp)
-                            .padding(start = 20.dp),
-                )
-
-                if (filteredComments.isEmpty()) {
-                    Box(
-                        modifier =
-                            Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
-                                .background(Color.White),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        Text(
-                            "Sin Comentarios",
-                            textAlign = TextAlign.Center,
-                            color = ar.edu.unlam.mobile.scaffolding.ui.theme.Green,
-                            fontWeight = FontWeight.Bold,
-                        )
-                    }
-                } else {
-                    ar.edu.unlam.mobile.scaffolding.ui.components.ListPost(
-                        posts = filteredComments,
-                        navController = controller,
-                        favoriteViewModel = favoriteViewModel,
-                    )
-                }
-
-                InputComment(
-                    modifier = Modifier.padding(0.dp),
+            } else {
+                ListPost(
+                    posts = filteredComments,
+                    navController = controller,
+                    favoriteViewModel = favoriteViewModel,
+                    onLikeClick = { viewModel.onLikeClicked(it) },
+                    currentUserId = currentUserId
                 )
             }
         }

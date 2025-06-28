@@ -44,33 +44,19 @@ fun UserScreen(
     userId: String = "User gay",
     controller: NavHostController = rememberNavController(),
 ) {
-    val posts =
-        remember {
-            mutableStateListOf(
-                Post(
-                    1,
-                    1,
-                    "Título 1",
-                    "Este es el contenido del post 1.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(
-                    2,
-                    1,
-                    "Título 2",
-                    "Este es el contenido del post 2.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(3, 1, "Título 3", "Este es el contenido del post 3."),
-                Post(
-                    4,
-                    1,
-                    "Título 4",
-                    "Este es el contenido del post 4.",
-                    "https://i0.wp.com/puppis.blog/wp-content/uploads/2022/02/abc-cuidado-de-los-gatos-min.jpg?resize=521%2C346&ssl=1",
-                ),
-                Post(5, 1, "Título 5", "Este es el contenido del post 5."),
-            )
+    val context = LocalContext.current
+    val userStore = remember { UserStore(context) }
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    val profileState by viewModel.profileState.collectAsStateWithLifecycle()
+    val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val currentUserId = currentUserIdState.value
+
+    val isCurrentUser = userId == currentUserId
+
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            viewModel.loadProfile(token)
         }
 
     Column(
@@ -102,19 +88,26 @@ fun UserScreen(
                         .size(95.dp)
                         .clip(CircleShape)
                         .border(0.1.dp, Color.White, CircleShape)
-                        .clickable(onClick = {}),
+                        .clickable(onClick = { /* Accion */ }),
             )
             Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "editar perfil",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable(onClick = { controller.navigate("edit profile") }),
+                painter = painterResource(
+                    id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo
+                ),
+                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
+                modifier = Modifier
+                    .size(45.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(6.dp, 6.dp)
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .clickable(onClick = {
+                        if (isCurrentUser) {
+                            /* Accion para editar perfil */
+                        } else {
+                            /* Accion para seguir usuario */
+                        }
+                    })
             )
         }
         Text(
@@ -179,16 +172,17 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(200.dp))
 
-        FloatingActionButton(
-            onClick = { },
-            modifier =
-                Modifier
+        if (isCurrentUser) {
+            FloatingActionButton(
+                onClick = { /* Accin para nuevo post */ },
+                modifier = Modifier
                     .padding(16.dp)
                     .align(Alignment.End)
                     .clip(CircleShape),
-            containerColor = Color(0xFF4B877A),
-        ) {
-            Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+                containerColor = Color(0xFF4B877A),
+            ) {
+                Icon(Icons.Default.Add, contentDescription = "Nuevo post", tint = Color.White)
+            }
         }
     }
 }
