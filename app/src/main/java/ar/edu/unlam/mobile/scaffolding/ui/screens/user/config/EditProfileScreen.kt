@@ -79,11 +79,12 @@ fun Edit(
             else -> "nombre desconocido"
         }
 
-    // by remember { mutableStateOf("@Hola4576") }
     var user by remember { mutableStateOf("@$username") }
     var name by remember { mutableStateOf(username) }
     var bio by remember {
-        mutableStateOf("Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj")
+        mutableStateOf(
+            "Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj",
+        )
     }
 
     var imageUri by remember { mutableStateOf<Uri?>(null) }
@@ -94,7 +95,6 @@ fun Edit(
             imageUri = uri
         }
 
-    // Fondo superior verde
     Column(
         modifier =
             Modifier
@@ -107,13 +107,9 @@ fun Edit(
                     .fillMaxWidth()
                     .height(50.dp),
         ) {
-            // botón de cerrar
             IconButton(
-                onClick =
-                    { controller.navigate("user/{id}") },
-                modifier =
-                    Modifier
-                        .align(Alignment.TopStart),
+                onClick = { controller.navigate("user/{id}") },
+                modifier = Modifier.align(Alignment.TopStart),
             ) {
                 Icon(
                     Icons.Default.Close,
@@ -121,7 +117,6 @@ fun Edit(
                 )
             }
 
-            // guardar
             Button(
                 onClick = {
                     userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
@@ -138,7 +133,6 @@ fun Edit(
             }
         }
 
-        // Banner verde con icono de cámara
         Box(
             modifier =
                 Modifier
@@ -153,8 +147,9 @@ fun Edit(
                         .background(Color(0xFF386A5F)),
                 contentAlignment = Alignment.Center,
             ) {
-                IconButton(onClick = {
-                }) {
+                IconButton(
+                    onClick = {},
+                ) {
                     Icon(
                         imageVector = Icons.Default.PhotoCamera,
                         contentDescription = "Cambiar banner",
@@ -197,8 +192,6 @@ fun Edit(
                 )
             }
 
-            // Foto de perfil redonda (superpuesta)
-
             Spacer(modifier = Modifier.height(32.dp))
         }
 
@@ -216,9 +209,7 @@ fun Edit(
             TextField(
                 value = user,
                 onValueChange = { user = it },
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 colors =
                     TextFieldDefaults.colors(
                         focusedTextColor = Color.Black,
@@ -239,9 +230,7 @@ fun Edit(
             TextField(
                 value = name,
                 onValueChange = { name = it },
-                modifier =
-                    Modifier
-                        .fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth(),
                 colors =
                     TextFieldDefaults.colors(
                         focusedTextColor = Color.Black,

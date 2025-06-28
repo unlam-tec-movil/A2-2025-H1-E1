@@ -13,51 +13,51 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel
-@Inject
-constructor(
-    private val profileRepository: ProfileRespository,
-) : ViewModel() {
-    private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
-    val user: StateFlow<UserUiState> get() = _user
+    @Inject
+    constructor(
+        private val profileRepository: ProfileRespository,
+    ) : ViewModel() {
+        private val _user = MutableStateFlow<UserUiState>(UserUiState.Loading)
+        val user: StateFlow<UserUiState> get() = _user
 
-    fun loadProfile(userToken: String) {
-        viewModelScope.launch {
-            try {
-                _user.value = UserUiState.Loading
-                val profile = profileRepository.getProfile(userToken)
-                _user.value = UserUiState.Success(profile)
-            } catch (e: Exception) {
-                _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+        fun loadProfile(userToken: String) {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserUiState.Loading
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserUiState.Success(profile)
+                } catch (e: Exception) {
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                }
             }
         }
-    }
 
-    fun updateUser(
-        name: String,
-        password: String,
-        avatarUrl: String,
-        userToken: String,
-    ) {
-        viewModelScope.launch {
-            try {
-                profileRepository.updateProfile(name, password, avatarUrl, userToken)
-                val profile = profileRepository.getProfile(userToken)
-                _user.value = UserUiState.Success(profile)
-            } catch (e: Exception) {
-                _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+        fun updateUser(
+            name: String,
+            password: String,
+            avatarUrl: String,
+            userToken: String,
+        ) {
+            viewModelScope.launch {
+                try {
+                    profileRepository.updateProfile(name, password, avatarUrl, userToken)
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserUiState.Success(profile)
+                } catch (e: Exception) {
+                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                }
             }
         }
+
+        sealed interface UserUiState {
+            object Loading : UserUiState
+
+            data class Success(
+                val user: ProfileResponse,
+            ) : UserUiState
+
+            data class Error(
+                val message: String,
+            ) : UserUiState
+        }
     }
-
-    sealed interface UserUiState {
-        object Loading : UserUiState
-
-        data class Success(
-            val user: ProfileResponse,
-        ) : UserUiState
-
-        data class Error(
-            val message: String,
-        ) : UserUiState
-    }
-}

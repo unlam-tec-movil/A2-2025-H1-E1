@@ -14,52 +14,52 @@ import javax.inject.Inject
 
 @HiltViewModel
 class LoginViewModel
-@Inject
-constructor(
-    private val authRepository: AuthRepository,
-) : ViewModel() {
-    private val _loginState = MutableStateFlow<Resource<LoginResponse>>(Resource.Idle())
-    val loginState: StateFlow<Resource<LoginResponse>> = _loginState
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+    ) : ViewModel() {
+        private val _loginState = MutableStateFlow<Resource<LoginResponse>>(Resource.Idle())
+        val loginState: StateFlow<Resource<LoginResponse>> = _loginState
 
-    fun login(
-        email: String,
-        password: String,
-    ) {
-        viewModelScope.launch {
-            _loginState.value = Resource.Loading()
+        fun login(
+            email: String,
+            password: String,
+        ) {
+            viewModelScope.launch {
+                _loginState.value = Resource.Loading()
 
-            try {
-                val response = authRepository.login(email, password)
-                _loginState.value = Resource.Success(response)
-            } catch (e: Exception) {
-                _loginState.value = Resource.Failure(e)
+                try {
+                    val response = authRepository.login(email, password)
+                    _loginState.value = Resource.Success(response)
+                } catch (e: Exception) {
+                    _loginState.value = Resource.Failure(e)
+                }
             }
         }
     }
-}
 
 @HiltViewModel
 class RegisterViewModel
-@Inject
-constructor(
-    private val authRepository: AuthRepository,
-) : ViewModel() {
-    private val _registerState = MutableStateFlow<Resource<UserResponse>>(Resource.Idle())
-    val registerState: StateFlow<Resource<UserResponse>> = _registerState
+    @Inject
+    constructor(
+        private val authRepository: AuthRepository,
+    ) : ViewModel() {
+        private val _registerState = MutableStateFlow<Resource<UserResponse>>(Resource.Idle())
+        val registerState: StateFlow<Resource<UserResponse>> = _registerState
 
-    fun registerUser(
-        name: String,
-        email: String,
-        password: String,
-    ) {
-        viewModelScope.launch {
-            _registerState.value = Resource.Loading()
-            try {
-                val response = authRepository.users(name, email, password)
-                _registerState.value = Resource.Success(response)
-            } catch (e: Exception) {
-                _registerState.value = Resource.Failure(e)
+        fun registerUser(
+            name: String,
+            email: String,
+            password: String,
+        ) {
+            viewModelScope.launch {
+                _registerState.value = Resource.Loading()
+                try {
+                    val response = authRepository.users(name, email, password)
+                    _registerState.value = Resource.Success(response)
+                } catch (e: Exception) {
+                    _registerState.value = Resource.Failure(e)
+                }
             }
         }
     }
-}
