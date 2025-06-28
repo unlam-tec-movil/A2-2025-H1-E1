@@ -6,6 +6,6 @@ data class Post(
     val title: String,
     val body: String,
     val urlPostImage: String? = null,
-    val likes: Int? = 0,
+    val likes: Long? = 0,
     val comments: Int? = 0,
 )
