@@ -38,7 +38,7 @@ fun UserScreen(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
-
+    
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
             viewModel.loadProfile(token)

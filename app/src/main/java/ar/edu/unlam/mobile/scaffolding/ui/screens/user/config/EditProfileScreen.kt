@@ -23,6 +23,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.PhotoCamera
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
@@ -43,7 +44,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -54,33 +54,37 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
 
-@Preview
 @Composable
 fun Edit(
     controller: NavHostController = rememberNavController(),
-    userEditViewModel: EditProfileViewModel = hiltViewModel(),
+    viewModel: EditProfileViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+    val userState by viewModel.user.collectAsStateWithLifecycle()
+    var name = ""
 
-    val userState = userEditViewModel.user.collectAsStateWithLifecycle()
+    when (val state = userState) {
+        is UserEditUiState.Success -> {
+            val user = state.user
+             name = user.name
+            val avatarUrl = user.avatarUrl
+        }
+        is UserEditUiState.Error ->{
+        }
+        UserEditUiState.Loading -> {}
+
+    }
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            userEditViewModel.loadProfile(token)
+            viewModel.loadProfile(token)
+
         }
     }
 
-    var username =
-        when (val state = userState.value) {
-            is UserUiState.Success -> state.user.name
-            else -> "nombre desconocido"
-        }
-
-    var user by remember { mutableStateOf("@$username") }
-    var name by remember { mutableStateOf(username) }
     var bio by remember {
         mutableStateOf(
             "Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj",
@@ -119,7 +123,7 @@ fun Edit(
 
             Button(
                 onClick = {
-                    userEditViewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
+                    viewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
                     controller.navigate("user/{id}")
                 },
                 modifier =
@@ -170,7 +174,7 @@ fun Edit(
                             .clickable(onClick = { launcher.launch("image/*") }),
                 )
 
-                imageUri?.let {
+              /*  imageUri?.let {
                     Image(
                         painter = rememberAsyncImagePainter(it),
                         contentDescription = "Imagen seleccionada",
@@ -181,6 +185,7 @@ fun Edit(
                                 .border(2.dp, Color.Gray, CircleShape),
                     )
                 }
+                */
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
@@ -202,13 +207,29 @@ fun Edit(
                     .fillMaxSize()
                     .padding(16.dp),
         ) {
+            when (val state = userState) {
+                is UserEditUiState.Success -> {
+                    val user = state.user
+                    name = user.name
+                }
+
+                    is UserEditUiState.Loading -> {
+                        CircularProgressIndicator(
+                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                        )
+                    }
+
+                is UserEditUiState.Error -> {}
+            }
+
+
             Text(
                 text = "Usuario",
                 style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
             )
             TextField(
-                value = user,
-                onValueChange = { user = it },
+                value = name,
+                onValueChange = { name = it },
                 modifier = Modifier.fillMaxWidth(),
                 colors =
                     TextFieldDefaults.colors(
@@ -271,3 +292,4 @@ fun Edit(
         }
     }
 }
+
