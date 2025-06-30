@@ -32,7 +32,8 @@ class LoginViewModel
                     val response = authRepository.login(email, password)
                     _loginState.value = Resource.Success(response)
                 } catch (e: Exception) {
-                    _loginState.value = Resource.Failure(e)
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleAuthError(e)
+                    _loginState.value = Resource.Failure(Exception(errorMsg))
                 }
             }
         }
@@ -58,7 +59,8 @@ class RegisterViewModel
                     val response = authRepository.users(name, email, password)
                     _registerState.value = Resource.Success(response)
                 } catch (e: Exception) {
-                    _registerState.value = Resource.Failure(e)
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleAuthError(e)
+                    _registerState.value = Resource.Failure(Exception(errorMsg))
                 }
             }
         }

@@ -54,7 +54,8 @@ class ControllerPostViewModel
                         _newPost.value = NewPostUiState.Error("Error en la solicitud")
                     }
                 } catch (e: Exception) {
-                    _newPost.value = NewPostUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handlePostError(e)
+                    _newPost.value = NewPostUiState.Error(errorMsg)
                 }
             }
         }

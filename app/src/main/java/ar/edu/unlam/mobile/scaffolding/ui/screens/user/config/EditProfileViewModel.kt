@@ -27,7 +27,8 @@ class EditProfileViewModel
                     val profile = profileRepository.getProfile()
                     _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
-                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
+                    _user.value = UserUiState.Error(errorMsg)
                 }
             }
         }
@@ -43,7 +44,8 @@ class EditProfileViewModel
                     val profile = profileRepository.getProfile()
                     _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
-                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
+                    _user.value = UserUiState.Error(errorMsg)
                 }
             }
         }

@@ -124,10 +124,6 @@ fun UserScreen(
                     style = TextStyle(fontSize = 30.sp),
                 )
                 Text(
-                    text = "@$userId",
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
-                Text(
                     text = user.email,
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = TextStyle(color = Color.Gray, fontSize = 16.sp),

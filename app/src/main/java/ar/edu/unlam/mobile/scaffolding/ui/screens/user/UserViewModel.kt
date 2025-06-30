@@ -26,7 +26,8 @@ class UserViewModel
                     val profile = profileRepository.getProfile()
                     _user.value = UserUiState.Success(profile)
                 } catch (e: Exception) {
-                    _user.value = UserUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
+                    _user.value = UserUiState.Error(errorMsg)
                 }
             }
         }
