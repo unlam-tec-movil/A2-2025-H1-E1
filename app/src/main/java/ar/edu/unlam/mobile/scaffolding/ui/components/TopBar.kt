@@ -10,15 +10,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,18 +35,19 @@ import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 fun TopBar(
     title: String = "",
     onActionClick: () -> Unit = {},
+    onLogout: () -> Unit = {},
     viewModel: UserViewModel = hiltViewModel(),
 ) {
     var showLogoutModal by remember { mutableStateOf(false) }
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
-    val tokenState by userStore.leerTokenUsuario.collectAsState(initial = "")
-    val token = tokenState
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            viewModel.loadProfile()
+            viewModel.loadProfile(token)
         }
     }
 
@@ -111,5 +105,16 @@ fun TopBar(
                 }
             }
         }
+    }
+
+    // LogoutModal
+    if (showLogoutModal) {
+        LogoutModal(
+            onDismiss = { showLogoutModal = false },
+            onConfirmLogout = {
+                showLogoutModal = false
+                onLogout()
+            },
+        )
     }
 }

@@ -12,7 +12,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -20,7 +19,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -55,22 +53,17 @@ fun ControllerPostScreen(
     navigateToHome: () -> Unit,
 ) {
     var text by remember { mutableStateOf("") }
-
     val state by viewModel.newPost.collectAsStateWithLifecycle()
-    val draftSaved by viewModel.draftSaved.collectAsStateWithLifecycle()
-    var showDiscardDialog by remember { mutableStateOf(false) }
-
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
-
     val userViewModel: UserViewModel = hiltViewModel()
     val userState by userViewModel.user.collectAsStateWithLifecycle()
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
-            userViewModel.loadProfile()
+            userViewModel.loadProfile(token)
         }
     }
 
@@ -81,10 +74,16 @@ fun ControllerPostScreen(
         }
     }
 
-    LaunchedEffect(draftSaved) {
-        if (draftSaved) {
-            navigateToHome()
-        }
+    val onCloseClick = {
+        navigateToHome()
+    }
+
+    val onPostClick = {
+        viewModel.newPost(text, token)
+    }
+
+    val onTextChange = { newText: String ->
+        text = newText
     }
 
     Scaffold { innerPading ->
@@ -93,15 +92,9 @@ fun ControllerPostScreen(
                 modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.SpaceBetween,
             ) {
-                IconButton(onClick = {
-                    if (text.isNotBlank()) {
-                        showDiscardDialog = true
-                    } else {
-                        navigateToHome()
-                    }
-                }) {
+                IconButton(onClick = onCloseClick) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = (Icons.Default.Close),
                         contentDescription = null,
                         modifier = modifier.size(28.dp),
                     )
@@ -109,13 +102,9 @@ fun ControllerPostScreen(
                 Button(
                     colors = ButtonDefaults.buttonColors(Green),
                     modifier = modifier.padding(end = 8.dp),
-                    onClick = {
-                        viewModel.newPost(text, token)
-                    },
+                    onClick = onPostClick,
                     enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                ) {
-                    Text("Publicar", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
             }
 
             Row {
@@ -134,7 +123,7 @@ fun ControllerPostScreen(
                 }
                 BasicTextField(
                     value = text,
-                    onValueChange = { text = it },
+                    onValueChange = { onTextChange(it) },
                     modifier =
                         modifier
                             .fillMaxWidth()
@@ -150,7 +139,7 @@ fun ControllerPostScreen(
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("¿Qué está pasando?", color = Color.Gray, fontSize = 15.sp)
+                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },
@@ -168,30 +157,6 @@ fun ControllerPostScreen(
             }
         }
     }
-
-    if (showDiscardDialog) {
-        AlertDialog(
-            onDismissRequest = { showDiscardDialog = false },
-            title = { Text("¿Guardar como borrador?") },
-            text = { Text("¿Querés guardar el tuit como borrador o descartarlo?") },
-            confirmButton = {
-                TextButton(onClick = {
-                    showDiscardDialog = false
-                    viewModel.draftTuit(text)
-                }) {
-                    Text("Guardar")
-                }
-            },
-            dismissButton = {
-                TextButton(onClick = {
-                    showDiscardDialog = false
-                    navigateToHome()
-                }) {
-                    Text("Descartar")
-                }
-            },
-        )
-    }
 }
 
 @Composable
@@ -207,7 +172,7 @@ fun ControllerPostScreenPreview() {
             ) {
                 IconButton(onClick = {}) {
                     Icon(
-                        imageVector = Icons.Default.Close,
+                        imageVector = (Icons.Default.Close),
                         contentDescription = null,
                         modifier = Modifier.size(28.dp),
                     )
@@ -218,9 +183,7 @@ fun ControllerPostScreenPreview() {
                     onClick = {
                         TODO()
                     },
-                ) {
-                    Text("Publicar", fontWeight = FontWeight.Bold)
-                }
+                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
             }
 
             Row {
@@ -243,7 +206,7 @@ fun ControllerPostScreenPreview() {
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("¿Qué está pasando?", color = Color.Gray, fontSize = 15.sp)
+                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },

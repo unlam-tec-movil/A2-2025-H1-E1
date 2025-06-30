@@ -77,7 +77,7 @@ fun RegisterScreen(
 
             MyTextField(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                label = "Username",
+                label = "Nombre",
                 text = username,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
@@ -101,7 +101,7 @@ fun RegisterScreen(
 
             MyTextField(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                label = "Password",
+                label = "Contraseña",
                 text = password,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
@@ -113,7 +113,7 @@ fun RegisterScreen(
 
             MyTextField(
                 modifier = Modifier.padding(horizontal = 16.dp),
-                label = "PasswordConfirm",
+                label = "Confirmar contraseña",
                 text = confirmPassword,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
@@ -177,7 +177,7 @@ fun RegisterScreen(
 @Composable
 fun RegisterTitleSection() {
     Text(
-        text = "Register",
+        text = "Regístrate",
         fontFamily = FontFamily.Default,
         fontSize = 36.sp,
         fontWeight = FontWeight.Bold,
@@ -185,7 +185,7 @@ fun RegisterTitleSection() {
     )
     Spacer(modifier = Modifier.height(20.dp))
     Text(
-        text = "Create your new account",
+        text = "Crea una nueva cuenta",
         fontFamily = FontFamily.Default,
         fontSize = 15.sp,
         color = Color.Gray,
@@ -208,7 +208,7 @@ fun RegisterButton(
         shape = RoundedCornerShape(30.dp),
     ) {
         Text(
-            text = "Sign up",
+            text = "Registrarse",
             style = TextStyle(fontSize = 18.sp, fontWeight = FontWeight(500)),
         )
     }
@@ -225,12 +225,12 @@ fun AlreadyHaveAccountSection(navController: NavHostController) {
         horizontalArrangement = Arrangement.Center,
     ) {
         Text(
-            text = "Already have an account?",
+            text = "¿Ya tienes una cuenta?",
             color = DarkGreen,
             fontSize = 14.sp,
         )
         TextButton(onClick = { navController.popBackStack() }) {
-            Text("Login", color = DarkGreen, fontWeight = FontWeight.Bold)
+            Text("Inicia sesión", color = DarkGreen, fontWeight = FontWeight.Bold)
         }
     }
 }

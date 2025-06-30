@@ -6,7 +6,7 @@ import ar.edu.unlam.mobile.scaffolding.data.datasources.network.requests.TuitReq
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import javax.inject.Inject
 
-class PostRepository
+class PostRespository
     @Inject
     constructor(
         private val postApiService: PostApiService,
