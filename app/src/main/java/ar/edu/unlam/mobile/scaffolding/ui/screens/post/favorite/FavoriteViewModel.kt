@@ -1,23 +1,67 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.FavoriteEntity
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FavoriteRepository
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
+import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.launch
 
-class FavoriteViewModel : ViewModel() {
+@HiltViewModel
+class FavoriteViewModel @Inject constructor(
+    private val repository: FavoriteRepository
+) : ViewModel() {
+
     private val _favorites = MutableStateFlow<List<Tuit>>(emptyList())
     val favorites: StateFlow<List<Tuit>> = _favorites.asStateFlow()
 
-    fun toggleFavorite(post: Tuit) {
-        _favorites.value =
-            if (_favorites.value.any { it.id == post.id }) {
-                _favorites.value.filterNot { it.id == post.id }
-            } else {
-                _favorites.value + post
+    init {
+        viewModelScope.launch {
+            repository.getAllFavorites().collect { list ->
+                _favorites.value = list.map { it.toTuit() }
             }
+        }
     }
 
-    fun isFavorite(postId: Int): Boolean = _favorites.value.any { it.id == postId }
+    fun toggleFavorite(post: Tuit) {
+        viewModelScope.launch {
+            val isFav = repository.isFavorite(post.id)
+            if (isFav) {
+                repository.removeFromFavorites(post.toEntity())
+            } else {
+                repository.addToFavorites(post.toEntity())
+            }
+        }
+    }
+
+    fun isFavorite(postId: Int): Boolean {
+        return _favorites.value.any { it.id == postId }
+    }
+
+    // Mapper de Room a dominio
+    private fun FavoriteEntity.toTuit(): Tuit = Tuit(
+        id = id,
+        message = message,
+        parentId = parentId,
+        author = author,
+        avatarUrl = avatarUrl,
+        likes = likes,
+        liked = liked,
+        date = date
+    )
+
+    // Mapper de dominio a Room
+    private fun Tuit.toEntity(): FavoriteEntity = FavoriteEntity(
+        id = id,
+        message = message,
+        parentId = parentId,
+        author = author,
+        avatarUrl = avatarUrl,
+        likes = likes,
+        liked = liked,
+        date = date
+    )
 }
