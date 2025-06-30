@@ -165,7 +165,7 @@ fun LoginScreen(
                 Toast
                     .makeText(
                         context,
-                        error ?: "Error al registrarse",
+                        error ?: "Error de autenticación",
                         Toast.LENGTH_SHORT,
                     ).show()
                 navController.navigate("login") {

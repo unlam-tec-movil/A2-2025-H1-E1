@@ -28,7 +28,8 @@ class FeedViewModel
                 try {
                     _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
                 } catch (e: Exception) {
-                    _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handlePostError(e)
+                    _posts.value = PostUiState.Error(errorMsg)
                 }
             }
         }
@@ -58,7 +59,8 @@ class FeedViewModel
 
                     _posts.value = PostUiState.Success(updatedList ?: emptyList())
                 } catch (e: Exception) {
-                    _posts.value = PostUiState.Error(e.message ?: "Error desconocido")
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handlePostError(e)
+                    _posts.value = PostUiState.Error(errorMsg)
                 }
             }
         }
