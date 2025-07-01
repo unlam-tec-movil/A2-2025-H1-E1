@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -46,6 +48,9 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ButtonsPost(
@@ -58,7 +63,6 @@ fun ButtonsPost(
     val currentBackStackEntry = navController.currentBackStackEntry
     val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
     val currentRoute = navController.currentBackStackEntry?.destination?.route
-    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
     fun formatLikes(likes: Long): String {
         return when {
@@ -111,7 +115,7 @@ fun ButtonsPost(
         ) {
             IconButton(
                 onClick = {
-                    if (currentPostId != post.id && !isInCommentsScreen) {
+                    if (currentPostId != post.id) {
                         navController.navigate("comments/${post.id}")
                     }
                 },
@@ -161,32 +165,33 @@ fun PostItem(
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val currentBackStackEntry = navController.currentBackStackEntry
-    val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
     fun onPostClick() {
         if (isCooldown) return
 
-        clickCount += 1
-        when (clickCount) {
-            1 -> {
-                // Espera a ver si es 1 solo click o 2
-                scope.launch {
-                    delay(300L)
-                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen) {
-                        navController.navigate("comments/${post.id}")
-                    } else if (clickCount == 2) {
-                        onLikeClick(post)
-                    }
-                    clickCount = 0
-                    isCooldown = true
-                    delay(1000L)
-                    isCooldown = false
+        val currentClickTime = System.currentTimeMillis()
+        val clickThreshold = 300L
+
+        if (clickCount == 0) {
+            clickCount = 1
+
+            scope.launch {
+                val firstClickTime = currentClickTime
+                delay(clickThreshold)
+
+                if (clickCount == 1 && firstClickTime == currentClickTime) {
+                    // No acción
                 }
+
+                clickCount = 0
             }
-            2 -> {
+        } else {
+            clickCount = 0
+            isCooldown = true
+            onLikeClick(post)
+            scope.launch {
+                delay(1000L)
+                isCooldown = false
             }
         }
     }
@@ -198,7 +203,7 @@ fun PostItem(
         onClick = { onPostClick() },
     ) {
         Column(modifier) {
-            HeaderPostItem(post.author, post.avatarUrl)
+            HeaderPostItem(post.author, post.avatarUrl, post.date)
             BodyPostItem(post.message)
             ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
         }
@@ -244,6 +249,7 @@ fun BodyPostItem(body: String) {
 fun HeaderPostItem(
     userName: String,
     userImage: String?,
+    date: String,
 ) {
     Row(modifier = Modifier.fillMaxWidth()) {
         AvatarItem(avatarUrl = userImage, size = 50)
@@ -257,9 +263,35 @@ fun HeaderPostItem(
             horizontalAlignment = Alignment.Start,
         ) {
             UserName(userName)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Date(date)
+            }
         }
     }
 }
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Date(date: String) {
+    val formattedDate = try {
+        val zonedDateTime = ZonedDateTime.parse(date)
+        val formatter = DateTimeFormatter.ofPattern(
+            "EEEE, d 'de' MMMM 'de' yyyy",
+            Locale("es")
+        )
+        zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        date
+    }
+
+    Text(
+        text = formattedDate,
+        textAlign = TextAlign.Start,
+        fontSize = 12.sp,
+        color = Color.Gray,
+    )
+}
+
 
 @Composable
 fun UserName(userName: String) {

@@ -38,7 +38,6 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
-import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
@@ -50,27 +49,19 @@ import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 fun DetailPostScreen(
     controller: NavHostController,
     idPost: Int,
-    viewModel: FeedViewModel = hiltViewModel(),
     detailPostViewModel: DetailPostViewModel = hiltViewModel(),
 ) {
-    val postState = viewModel.posts.collectAsStateWithLifecycle()
+    val postState = detailPostViewModel.post.collectAsStateWithLifecycle()
     val commentState = detailPostViewModel.comments.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
 
-    // Cargar comentarios cuando el token esté disponible
     LaunchedEffect(idPost, token) {
         if (token.isNotEmpty()) {
+            detailPostViewModel.getPostById(idPost, token)
             detailPostViewModel.getComments(idPost, token)
-        }
-    }
-
-    // Cargar posts si no están disponibles
-    LaunchedEffect(token) {
-        if (token.isNotEmpty() && postState.value is PostUiState.Loading) {
-            viewModel.getPosts(token)
         }
     }
 
@@ -137,7 +128,7 @@ fun DetailPostScreen(
                         modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
-                        onLikeClick = { viewModel.onLikeClicked(it) },
+                        onLikeClick = { detailPostViewModel.onLikeClicked(it) },
                     )
                 } ?: run {
                     Box(
@@ -203,7 +194,7 @@ fun DetailPostScreen(
                             posts = filteredComments,
                             navController = controller,
                             favoriteViewModel = favoriteViewModel,
-                            onLikeClick = { viewModel.onLikeClicked(it) },
+                            onLikeClick = { detailPostViewModel.onLikeClicked(it) },
                             modifier =
                                 Modifier
                                     .fillMaxWidth()
@@ -218,8 +209,7 @@ fun DetailPostScreen(
                 modifier =
                     Modifier
                         .align(Alignment.BottomCenter)
-                        .background(SoftGreen)
-                        .padding(8.dp),
+                        .background(SoftGreen),
                 idPost = idPost,
                 detailPostViewModel = detailPostViewModel,
             )
