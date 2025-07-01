@@ -34,6 +34,7 @@ import coil.compose.AsyncImage
 
 @Composable
 fun UserScreen(
+    userId: String = "User",
     controller: NavHostController = rememberNavController(),
     viewModel: UserViewModel = hiltViewModel(),
     feedViewModel: FeedViewModel = hiltViewModel(),
@@ -44,6 +45,10 @@ fun UserScreen(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
+
+    val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
+    val currentUserId = currentUserIdState.value
+    val isCurrentUser = userId == currentUserId
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -91,8 +96,11 @@ fun UserScreen(
             )
 
             Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "Editar Perfil",
+                painter =
+                    painterResource(
+                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
+                    ),
+                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
                 modifier =
                     Modifier
                         .size(45.dp)
@@ -100,7 +108,13 @@ fun UserScreen(
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable { controller.navigate("edit profile") },
+                        .clickable(onClick = {
+                            if (isCurrentUser) {
+                                // Acción para editar perfil
+                            } else {
+                                // Acción para seguir usuario
+                            }
+                        }),
             )
         }
 
@@ -183,6 +197,7 @@ fun UserScreen(
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { feedViewModel.onLikeClicked(it) },
                         modifier = Modifier.weight(1f),
+                        currentUserId = currentUserId,
                     )
                 }
             }

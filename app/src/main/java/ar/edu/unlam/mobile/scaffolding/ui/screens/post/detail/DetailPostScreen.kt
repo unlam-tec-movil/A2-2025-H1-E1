@@ -1,28 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -57,6 +40,7 @@ fun DetailPostScreen(
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+    val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
 
     LaunchedEffect(idPost, token) {
         if (token.isNotEmpty()) {
@@ -71,7 +55,6 @@ fun DetailPostScreen(
         }
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
 
-    // Mostrar estado de carga mientras se obtienen los datos
     if (postState.value is PostUiState.Loading || commentState.value is CommentsState.Loading) {
         Box(Modifier.fillMaxSize()) {
             CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
@@ -79,7 +62,6 @@ fun DetailPostScreen(
         return
     }
 
-    // Mostrar error si hay problemas
     if (postState.value is PostUiState.Error) {
         Box(Modifier.fillMaxSize()) {
             Text(
@@ -90,7 +72,6 @@ fun DetailPostScreen(
         return
     }
 
-    // Mostrar error de comentarios si hay problemas
     if (commentState.value is CommentsState.Error) {
         Box(Modifier.fillMaxSize()) {
             Text(
@@ -101,7 +82,6 @@ fun DetailPostScreen(
         return
     }
 
-    // Mostrar contenido cuando los datos estén disponibles
     if (postState.value is PostUiState.Success) {
         val post = (postState.value as PostUiState.Success).list.find { it.id == idPost }
         val filteredComments =
@@ -111,16 +91,10 @@ fun DetailPostScreen(
             }
 
         Box(
-            modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(Color.White),
+            modifier = Modifier.fillMaxSize().background(Color.White),
         ) {
             Column(
-                modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .padding(bottom = 70.dp),
+                modifier = Modifier.fillMaxSize().padding(bottom = 70.dp),
             ) {
                 post?.let {
                     PostItem(
@@ -129,13 +103,11 @@ fun DetailPostScreen(
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { detailPostViewModel.onLikeClicked(it) },
+                        currentUserId = currentUserId,
                     )
                 } ?: run {
                     Box(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .weight(1f),
+                        modifier = Modifier.fillMaxSize().weight(1f),
                         contentAlignment = Alignment.Center,
                     ) {
                         Text(
@@ -148,10 +120,7 @@ fun DetailPostScreen(
                 }
 
                 Column(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                    modifier = Modifier.fillMaxWidth().weight(1f),
                 ) {
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
@@ -163,10 +132,7 @@ fun DetailPostScreen(
                         fontWeight = FontWeight.SemiBold,
                         color = Color.DarkGray,
                         fontSize = 18.sp,
-                        modifier =
-                            Modifier
-                                .padding(vertical = 8.dp)
-                                .padding(start = 20.dp),
+                        modifier = Modifier.padding(vertical = 8.dp).padding(start = 20.dp),
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
@@ -176,10 +142,7 @@ fun DetailPostScreen(
 
                     if (filteredComments.isEmpty()) {
                         Box(
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
+                            modifier = Modifier.fillMaxWidth().weight(1f),
                             contentAlignment = Alignment.Center,
                         ) {
                             Text(
@@ -195,21 +158,15 @@ fun DetailPostScreen(
                             navController = controller,
                             favoriteViewModel = favoriteViewModel,
                             onLikeClick = { detailPostViewModel.onLikeClicked(it) },
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .weight(1f),
+                            modifier = Modifier.fillMaxWidth().weight(1f),
+                            currentUserId = currentUserId,
                         )
                     }
                 }
             }
 
-            // Input fijo al fondo
             InputComment(
-                modifier =
-                    Modifier
-                        .align(Alignment.BottomCenter)
-                        .background(SoftGreen),
+                modifier = Modifier.align(Alignment.BottomCenter).background(SoftGreen),
                 idPost = idPost,
                 detailPostViewModel = detailPostViewModel,
             )
@@ -226,10 +183,7 @@ fun InputComment(
     var comment by remember { mutableStateOf("") }
 
     Row(
-        modifier =
-            modifier
-                .fillMaxWidth()
-                .background(SoftGreen),
+        modifier = modifier.fillMaxWidth().background(SoftGreen),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
@@ -242,10 +196,7 @@ fun InputComment(
                     color = Color.DarkGray,
                 )
             },
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(end = 8.dp),
+            modifier = Modifier.weight(1f).padding(end = 8.dp),
             maxLines = 3,
             singleLine = false,
             textStyle =
@@ -270,7 +221,7 @@ fun InputComment(
             onClick = {
                 if (comment.isNotBlank()) {
                     detailPostViewModel.sendComment(idPost, comment)
-                    comment = "" // Limpiar campo
+                    comment = ""
                 }
             },
         ) {
