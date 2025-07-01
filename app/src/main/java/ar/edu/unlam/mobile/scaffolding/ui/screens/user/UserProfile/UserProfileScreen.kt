@@ -56,11 +56,11 @@ fun UserProfileScreen(
             style = TextStyle(fontSize = 30.sp)
         )
 
-        Text(
-            text = "ID: $userId",
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(color = Color.Gray, fontSize = 16.sp)
-        )
+//        Text(
+//            text = "ID: $userId",
+//            modifier = Modifier.align(Alignment.CenterHorizontally),
+//            style = TextStyle(color = Color.Gray, fontSize = 16.sp)
+//        )
 
         Spacer(modifier = Modifier.height(20.dp))
 
