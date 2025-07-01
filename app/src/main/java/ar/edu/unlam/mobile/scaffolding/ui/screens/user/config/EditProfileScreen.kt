@@ -67,7 +67,6 @@ fun Edit(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
-    val state = userState
     var name by rememberSaveable { mutableStateOf("") }
     var userUrl by rememberSaveable { mutableStateOf("") }
 
