@@ -11,11 +11,7 @@ import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-class FavoriteViewModel
-    @Inject
-    constructor(
-        private val repository: FavoriteRepository
-    ) : ViewModel() {
+class FavoriteViewModel @Inject constructor(private val repository: FavoriteRepository) : ViewModel() {
         private val _favorites = MutableStateFlow<List<Tuit>>(emptyList())
         val favorites: StateFlow<List<Tuit>> = _favorites.asStateFlow()
 
