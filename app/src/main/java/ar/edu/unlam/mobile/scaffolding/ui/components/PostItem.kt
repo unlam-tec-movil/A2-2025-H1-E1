@@ -161,6 +161,8 @@ fun PostItem(
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
 
     fun onPostClick() {
         if (isCooldown) return
@@ -171,7 +173,7 @@ fun PostItem(
                 // Espera a ver si es 1 solo click o 2
                 scope.launch {
                     delay(300L)
-                    if (clickCount == 1) {
+                    if (clickCount == 1 && currentPostId != post.id ) {
 
                         navController.navigate("comments/${post.id}")
                     } else if (clickCount == 2) {
