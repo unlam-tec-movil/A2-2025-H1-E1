@@ -43,6 +43,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
@@ -166,7 +167,7 @@ fun ControllerPostScreen(
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
+                            Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },
@@ -186,7 +187,7 @@ fun ControllerPostScreen(
             if (draftSaved) {
                 Text(
                     text = "Borrador guardado",
-                    color = Color.Green,
+                    color = DarkGreen,
                     modifier = modifier.padding(16.dp),
                 )
             }

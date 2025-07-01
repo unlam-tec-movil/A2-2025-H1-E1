@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -52,31 +53,32 @@ fun DraftContainerScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Mis Borradores",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver",
-                        )
-                    }
-                },
-            )
-        },
-    ) { paddingValues ->
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    Text(
+//                        text = "Mis Borradores",
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 20.sp,
+//                    )
+//                },
+//                navigationIcon = {
+//                    IconButton(onClick = onNavigateBack) {
+//                        Icon(
+//                            imageVector = Icons.Default.ArrowBack,
+//                            contentDescription = "Volver",
+//                        )
+//                    }
+//                },
+//            )
+//        },
+    ) {
+        paddingValues ->
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues).background(Color.White),
         ) {
             when {
                 isLoading -> {
@@ -89,7 +91,7 @@ fun DraftContainerScreen(
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .padding(16.dp),
+                                .padding(16.dp).background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -105,7 +107,7 @@ fun DraftContainerScreen(
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .padding(16.dp),
+                                .padding(16.dp).background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -118,7 +120,7 @@ fun DraftContainerScreen(
                 }
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().background(Color.White),
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                     ) {
                         items(drafts) { draft ->

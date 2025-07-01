@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -21,6 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.entities.DraftEntity
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkRed
+import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -38,7 +42,9 @@ fun DraftItem(
             modifier
                 .fillMaxWidth()
                 .padding(8.dp),
+
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
+        colors = CardDefaults.cardColors(GrayLight)
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
@@ -71,7 +77,7 @@ fun DraftItem(
                         Icon(
                             imageVector = Icons.Default.Edit,
                             contentDescription = "Editar borrador",
-                            tint = Color.Blue,
+                            tint = BlueGreen,
                             modifier = Modifier.size(20.dp),
                         )
                     }
@@ -83,7 +89,7 @@ fun DraftItem(
                         Icon(
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Eliminar borrador",
-                            tint = Color.Red,
+                            tint = DarkRed,
                             modifier = Modifier.size(20.dp),
                         )
                     }
