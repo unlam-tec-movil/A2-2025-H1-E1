@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.Icon
@@ -51,6 +52,18 @@ fun BottomBar(controller: NavHostController) {
                 Icon(
                     imageVector = Icons.Default.Bookmark,
                     contentDescription = "favorites",
+                    tint = MaterialTheme.colorScheme.primary,
+                )
+            },
+            modifier = Modifier.clip(CircleShape),
+        )
+        NavigationBarItem(
+            selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "drafts" } == true,
+            onClick = { controller.navigate("drafts") },
+            icon = {
+                Icon(
+                    imageVector = Icons.Default.Drafts,
+                    contentDescription = "Borradores",
                     tint = MaterialTheme.colorScheme.primary,
                 )
             },
