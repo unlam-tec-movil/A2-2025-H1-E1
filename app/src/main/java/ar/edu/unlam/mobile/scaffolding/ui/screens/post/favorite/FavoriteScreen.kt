@@ -32,16 +32,17 @@ fun FavoriteScreen(
     val favorites = favoriteViewModel.favorites.collectAsState()
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White)
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(Color.White),
     ) {
         if (favorites.value.isEmpty()) {
             Text(
                 text = "No tienes posts guardados",
                 color = Color.Gray,
                 fontSize = 18.sp,
-                modifier = Modifier.align(Alignment.Center)
+                modifier = Modifier.align(Alignment.Center),
             )
         } else {
             ListPost(
@@ -49,7 +50,7 @@ fun FavoriteScreen(
                 navController = navController,
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = { viewModel.onLikeClicked(it) },
-                modifier = modifier
+                modifier = modifier,
             )
         }
     }

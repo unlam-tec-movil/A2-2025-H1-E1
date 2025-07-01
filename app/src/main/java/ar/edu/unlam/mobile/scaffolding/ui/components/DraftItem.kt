@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -42,9 +41,8 @@ fun DraftItem(
             modifier
                 .fillMaxWidth()
                 .padding(8.dp),
-
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-        colors = CardDefaults.cardColors(GrayLight)
+        colors = CardDefaults.cardColors(GrayLight),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),

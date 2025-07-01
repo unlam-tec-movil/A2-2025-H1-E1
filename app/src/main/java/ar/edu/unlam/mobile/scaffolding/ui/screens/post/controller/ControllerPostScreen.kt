@@ -99,114 +99,117 @@ fun ControllerPostScreen(
 
     Scaffold { innerPading ->
         Box(
-            modifier = modifier
-                .fillMaxSize()
-                .background(Color.White)
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .background(Color.White),
         ) {
-        Column(modifier.padding(innerPading)) {
-            Row(
-                modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                IconButton(onClick = onCloseClick) {
-                    Icon(
-                        imageVector = (Icons.Default.Close),
-                        contentDescription = null,
-                        modifier = modifier.size(28.dp),
-                    )
-                }
-                Row {
-                    Button(
-                        colors = ButtonDefaults.buttonColors(Color.Gray),
-                        modifier = modifier.padding(end = 8.dp),
-                        onClick = onSaveDraftClick,
-                        enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                    ) {
-                        Row {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = "Guardar borrador",
-                                modifier = modifier.size(16.dp),
-                            )
-                            Text(
-                                "Guardar",
-                                fontWeight = FontWeight.Medium,
-                                modifier = modifier.padding(start = 4.dp),
-                            )
+            Column(modifier.padding(innerPading)) {
+                Row(
+                    modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    IconButton(onClick = onCloseClick) {
+                        Icon(
+                            imageVector = (Icons.Default.Close),
+                            contentDescription = null,
+                            modifier = modifier.size(28.dp),
+                        )
+                    }
+                    Row {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(Color.Gray),
+                            modifier = modifier.padding(end = 8.dp),
+                            onClick = onSaveDraftClick,
+                            enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                        ) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = "Guardar borrador",
+                                    modifier = modifier.size(16.dp),
+                                )
+                                Text(
+                                    "Guardar",
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = modifier.padding(start = 4.dp),
+                                )
+                            }
                         }
-                    }
-                    Button(
-                        colors = ButtonDefaults.buttonColors(Green),
-                        modifier = modifier.padding(end = 8.dp),
-                        onClick = onPostClick,
-                        enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                    ) { Text("Publicar", fontWeight = FontWeight.Bold) }
-                }
-            }
-            Spacer(modifier = Modifier.height(10.dp))
-
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(horizontal = 12.dp),
-            ) {
-                when (val profileStateValue = userState) {
-                    is UserUiState.Loading -> {
-                        AvatarItem(size = 50)
-                    }
-
-                    is UserUiState.Success -> {
-                        AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
-                    }
-
-                    is UserUiState.Error -> {
-                        AvatarItem(size = 50)
+                        Button(
+                            colors = ButtonDefaults.buttonColors(Green),
+                            modifier = modifier.padding(end = 8.dp),
+                            onClick = onPostClick,
+                            enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                        ) { Text("Publicar", fontWeight = FontWeight.Bold) }
                     }
                 }
-                BasicTextField(
-                    value = text,
-                    onValueChange = { onTextChange(it) },
+                Spacer(modifier = Modifier.height(10.dp))
+
+                Row(
                     modifier =
-                        modifier
+                        Modifier
                             .fillMaxWidth()
-                            .height(150.dp)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                    textStyle =
-                        TextStyle(
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                        ),
-                    cursorBrush = SolidColor(Color.Gray),
-                    decorationBox = { innerTextField ->
-                        if (text.isEmpty()) {
-                            Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
+                            .padding(horizontal = 12.dp),
+                ) {
+                    when (val profileStateValue = userState) {
+                        is UserUiState.Loading -> {
+                            AvatarItem(size = 50)
                         }
-                        innerTextField()
-                    },
-                )
-            }
-            when (val currentState = state) {
-                is NewPostUiState.Error ->
-                    Text(
-                        text = currentState.message,
-                        color = Color.Red,
+
+                        is UserUiState.Success -> {
+                            AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
+                        }
+
+                        is UserUiState.Error -> {
+                            AvatarItem(size = 50)
+                        }
+                    }
+                    BasicTextField(
+                        value = text,
+                        onValueChange = { onTextChange(it) },
+                        modifier =
+                            modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 12.dp, top = 20.dp, end = 12.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        textStyle =
+                            TextStyle(
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                            ),
+                        cursorBrush = SolidColor(Color.Gray),
+                        decorationBox = { innerTextField ->
+                            if (text.isEmpty()) {
+                                Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
+                            }
+                            innerTextField()
+                        },
                     )
+                }
+                when (val currentState = state) {
+                    is NewPostUiState.Error ->
+                        Text(
+                            text = currentState.message,
+                            color = Color.Red,
+                        )
 
-                NewPostUiState.Loading -> CircularProgressIndicator()
-                else -> {}
-            }
+                    NewPostUiState.Loading -> CircularProgressIndicator()
+                    else -> {}
+                }
 
-            if (draftSaved) {
-                Text(
-                    text = "Borrador guardado",
-                    color = DarkGreen,
-                    modifier = modifier.padding(16.dp),
-                )
+                if (draftSaved) {
+                    Text(
+                        text = "Borrador guardado",
+                        color = DarkGreen,
+                        modifier = modifier.padding(16.dp),
+                    )
+                }
             }
         }
-    }}
+    }
 }
 
 @Composable

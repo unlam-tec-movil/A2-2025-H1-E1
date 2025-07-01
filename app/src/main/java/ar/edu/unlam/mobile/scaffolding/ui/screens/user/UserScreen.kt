@@ -182,7 +182,7 @@ fun UserScreen(
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { feedViewModel.onLikeClicked(it) },
-                        modifier = Modifier.weight(1f)
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }
