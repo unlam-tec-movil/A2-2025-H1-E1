@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -91,22 +94,14 @@ fun TopBar(
                 onActionClick()
             },
         ) {
-            when (val state = userState) {
-                is UserUiState.Loading -> {
-                    AvatarItem(size = 50)
-                }
-
-                is UserUiState.Success -> {
-                    AvatarItem(avatarUrl = state.user.avatarUrl, size = 50)
-                }
-
-                is UserUiState.Error -> {
-                    AvatarItem(size = 50)
-                }
-            }
+            Icon(
+                imageVector = Icons.Default.Logout,
+                contentDescription = "Cerrar sesión",
+                tint = Color.White,
+                modifier = Modifier.size(30.dp)
+            )
         }
     }
-
     // LogoutModal
     if (showLogoutModal) {
         LogoutModal(
