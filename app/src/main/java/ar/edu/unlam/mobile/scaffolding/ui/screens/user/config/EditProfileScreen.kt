@@ -52,16 +52,15 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.UserEditUiState.Success
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
-import coil.compose.rememberAsyncImagePainter
 import coil.compose.AsyncImage
+import coil.compose.rememberAsyncImagePainter
 
 @Composable
 fun Edit(
     controller: NavHostController = rememberNavController(),
-    viewModel: EditProfileViewModel = hiltViewModel()
+    viewModel: EditProfileViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
@@ -80,7 +79,7 @@ fun Edit(
 
     var bio by remember {
         mutableStateOf(
-            "meomeo"
+            "meomeo",
         )
     }
 
@@ -130,10 +129,11 @@ fun Edit(
                         .align(Alignment.BottomEnd)
                         .clip(RoundedCornerShape(20.dp)),
                 shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color(0xFF386A5F),
-                    disabledContainerColor = Color.Gray
-                ),
+                colors =
+                    ButtonDefaults.buttonColors(
+                        containerColor = Color(0xFF386A5F),
+                        disabledContainerColor = Color.Gray,
+                    ),
             ) {
                 Text("Guardar", color = Color.White)
             }
@@ -211,7 +211,6 @@ fun Edit(
                     }
                 }
 
-                
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
@@ -238,11 +237,11 @@ fun Edit(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                     )
                 }
-                
+
                 is UserEditUiState.Uploading -> {
                     Column(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
-                        horizontalAlignment = Alignment.CenterHorizontally
+                        horizontalAlignment = Alignment.CenterHorizontally,
                     ) {
                         CircularProgressIndicator()
                         Spacer(modifier = Modifier.height(8.dp))
@@ -262,7 +261,7 @@ fun Edit(
                 }
 
                 is Success -> {
-                    //var userUrl = user.avatarUrl
+                    // var userUrl = user.avatarUrl
                     var userUrl1 by rememberSaveable { mutableStateOf(state.user.avatarUrl) }
                     userUrl = userUrl1
                     var nam by rememberSaveable { mutableStateOf(state.user.name) }
@@ -346,4 +345,3 @@ fun Edit(
         }
     }
 }
-

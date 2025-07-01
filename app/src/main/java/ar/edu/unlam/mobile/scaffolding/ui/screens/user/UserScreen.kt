@@ -49,9 +49,10 @@ fun UserScreen(
     val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
     val currentUserId = currentUserIdState.value
 
-    val homeBackStackEntry = remember(controller.currentBackStackEntry) {
-        controller.getBackStackEntry("home")
-    }
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
 
     val favoriteViewModel: FavoriteViewModel = hiltViewModel(homeBackStackEntry)
 
@@ -63,53 +64,59 @@ fun UserScreen(
     }
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Color.White),
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(Color.White),
     ) {
         Image(
             painter = painterResource(id = R.drawable.banner),
             contentDescription = "Editar Perfil",
-            modifier = Modifier
-                .height(250.dp)
-                .fillMaxWidth()
+            modifier =
+                Modifier
+                    .height(250.dp)
+                    .fillMaxWidth(),
         )
 
         val isCurrentUser = (userState as? Success)?.user?.id == currentUserId
 
         Box(
-            modifier = Modifier
-                .offset(y = (-40).dp)
-                .align(Alignment.CenterHorizontally),
+            modifier =
+                Modifier
+                    .offset(y = (-40).dp)
+                    .align(Alignment.CenterHorizontally),
         ) {
             val avatarUrl = (userState as? Success)?.user?.avatarUrl
             AsyncImage(
                 model = avatarUrl ?: R.drawable.profile_photo,
                 contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(0.1.dp, Color.White, CircleShape),
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(0.1.dp, Color.White, CircleShape),
             )
 
             Image(
-                painter = painterResource(
-                    id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
-                ),
+                painter =
+                    painterResource(
+                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
+                    ),
                 contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
-                modifier = Modifier
-                    .size(45.dp)
-                    .align(Alignment.BottomEnd)
-                    .offset(6.dp, 6.dp)
-                    .padding(4.dp)
-                    .clip(CircleShape)
-                    .clickable {
-                        if (isCurrentUser) {
-                            // Acción para editar perfil
-                        } else {
-                            // Acción para seguir usuario
-                        }
-                    },
+                modifier =
+                    Modifier
+                        .size(45.dp)
+                        .align(Alignment.BottomEnd)
+                        .offset(6.dp, 6.dp)
+                        .padding(4.dp)
+                        .clip(CircleShape)
+                        .clickable {
+                            if (isCurrentUser) {
+                                // Acción para editar perfil
+                            } else {
+                                // Acción para seguir usuario
+                            }
+                        },
             )
         }
 
@@ -130,21 +137,23 @@ fun UserScreen(
                 )
             }
 
-            is Error -> Text(
-                text = "Error: ${state.message}",
-                modifier = Modifier.align(Alignment.CenterHorizontally),
-                style = TextStyle(color = Color.Red),
-            )
+            is Error ->
+                Text(
+                    text = "Error: ${state.message}",
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    style = TextStyle(color = Color.Red),
+                )
         }
 
         val user = (userState as? Success)?.user
 
-        val userPosts = user?.let {
-            when (val state = postState.value) {
-                is PostUiState.Success -> state.list.filter { post -> post.author == user.name }
-                else -> emptyList()
-            }
-        } ?: emptyList()
+        val userPosts =
+            user?.let {
+                when (val state = postState.value) {
+                    is PostUiState.Success -> state.list.filter { post -> post.author == user.name }
+                    else -> emptyList()
+                }
+            } ?: emptyList()
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -164,19 +173,21 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(20.dp))
         Spacer(
-            modifier = Modifier
-                .height(2.dp)
-                .fillMaxWidth()
-                .background(color = GrayLight)
+            modifier =
+                Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .background(color = GrayLight),
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
             when (val state = postState.value) {
                 is PostUiState.Error -> Text("Error: ${state.message}")
 
-                PostUiState.Loading -> Box(Modifier.fillMaxSize()) {
-                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-                }
+                PostUiState.Loading ->
+                    Box(Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
 
                 is PostUiState.Success -> {
                     if (userState is Success) {

@@ -121,7 +121,7 @@ dependencies {
     testImplementation(libs.google.dagger.hilt.android.testing)
 
     implementation(libs.androidx.datastore.preferences)
-    
+
     // Firebase
     implementation(platform(libs.firebase.bom))
     implementation("com.google.firebase:firebase-storage")

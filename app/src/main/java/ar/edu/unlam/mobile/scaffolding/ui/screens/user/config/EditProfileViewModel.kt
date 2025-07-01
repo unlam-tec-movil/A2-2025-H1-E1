@@ -14,78 +14,82 @@ import javax.inject.Inject
 
 @HiltViewModel
 class EditProfileViewModel
-@Inject
-constructor(
-    private val profileRepository: ProfileRespository,
-    private val firebaseStorageService: FirebaseStorageService,
-) : ViewModel() {
-    private val _user = MutableStateFlow<UserEditUiState>(UserEditUiState.Loading)
-    val user: StateFlow<UserEditUiState> get() = _user
+    @Inject
+    constructor(
+        private val profileRepository: ProfileRespository,
+        private val firebaseStorageService: FirebaseStorageService,
+    ) : ViewModel() {
+        private val _user = MutableStateFlow<UserEditUiState>(UserEditUiState.Loading)
+        val user: StateFlow<UserEditUiState> get() = _user
 
-    fun loadProfile(userToken: String) {
-        viewModelScope.launch {
-            try {
-                _user.value = UserEditUiState.Loading
-                val profile = profileRepository.getProfile(userToken)
-                _user.value = UserEditUiState.Success(profile)
-            } catch (e: Exception) {
-                val errorMsg =
-                    ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
-                _user.value = UserEditUiState.Error(errorMsg)
+        fun loadProfile(userToken: String) {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserEditUiState.Loading
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserEditUiState.Success(profile)
+                } catch (e: Exception) {
+                    val errorMsg =
+                        ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
+                    _user.value = UserEditUiState.Error(errorMsg)
+                }
+            }
+        }
+
+        fun updateUser(
+            name: String,
+            password: String,
+            avatarUrl: String,
+            userToken: String,
+        ) {
+            viewModelScope.launch {
+                try {
+                    profileRepository.updateProfile(name, password, avatarUrl, userToken)
+                    val profile = profileRepository.getProfile(userToken)
+                    _user.value = UserEditUiState.Success(profile)
+                } catch (e: Exception) {
+                    val errorMsg =
+                        ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
+                    _user.value = UserEditUiState.Error(errorMsg)
+                }
+            }
+        }
+
+        fun uploadAvatar(
+            imageUri: Uri,
+            userToken: String,
+        ) {
+            viewModelScope.launch {
+                try {
+                    _user.value = UserEditUiState.Uploading
+                    val downloadUrl = firebaseStorageService.uploadImage(imageUri)
+
+                    // Obtener el perfil actual para mantener los datos existentes
+                    val currentProfile = profileRepository.getProfile(userToken)
+
+                    // Actualizar solo el avatar
+                    profileRepository.updateProfile(
+                        name = currentProfile.name,
+                        // No cambiar la contraseña
+                        password = "",
+                        avatarUrl = downloadUrl,
+                        userToken = userToken,
+                    )
+
+                    // Recargar el perfil actualizado
+                    val updatedProfile = profileRepository.getProfile(userToken)
+                    _user.value = UserEditUiState.Success(updatedProfile)
+                } catch (e: Exception) {
+                    val errorMsg = "Error al subir el avatar: ${e.message}"
+                    _user.value = UserEditUiState.Error(errorMsg)
+                }
             }
         }
     }
-//
-    fun updateUser(
-        name: String,
-        password: String,
-        avatarUrl: String,
-        userToken: String,
-    ) {
-        viewModelScope.launch {
-            try {
-                profileRepository.updateProfile(name, password, avatarUrl, userToken)
-                val profile = profileRepository.getProfile(userToken)
-                _user.value = UserEditUiState.Success(profile)
-            } catch (e: Exception) {
-                val errorMsg =
-                    ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handleProfileError(e)
-                _user.value = UserEditUiState.Error(errorMsg)
-            }
-        }
-    }
-    
-    fun uploadAvatar(imageUri: Uri, userToken: String) {
-        viewModelScope.launch {
-            try {
-                _user.value = UserEditUiState.Uploading
-                val downloadUrl = firebaseStorageService.uploadImage(imageUri)
-                
-                // Obtener el perfil actual para mantener los datos existentes
-                val currentProfile = profileRepository.getProfile(userToken)
-                
-                // Actualizar solo el avatar
-                profileRepository.updateProfile(
-                    name = currentProfile.name,
-                    password = "", // No cambiar la contraseña
-                    avatarUrl = downloadUrl,
-                    userToken = userToken
-                )
-                
-                // Recargar el perfil actualizado
-                val updatedProfile = profileRepository.getProfile(userToken)
-                _user.value = UserEditUiState.Success(updatedProfile)
-            } catch (e: Exception) {
-                val errorMsg = "Error al subir el avatar: ${e.message}"
-                _user.value = UserEditUiState.Error(errorMsg)
-            }
-        }
-    }
-}
 
 sealed interface UserEditUiState {
     object Loading : UserEditUiState
-    
+
     object Uploading : UserEditUiState
 
     data class Success(
