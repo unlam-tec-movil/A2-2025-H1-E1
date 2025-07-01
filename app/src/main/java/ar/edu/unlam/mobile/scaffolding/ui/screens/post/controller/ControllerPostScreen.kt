@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -54,6 +55,7 @@ fun ControllerPostScreen(
 ) {
     var text by remember { mutableStateOf("") }
     val state by viewModel.newPost.collectAsStateWithLifecycle()
+    val draftSaved by viewModel.draftSaved.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
@@ -82,6 +84,10 @@ fun ControllerPostScreen(
         viewModel.newPost(text, token)
     }
 
+    val onSaveDraftClick = {
+        viewModel.saveDraft(text)
+    }
+
     val onTextChange = { newText: String ->
         text = newText
     }
@@ -99,12 +105,33 @@ fun ControllerPostScreen(
                         modifier = modifier.size(28.dp),
                     )
                 }
-                Button(
-                    colors = ButtonDefaults.buttonColors(Green),
-                    modifier = modifier.padding(end = 8.dp),
-                    onClick = onPostClick,
-                    enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
+                Row {
+                    Button(
+                        colors = ButtonDefaults.buttonColors(Color.Gray),
+                        modifier = modifier.padding(end = 8.dp),
+                        onClick = onSaveDraftClick,
+                        enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                    ) {
+                        Row {
+                            Icon(
+                                imageVector = Icons.Default.Save,
+                                contentDescription = "Guardar borrador",
+                                modifier = modifier.size(16.dp),
+                            )
+                            Text(
+                                "Guardar",
+                                fontWeight = FontWeight.Medium,
+                                modifier = modifier.padding(start = 4.dp),
+                            )
+                        }
+                    }
+                    Button(
+                        colors = ButtonDefaults.buttonColors(Green),
+                        modifier = modifier.padding(end = 8.dp),
+                        onClick = onPostClick,
+                        enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                    ) { Text("Publicar", fontWeight = FontWeight.Bold) }
+                }
             }
 
             Row {
@@ -154,6 +181,14 @@ fun ControllerPostScreen(
 
                 NewPostUiState.Loading -> CircularProgressIndicator()
                 else -> {}
+            }
+
+            if (draftSaved) {
+                Text(
+                    text = "Borrador guardado",
+                    color = Color.Green,
+                    modifier = modifier.padding(16.dp),
+                )
             }
         }
     }

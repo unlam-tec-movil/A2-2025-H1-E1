@@ -1,16 +1,15 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.Drafts
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -27,10 +26,10 @@ import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 
-
 @Composable
 fun BottomBar(controller: NavHostController) {
     val navBackStackEntry by controller.currentBackStackEntryAsState()
+
     Column {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
@@ -39,11 +38,10 @@ fun BottomBar(controller: NavHostController) {
         )
 
         NavigationBar(
-            modifier =
-                Modifier
-                    .height(60.dp)
-                    .padding(0.dp)
-                    .fillMaxWidth(),
+            modifier = Modifier
+                .height(60.dp)
+                .padding(0.dp)
+                .fillMaxWidth(),
             containerColor = Color.White
         ) {
             NavigationBarItem(
@@ -68,7 +66,7 @@ fun BottomBar(controller: NavHostController) {
                 icon = {
                     Icon(
                         imageVector = Icons.Default.Bookmark,
-                        contentDescription = "favorites",
+                        contentDescription = "Favorites",
                         tint = MaterialTheme.colorScheme.primary,
                     )
                 },
@@ -77,6 +75,23 @@ fun BottomBar(controller: NavHostController) {
                     indicatorColor = Color.LightGray,
                 )
             )
+
+            NavigationBarItem(
+                selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "drafts" } == true,
+                onClick = { controller.navigate("drafts") },
+                icon = {
+                    Icon(
+                        imageVector = Icons.Default.Drafts,
+                        contentDescription = "Drafts",
+                        tint = MaterialTheme.colorScheme.primary,
+                    )
+                },
+                modifier = Modifier.clip(CircleShape),
+                colors = NavigationBarItemDefaults.colors(
+                    indicatorColor = Color.LightGray,
+                )
+            )
+
             NavigationBarItem(
                 selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "user/{id}" } == true,
                 onClick = { controller.navigate("user/test") },
