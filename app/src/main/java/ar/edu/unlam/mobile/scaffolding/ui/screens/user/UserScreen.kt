@@ -23,21 +23,34 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState.*
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.AsyncImage
 
 @Composable
 fun UserScreen(
+    userId: String = "User",
     controller: NavHostController = rememberNavController(),
     viewModel: UserViewModel = hiltViewModel(),
+    feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
+
+    val postState = feedViewModel.posts.collectAsStateWithLifecycle()
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
+    val favoriteViewModel: FavoriteViewModel = hiltViewModel(homeBackStackEntry)
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
-    
+
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
             viewModel.loadProfile(token)
@@ -51,13 +64,13 @@ fun UserScreen(
                 .background(Color.White),
     ) {
         Image(
-        painter = painterResource(id = R.drawable.banner),
-        contentDescription = "Editar Perfil",
-        modifier =
-            Modifier
-                .height(250.dp)
-                .fillMaxWidth()
-    )
+            painter = painterResource(id = R.drawable.banner),
+            contentDescription = "Editar Perfil",
+            modifier =
+                Modifier
+                    .height(250.dp)
+                    .fillMaxWidth()
+        )
         Box(
             modifier =
                 Modifier
@@ -135,12 +148,31 @@ fun UserScreen(
             Spacer(modifier = Modifier.weight(1f))
         }
 
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .background(Color(0xFF4B877A)),
-        )
+        Column(modifier = Modifier.fillMaxSize()) {
+            when (val state = postState.value) {
+                is PostUiState.Error -> Text("Error: ${state.message}")
+                PostUiState.Loading -> {
+                    Box(Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+
+                is PostUiState.Success -> {
+
+                    if (userState is Success) {
+                        val user = (userState as Success).user
+                        val filteredPosts = state.list.filter { it.author == user.name }
+
+                        ListPost(
+                            posts = filteredPosts,
+                            navController = controller,
+                            favoriteViewModel = favoriteViewModel,
+                            onLikeClick = { feedViewModel.onLikeClicked(it) },
+                        )
+                    }
+                }
+            }
+        }
 
         Spacer(modifier = Modifier.height(30.dp))
         Spacer(modifier = Modifier.height(200.dp))
