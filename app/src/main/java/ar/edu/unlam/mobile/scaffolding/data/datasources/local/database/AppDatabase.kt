@@ -11,16 +11,16 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun favoriteDao(): FavoriteDao
 
     companion object {
-        @Volatile private var INSTANCE: AppDatabase? = null
+        @Volatile
+        private var instance: AppDatabase? = null
 
         fun getDatabase(context: Context): AppDatabase =
-            INSTANCE ?: synchronized(this) {
-                INSTANCE ?: Room.databaseBuilder(
+            instance ?: synchronized(this) {
+                instance ?: Room.databaseBuilder(
                     context.applicationContext,
                     AppDatabase::class.java,
-                    "favorites-db"
-                ).build().also { INSTANCE = it }
+                    "favorites-db",
+                ).build().also { instance = it }
             }
     }
 }
-
