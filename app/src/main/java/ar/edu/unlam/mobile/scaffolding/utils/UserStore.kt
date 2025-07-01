@@ -25,13 +25,16 @@ class UserStore(
             .map {
                 it[DATOS_USUARIO] ?: ""
             }
+
     val leerEstadoLogin: Flow<Boolean> =
         context.dataStore.data
             .map { it[IS_LOGGED_IN] ?: false }
 
+
     val leerTokenUsuario: Flow<String> =
         context.dataStore.data
             .map { it[USER_TOKEN] ?: "" }
+
 
     suspend fun escribirDatosUsuario(datosUsuario: String) {
         context.dataStore.edit {

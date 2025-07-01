@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -96,7 +97,7 @@ fun ButtonsPost(
                 )
             }
             Text(
-                text = "${formatLikes(post.likes)}",
+                text = formatLikes(post.likes),
                 color = if (post.liked) Green else Color.Gray,
                 fontWeight = FontWeight.Bold,
                 fontSize = 16.sp,
@@ -157,6 +158,7 @@ fun PostItem(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
+    currentUserId: String
 ) {
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
@@ -195,10 +197,16 @@ fun PostItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = { onPostClick() },
+        onClick = { onPostClick() }
     ) {
         Column(modifier) {
-            HeaderPostItem(post.author, post.avatarUrl)
+            HeaderPostItem(
+                userId = post.author,
+                currentUserId = currentUserId,
+                userName = post.author,
+                userImage = post.avatarUrl,
+                navController = navController,
+            )
             BodyPostItem(post.message)
             ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
         }
@@ -242,10 +250,22 @@ fun BodyPostItem(body: String) {
 
 @Composable
 fun HeaderPostItem(
+    userId: String,
+    currentUserId: String,
     userName: String,
     userImage: String?,
+    navController: NavController,
 ) {
-    Row(modifier = Modifier.fillMaxWidth()) {
+    Row(
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (userId != currentUserId) {
+                        navController.navigate("user/$userId")
+                    }
+                },
+    ) {
         AvatarItem(avatarUrl = userImage, size = 50)
         Column(
             modifier =
@@ -264,7 +284,7 @@ fun HeaderPostItem(
 @Composable
 fun UserName(userName: String) {
     Text(
-        text = "$userName",
+        text = userName,
         textAlign = TextAlign.Start,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
@@ -278,6 +298,7 @@ fun ListPost(
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
     modifier: Modifier?,
+    currentUserId: String
 ) {
     LazyColumn(
         modifier =
@@ -292,6 +313,7 @@ fun ListPost(
                 navController,
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = onLikeClick,
+                currentUserId = currentUserId
             )
             Spacer(modifier = Modifier.height(5.dp))
         }

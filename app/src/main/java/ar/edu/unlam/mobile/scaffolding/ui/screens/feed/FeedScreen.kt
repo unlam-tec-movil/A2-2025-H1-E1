@@ -18,18 +18,20 @@ import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
+import androidx.compose.runtime.getValue
 
 @Composable
 fun FeedScreen(
     modifier: Modifier,
     controller: NavHostController,
-    viewModel: FeedViewModel = hiltViewModel(),
+    viewModel: FeedViewModel = hiltViewModel()
 ) {
     val postState = viewModel.posts.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
+    val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -60,13 +62,14 @@ fun FeedScreen(
                     favoriteViewModel = favoriteViewModel,
                     onLikeClick = { viewModel.onLikeClicked(it) },
                     modifier,
+                    currentUserId = currentUserId
                 )
             }
         }
     }
 }
 
-//
+
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣀⣯⣾⣿⡿⢟⣿⠛⠉⠩⠁⠀⠀⡟⠁⠀⣀⠀⠀⠈⠙⠿⣿⣿⣿⣿⣿⣿⣿⣿⣦⠀⠀⠀⠀⠀⠀⠈⠢⣄⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⣴⣾⡿⠟⠁⣐⡮⠁⠀⡐⠀⠀⠀⠀⢰⣅⠈⠀⠒⠄⡀⠀⠀⠀⠙⠿⣿⣿⣿⣿⣿⣿⣷⣄⠀⠀⠀⠀ ⠀⠀⠐⠆⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀
 // ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⣰⡿⠋⠀⠀⠀⡬⠁⠀⡐⠀⠀⠀⠀⠀⠀⠟⢂⠀⠀⠀⠈⠂⡀⠀⠀⠀⠈⠙⢿⣿⣻⣿⣿⣿⣷⡀⠀⠀⠀⠀  ⠀⠈⢳⡀⠀⠀⠀⠀⠀⠀⠀⠀

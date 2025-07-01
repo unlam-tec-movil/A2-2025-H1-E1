@@ -168,7 +168,7 @@ fun MainScreen() {
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(controller)
+                UserScreen(userId = id, controller)
             }
 
             composable(
