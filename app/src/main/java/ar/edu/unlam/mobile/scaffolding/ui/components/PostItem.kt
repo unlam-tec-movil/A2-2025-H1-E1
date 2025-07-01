@@ -123,7 +123,10 @@ fun ButtonsPost(
             horizontalArrangement = Arrangement.End,
         ) {
             IconButton(
-                onClick = { favoriteViewModel.toggleFavorite(post) },
+                onClick = {
+                    favoriteViewModel.toggleFavorite(post)
+                    navController.navigate("favorite")
+                },
             ) {
                 Icon(
                     Icons.Default.Bookmark,
