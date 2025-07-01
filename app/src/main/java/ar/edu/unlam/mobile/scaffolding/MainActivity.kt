@@ -161,6 +161,7 @@ fun MainScreen() {
                 DetailPostScreen(controller, idPost)
             }
 
+            //user
             composable(
                 route = "user/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
