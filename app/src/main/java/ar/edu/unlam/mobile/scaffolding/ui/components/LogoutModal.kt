@@ -17,16 +17,19 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkRed
 
 @Composable
 fun LogoutModal(
@@ -66,7 +69,7 @@ fun LogoutModal(
                     contentDescription = "Cerrar sesión",
                     modifier =
                         Modifier.size(48.dp),
-                    tint = Color.Red,
+                    tint = DarkRed,
                 )
 
                 Spacer(
@@ -102,15 +105,11 @@ fun LogoutModal(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp),
                 ) {
-                    Button(
+                    TextButton(
                         onClick = onDismiss,
                         modifier = Modifier.weight(1f),
-                        colors =
-                            ButtonDefaults.buttonColors(
-                                containerColor = Color.Gray,
-                            ),
                     ) {
-                        Text("Cancelar")
+                        Text(text = "Cancelar", color = Color.Gray)
                     }
 
                     Button(
@@ -118,10 +117,17 @@ fun LogoutModal(
                         modifier = Modifier.weight(1f),
                         colors =
                             ButtonDefaults.buttonColors(
-                                containerColor = Color.Red,
+                                containerColor = DarkRed,
                             ),
                     ) {
-                        Text("Cerrar Sesión")
+                        Text(
+                            text = "Cerrar",
+                            textAlign = TextAlign.Center,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            fontSize = 14.sp,
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
             }

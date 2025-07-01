@@ -10,6 +10,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -26,7 +29,6 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.R
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
@@ -91,22 +93,14 @@ fun TopBar(
                 onActionClick()
             },
         ) {
-            when (val state = userState) {
-                is UserUiState.Loading -> {
-                    AvatarItem(size = 50)
-                }
-
-                is UserUiState.Success -> {
-                    AvatarItem(avatarUrl = state.user.avatarUrl, size = 50)
-                }
-
-                is UserUiState.Error -> {
-                    AvatarItem(size = 50)
-                }
-            }
+            Icon(
+                imageVector = Icons.Default.Logout,
+                contentDescription = "Cerrar sesión",
+                tint = Color.White,
+                modifier = Modifier.size(30.dp),
+            )
         }
     }
-
     // LogoutModal
     if (showLogoutModal) {
         LogoutModal(

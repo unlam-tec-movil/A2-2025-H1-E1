@@ -1,9 +1,13 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -12,6 +16,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -42,6 +47,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
@@ -54,6 +60,7 @@ fun ControllerPostScreen(
 ) {
     var text by remember { mutableStateOf("") }
     val state by viewModel.newPost.collectAsStateWithLifecycle()
+    val draftSaved by viewModel.draftSaved.collectAsStateWithLifecycle()
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
@@ -82,78 +89,124 @@ fun ControllerPostScreen(
         viewModel.newPost(text, token)
     }
 
+    val onSaveDraftClick = {
+        viewModel.saveDraft(text)
+    }
+
     val onTextChange = { newText: String ->
         text = newText
     }
 
     Scaffold { innerPading ->
-        Column(modifier.padding(innerPading)) {
-            Row(
-                modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.SpaceBetween,
-            ) {
-                IconButton(onClick = onCloseClick) {
-                    Icon(
-                        imageVector = (Icons.Default.Close),
-                        contentDescription = null,
-                        modifier = modifier.size(28.dp),
-                    )
-                }
-                Button(
-                    colors = ButtonDefaults.buttonColors(Green),
-                    modifier = modifier.padding(end = 8.dp),
-                    onClick = onPostClick,
-                    enabled = text.isNotBlank() && state != NewPostUiState.Loading,
-                ) { Text("Publicar", fontWeight = FontWeight.Bold) }
-            }
-
-            Row {
-                when (val profileStateValue = userState) {
-                    is UserUiState.Loading -> {
-                        AvatarItem(size = 50)
+        Box(
+            modifier =
+                modifier
+                    .fillMaxSize()
+                    .background(Color.White),
+        ) {
+            Column(modifier.padding(innerPading)) {
+                Row(
+                    modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                ) {
+                    IconButton(onClick = onCloseClick) {
+                        Icon(
+                            imageVector = (Icons.Default.Close),
+                            contentDescription = null,
+                            modifier = modifier.size(28.dp),
+                        )
                     }
-
-                    is UserUiState.Success -> {
-                        AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
-                    }
-
-                    is UserUiState.Error -> {
-                        AvatarItem(size = 50)
-                    }
-                }
-                BasicTextField(
-                    value = text,
-                    onValueChange = { onTextChange(it) },
-                    modifier =
-                        modifier
-                            .fillMaxWidth()
-                            .height(150.dp)
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 12.dp, top = 20.dp, end = 12.dp)
-                            .clip(RoundedCornerShape(8.dp)),
-                    textStyle =
-                        TextStyle(
-                            color = Color.Black,
-                            fontSize = 18.sp,
-                        ),
-                    cursorBrush = SolidColor(Color.Gray),
-                    decorationBox = { innerTextField ->
-                        if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
+                    Row {
+                        Button(
+                            colors = ButtonDefaults.buttonColors(Color.Gray),
+                            modifier = modifier.padding(end = 8.dp),
+                            onClick = onSaveDraftClick,
+                            enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                        ) {
+                            Row {
+                                Icon(
+                                    imageVector = Icons.Default.Save,
+                                    contentDescription = "Guardar borrador",
+                                    modifier = modifier.size(16.dp),
+                                )
+                                Text(
+                                    "Guardar",
+                                    fontWeight = FontWeight.Medium,
+                                    modifier = modifier.padding(start = 4.dp),
+                                )
+                            }
                         }
-                        innerTextField()
-                    },
-                )
-            }
-            when (val currentState = state) {
-                is NewPostUiState.Error ->
-                    Text(
-                        text = currentState.message,
-                        color = Color.Red,
-                    )
+                        Button(
+                            colors = ButtonDefaults.buttonColors(Green),
+                            modifier = modifier.padding(end = 8.dp),
+                            onClick = onPostClick,
+                            enabled = text.isNotBlank() && state != NewPostUiState.Loading,
+                        ) { Text("Publicar", fontWeight = FontWeight.Bold) }
+                    }
+                }
+                Spacer(modifier = Modifier.height(10.dp))
 
-                NewPostUiState.Loading -> CircularProgressIndicator()
-                else -> {}
+                Row(
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 12.dp),
+                ) {
+                    when (val profileStateValue = userState) {
+                        is UserUiState.Loading -> {
+                            AvatarItem(size = 50)
+                        }
+
+                        is UserUiState.Success -> {
+                            AvatarItem(avatarUrl = profileStateValue.user.avatarUrl, size = 50)
+                        }
+
+                        is UserUiState.Error -> {
+                            AvatarItem(size = 50)
+                        }
+                    }
+                    BasicTextField(
+                        value = text,
+                        onValueChange = { onTextChange(it) },
+                        modifier =
+                            modifier
+                                .fillMaxWidth()
+                                .height(150.dp)
+                                .align(Alignment.CenterVertically)
+                                .padding(start = 12.dp, top = 20.dp, end = 12.dp)
+                                .clip(RoundedCornerShape(8.dp)),
+                        textStyle =
+                            TextStyle(
+                                color = Color.Black,
+                                fontSize = 18.sp,
+                            ),
+                        cursorBrush = SolidColor(Color.Gray),
+                        decorationBox = { innerTextField ->
+                            if (text.isEmpty()) {
+                                Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
+                            }
+                            innerTextField()
+                        },
+                    )
+                }
+                when (val currentState = state) {
+                    is NewPostUiState.Error ->
+                        Text(
+                            text = currentState.message,
+                            color = Color.Red,
+                        )
+
+                    NewPostUiState.Loading -> CircularProgressIndicator()
+                    else -> {}
+                }
+
+                if (draftSaved) {
+                    Text(
+                        text = "Borrador guardado",
+                        color = DarkGreen,
+                        modifier = modifier.padding(16.dp),
+                    )
+                }
             }
         }
     }
@@ -206,7 +259,7 @@ fun ControllerPostScreenPreview() {
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
+                            Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },

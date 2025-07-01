@@ -1,14 +1,14 @@
 [versions]
-agp = "8.9.2"
+agp = "8.10.1"
 datastorePreferences = "1.1.7"
 kotlin = "2.0.20"
-coreKtx = "1.13.1"
+coreKtx = "1.16.0"
 junit = "4.13.2"
 junitVersion = "1.2.1"
 espressoCore = "3.6.1"
-lifecycleRuntimeKtx = "2.8.5"
-activityCompose = "1.9.2"
-composeBom = "2024.09.00"
+lifecycleRuntimeKtx = "2.9.1"
+activityCompose = "1.10.1"
+composeBom = "2025.06.01"
 dagger = "2.51.1"
 ksp = "2.0.20-1.0.24"
 androidXHilt = "1.2.0"
@@ -16,6 +16,8 @@ kover = "0.7.6"
 ktlint = "12.1.0"
 firebaseAppdistributionGradle = "5.1.1"
 firebaseBom = "32.8.0"
+roomCommonJvm = "2.7.2"
+roomRuntimeAndroid = "2.7.2"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -40,9 +42,11 @@ google-dagger-hilt-android-compiler = { group = "com.google.dagger", name = "hil
 google-dagger-hilt-android-testing = { group = "com.google.dagger", name = "hilt-android-testing", version.ref = "dagger" }
 firebase-appdistribution-gradle = { group = "com.google.firebase", name = "firebase-appdistribution-gradle", version.ref = "firebaseAppdistributionGradle" }
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+androidx-room-common-jvm = { group = "androidx.room", name = "room-common-jvm", version.ref = "roomCommonJvm" }
+androidx-room-runtime-android = { group = "androidx.room", name = "room-runtime-android", version.ref = "roomRuntimeAndroid" }
 
 [plugins]
-androidApplication = { id = "com.android.application", version = "8.9.2" }
+androidApplication = { id = "com.android.application", version.ref = "agp" }
 jetbrainsKotlinAndroid = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 daggerHiltAndroid = { id = "com.google.dagger.hilt.android", version.ref = "dagger" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

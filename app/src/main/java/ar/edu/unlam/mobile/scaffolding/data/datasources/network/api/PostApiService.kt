@@ -22,7 +22,7 @@ interface PostApiService {
         @Path("tuit_id") tuitId: Int,
         @Header("Authorization") userToken: String,
         @Header("Application-Token") token: String,
-    ): List<Tuit>
+    ): Tuit
 
     @POST("/api/v1/me/tuits/{tuit_id}/likes")
     suspend fun likeTuit(

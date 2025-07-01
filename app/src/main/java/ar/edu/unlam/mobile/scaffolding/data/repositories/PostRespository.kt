@@ -28,7 +28,7 @@ class PostRespository
         suspend fun getTuits(
             id: Int,
             userToken: String,
-        ): List<Tuit> =
+        ): Tuit =
             postApiService.getTuits(
                 tuitId = id,
                 userToken = userToken,

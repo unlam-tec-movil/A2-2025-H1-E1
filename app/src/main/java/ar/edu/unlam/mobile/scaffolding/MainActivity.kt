@@ -33,6 +33,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft.DraftContainerScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
@@ -174,6 +175,16 @@ fun MainScreen() {
                 "newPost",
             ) { backStackEntry ->
                 ControllerPostScreen(navigateToHome = { controller.navigate("home") })
+            }
+
+            composable("drafts") {
+                DraftContainerScreen(
+                    onNavigateBack = { controller.navigate("home") },
+                    onEditDraft = { draft ->
+                        // TODO: Navegar a la pantalla de crear post con el texto del borrador
+                        controller.navigate("newPost")
+                    },
+                )
             }
         }
     }

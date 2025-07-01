@@ -29,24 +29,39 @@ jobs:
         continue-on-error: true
       - uses: yutailang0119/action-ktlint@v4
         with:
-          report-path: build/*.xml # Support glob patterns by https://www.npmjs.com/package/@actions/glob
-        continue-on-error: false # If annotations contain error of severity, action-ktlint exit 1.
+          report-path: build/*.xml
+        continue-on-error: false
+
   android-lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 1
+
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
-      - name: set up JDK
+
+      - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 17
           cache: gradle
-      - run: ./gradlew lint
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          ndk: false
+
+      - name: Generate local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
+      - name: Run Android Lint
+        run: ./gradlew lint
+
       - uses: yutailang0119/action-android-lint@v3
         with:
-          report-path: build/reports/*.xml # Support glob patterns by https://www.npmjs.com/package/@actions/glob
-        continue-on-error: false # If annotations contain error of severity, action-android-lint exit 1.
+          report-path: build/reports/*.xml
+        continue-on-error: false
