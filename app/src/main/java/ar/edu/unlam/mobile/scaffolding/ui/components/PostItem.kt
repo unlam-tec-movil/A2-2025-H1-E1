@@ -57,9 +57,8 @@ fun ButtonsPost(
     val isBookmarked = favoriteViewModel.isFavorite(post.id)
     val currentBackStackEntry = navController.currentBackStackEntry
     val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
-
-
-
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
 
     fun formatLikes(likes: Long): String {
@@ -112,7 +111,7 @@ fun ButtonsPost(
             horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(
-                onClick = { if (currentPostId != post.id) {
+                onClick = { if (currentPostId != post.id && !isInCommentsScreen) {
                     navController.navigate("comments/${post.id}")
                 }
                 },
@@ -163,6 +162,9 @@ fun PostItem(
     val scope = rememberCoroutineScope()
     val currentBackStackEntry = navController.currentBackStackEntry
     val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
+
 
     fun onPostClick() {
         if (isCooldown) return
@@ -173,7 +175,7 @@ fun PostItem(
                 // Espera a ver si es 1 solo click o 2
                 scope.launch {
                     delay(300L)
-                    if (clickCount == 1 && currentPostId != post.id ) {
+                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen ) {
 
                         navController.navigate("comments/${post.id}")
                     } else if (clickCount == 2) {
