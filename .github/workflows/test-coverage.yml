@@ -9,15 +9,28 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Set up JDK
         uses: actions/setup-java@v3
         with:
           distribution: zulu
           java-version: 17
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v2
+        with:
+          api-level: 33
+          ndk: false
+
+      - name: Generate local.properties
+        run: echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+
       - name: Set up Gradle
         uses: gradle/gradle-build-action@v2
+
       - name: Change wrapper permissions
         run: chmod +x ./gradlew
+
       - name: Generate kover coverage report
         run: ./gradlew koverXmlReportRelease
 

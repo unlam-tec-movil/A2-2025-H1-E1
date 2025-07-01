@@ -14,7 +14,7 @@ import javax.inject.Inject
 class FavoriteViewModel
     @Inject
     constructor(
-        private val repository: FavoriteRepository,
+        private val repository: FavoriteRepository
     ) : ViewModel() {
         private val _favorites = MutableStateFlow<List<Tuit>>(emptyList())
         val favorites: StateFlow<List<Tuit>> = _favorites.asStateFlow()
