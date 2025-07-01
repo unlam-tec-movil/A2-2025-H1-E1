@@ -8,6 +8,7 @@ plugins {
     alias(libs.plugins.kover)
     alias(libs.plugins.ktlint)
     alias(libs.plugins.kotlin.compose.compiler)
+    alias(libs.plugins.googleServices)
 }
 
 val p = Properties()
@@ -129,4 +130,9 @@ dependencies {
     testImplementation(libs.google.dagger.hilt.android.testing)
 
     implementation(libs.androidx.datastore.preferences)
+    
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation("com.google.firebase:firebase-storage")
+    implementation("com.google.firebase:firebase-auth")
 }

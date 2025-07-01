@@ -26,7 +26,8 @@ constructor(
         avatarUrl: String,
         userToken: String,
     ) = profileApiService.updateProfile(
-        token = userToken,
+        userToken = userToken,
+        token = applicationToken,
         request = ProfileRequest(name, password, avatarUrl),
     )
 

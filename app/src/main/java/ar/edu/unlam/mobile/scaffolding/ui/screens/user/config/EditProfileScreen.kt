@@ -56,6 +56,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.UserEditUiState.Success
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
+import coil.compose.AsyncImage
 
 @Composable
 fun Edit(
@@ -69,6 +70,7 @@ fun Edit(
     val userState by viewModel.user.collectAsStateWithLifecycle()
     var name by rememberSaveable { mutableStateOf("") }
     var userUrl by rememberSaveable { mutableStateOf("") }
+    var shouldNavigate by remember { mutableStateOf(false) }
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -82,7 +84,7 @@ fun Edit(
         )
     }
 
-    var imageUri by remember { mutableStateOf<Uri?>(null) }
+    var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val launcher =
         rememberLauncherForActivityResult(
             contract = ActivityResultContracts.GetContent(),
@@ -114,15 +116,24 @@ fun Edit(
 
             Button(
                 onClick = {
-                    viewModel.updateUser(name, bio, userUrl, token)
-                    controller.navigate("user/{id}")
+                    val currentImageUri = imageUri
+                    if (currentImageUri != null) {
+                        viewModel.uploadAvatar(currentImageUri, token)
+                    } else {
+                        viewModel.updateUser(name, bio, userUrl, token)
+                    }
+                    shouldNavigate = true
                 },
+                enabled = userState !is UserEditUiState.Loading && userState !is UserEditUiState.Uploading,
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
                         .clip(RoundedCornerShape(20.dp)),
                 shape = RoundedCornerShape(20.dp),
-                colors = ButtonDefaults.buttonColors(containerColor = Color(0xFF386A5F)),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = Color(0xFF386A5F),
+                    disabledContainerColor = Color.Gray
+                ),
             ) {
                 Text("Guardar", color = Color.White)
             }
@@ -153,30 +164,54 @@ fun Edit(
                     )
                 }
 
-                Image(
-                    painter = painterResource(id = R.drawable.profile_photo),
-                    contentDescription = "Profile photo",
-                    modifier =
-                        Modifier
-                            .size(95.dp)
-                            .offset(y = 80.dp)
-                            .clip(CircleShape)
-                            .border(0.1.dp, Color.White, CircleShape)
-                            .clickable(onClick = { launcher.launch("image/*") }),
-                )
+                // Mostrar imagen actual del usuario o imagen por defecto
+                when (val state = userState) {
+                    is UserEditUiState.Success -> {
+                        val currentImageUri = imageUri
+                        if (currentImageUri != null) {
+                            // Mostrar imagen seleccionada
+                            Image(
+                                painter = rememberAsyncImagePainter(currentImageUri),
+                                contentDescription = "Imagen seleccionada",
+                                modifier =
+                                    Modifier
+                                        .size(95.dp)
+                                        .offset(y = 80.dp)
+                                        .clip(CircleShape)
+                                        .border(0.1.dp, Color.White, CircleShape)
+                                        .clickable(onClick = { launcher.launch("image/*") }),
+                            )
+                        } else {
+                            // Mostrar avatar actual del usuario
+                            AsyncImage(
+                                model = state.user.avatarUrl.ifEmpty { R.drawable.profile_photo },
+                                contentDescription = "Avatar del usuario",
+                                modifier =
+                                    Modifier
+                                        .size(95.dp)
+                                        .offset(y = 80.dp)
+                                        .clip(CircleShape)
+                                        .border(0.1.dp, Color.White, CircleShape)
+                                        .clickable(onClick = { launcher.launch("image/*") }),
+                            )
+                        }
+                    }
+                    else -> {
+                        Image(
+                            painter = painterResource(id = R.drawable.profile_photo),
+                            contentDescription = "Profile photo",
+                            modifier =
+                                Modifier
+                                    .size(95.dp)
+                                    .offset(y = 80.dp)
+                                    .clip(CircleShape)
+                                    .border(0.1.dp, Color.White, CircleShape)
+                                    .clickable(onClick = { launcher.launch("image/*") }),
+                        )
+                    }
+                }
 
-                /*  imageUri?.let {
-                      Image(
-                          painter = rememberAsyncImagePainter(it),
-                          contentDescription = "Imagen seleccionada",
-                          modifier =
-                              Modifier
-                                  .size(200.dp)
-                                  .clip(CircleShape)
-                                  .border(2.dp, Color.Gray, CircleShape),
-                      )
-                  }
-                  */
+                
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
@@ -202,6 +237,20 @@ fun Edit(
                     CircularProgressIndicator(
                         modifier = Modifier.align(Alignment.CenterHorizontally),
                     )
+                }
+                
+                is UserEditUiState.Uploading -> {
+                    Column(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator()
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Text(
+                            text = "Subiendo avatar...",
+                            style = TextStyle(color = Color.Gray),
+                        )
+                    }
                 }
 
                 is UserEditUiState.Error -> {
@@ -286,6 +335,14 @@ fun Edit(
                     }
                 }
             }
+        }
+    }
+
+    // LaunchedEffect para navegar solo cuando el perfil se refresca correctamente
+    LaunchedEffect(userState, shouldNavigate) {
+        if (shouldNavigate && userState is UserEditUiState.Success) {
+            shouldNavigate = false
+            controller.navigate("user/{id}")
         }
     }
 }
