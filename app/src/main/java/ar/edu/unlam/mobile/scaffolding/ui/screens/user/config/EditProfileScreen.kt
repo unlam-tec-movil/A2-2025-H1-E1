@@ -37,6 +37,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -44,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -51,6 +53,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.UserEditUiState.Success
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.rememberAsyncImagePainter
 
@@ -64,30 +67,19 @@ fun Edit(
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
     val userState by viewModel.user.collectAsStateWithLifecycle()
-    var name = ""
-
-    when (val state = userState) {
-        is UserEditUiState.Success -> {
-            val user = state.user
-             name = user.name
-            val avatarUrl = user.avatarUrl
-        }
-        is UserEditUiState.Error ->{
-        }
-        UserEditUiState.Loading -> {}
-
-    }
+    val state = userState
+    var name by rememberSaveable { mutableStateOf("") }
+    var userUrl by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
             viewModel.loadProfile(token)
-
         }
     }
 
     var bio by remember {
         mutableStateOf(
-            "Aadsbsa sadhga ed ahdfba chenbfsb ahvharbgrh ansbdbdhff hdbfc b fdvnbajhrew e regbgrqwgrr fgjkaerjnuoj",
+            "meomeo"
         )
     }
 
@@ -123,7 +115,7 @@ fun Edit(
 
             Button(
                 onClick = {
-                    viewModel.updateUser(name, "", imageUri?.toString() ?: "", token)
+                    viewModel.updateUser(name, bio, userUrl, token)
                     controller.navigate("user/{id}")
                 },
                 modifier =
@@ -174,18 +166,18 @@ fun Edit(
                             .clickable(onClick = { launcher.launch("image/*") }),
                 )
 
-              /*  imageUri?.let {
-                    Image(
-                        painter = rememberAsyncImagePainter(it),
-                        contentDescription = "Imagen seleccionada",
-                        modifier =
-                            Modifier
-                                .size(200.dp)
-                                .clip(CircleShape)
-                                .border(2.dp, Color.Gray, CircleShape),
-                    )
-                }
-                */
+                /*  imageUri?.let {
+                      Image(
+                          painter = rememberAsyncImagePainter(it),
+                          contentDescription = "Imagen seleccionada",
+                          modifier =
+                              Modifier
+                                  .size(200.dp)
+                                  .clip(CircleShape)
+                                  .border(2.dp, Color.Gray, CircleShape),
+                      )
+                  }
+                  */
                 Icon(
                     imageVector = Icons.Default.PhotoCamera,
                     contentDescription = "Cambiar banner",
@@ -196,7 +188,6 @@ fun Edit(
                             .offset(y = 80.dp),
                 )
             }
-
             Spacer(modifier = Modifier.height(32.dp))
         }
 
@@ -208,86 +199,93 @@ fun Edit(
                     .padding(16.dp),
         ) {
             when (val state = userState) {
-                is UserEditUiState.Success -> {
-                    val user = state.user
-                    name = user.name
+                is UserEditUiState.Loading -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                    )
                 }
 
-                    is UserEditUiState.Loading -> {
-                        CircularProgressIndicator(
-                            modifier = Modifier.align(Alignment.CenterHorizontally),
+                is UserEditUiState.Error -> {
+                    Text(
+                        text = "Error: ${state.message}",
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
+                        style = TextStyle(color = Color.Red),
+                    )
+                }
+
+                is Success -> {
+                    //var userUrl = user.avatarUrl
+                    var userUrl1 by rememberSaveable { mutableStateOf(state.user.avatarUrl) }
+                    userUrl = userUrl1
+                    var nam by rememberSaveable { mutableStateOf(state.user.name) }
+                    name = nam
+                    Text(
+                        text = "Usuario",
+                        style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                    )
+                    TextField(
+                        value = userUrl1,
+                        onValueChange = { userUrl1 = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color(0xFF386A5F),
+                                disabledTextColor = LocalContentColor.current,
+                                disabledLabelColor = Color.Gray,
+                                focusedIndicatorColor = Color.Gray,
+                                unfocusedIndicatorColor = Color.Gray,
+                                unfocusedContainerColor = Color.White,
+                                focusedLabelColor = Color.White,
+                            ),
+                    )
+
+                    Text(
+                        text = "Nombre",
+                        style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                    )
+                    TextField(
+                        value = nam,
+                        onValueChange = { nam = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color(0xFF386A5F),
+                                disabledTextColor = LocalContentColor.current,
+                                disabledLabelColor = Color.Gray,
+                                focusedIndicatorColor = Color.Gray,
+                                unfocusedIndicatorColor = Color.Gray,
+                                unfocusedContainerColor = Color.White,
+                                focusedLabelColor = Color.White,
+                            ),
+                    )
+
+                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
+                        Text(
+                            text = "Biografía",
+                            style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                        )
+                        TextField(
+                            value = bio,
+                            onValueChange = { bio = it },
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .height(100.dp),
+                            colors =
+                                TextFieldDefaults.colors(
+                                    unfocusedTextColor = Color(0xFF386A5F),
+                                    disabledTextColor = LocalContentColor.current,
+                                    disabledLabelColor = Color.Gray,
+                                    focusedIndicatorColor = Color.Gray,
+                                    unfocusedIndicatorColor = Color.Gray,
+                                    unfocusedContainerColor = Color.White,
+                                    focusedLabelColor = Color.White,
+                                ),
                         )
                     }
-
-                is UserEditUiState.Error -> {}
-            }
-
-
-            Text(
-                text = "Usuario",
-                style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
-            )
-            TextField(
-                value = name,
-                onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    TextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color(0xFF386A5F),
-                        disabledTextColor = LocalContentColor.current,
-                        disabledLabelColor = Color.Gray,
-                        focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.Gray,
-                        unfocusedContainerColor = Color.White,
-                        focusedLabelColor = Color.White,
-                    ),
-            )
-
-            Text(
-                text = "Nombre",
-                style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
-            )
-            TextField(
-                value = name,
-                onValueChange = { name = it },
-                modifier = Modifier.fillMaxWidth(),
-                colors =
-                    TextFieldDefaults.colors(
-                        focusedTextColor = Color.Black,
-                        unfocusedTextColor = Color(0xFF386A5F),
-                        disabledTextColor = LocalContentColor.current,
-                        disabledLabelColor = Color.Gray,
-                        focusedIndicatorColor = Color.Gray,
-                        unfocusedIndicatorColor = Color.Gray,
-                        unfocusedContainerColor = Color.White,
-                        focusedLabelColor = Color.White,
-                    ),
-            )
-
-            Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                Text(
-                    text = "Biografía",
-                    style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
-                )
-                TextField(
-                    value = bio,
-                    onValueChange = { bio = it },
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .height(100.dp),
-                    colors =
-                        TextFieldDefaults.colors(
-                            unfocusedTextColor = Color(0xFF386A5F),
-                            disabledTextColor = LocalContentColor.current,
-                            disabledLabelColor = Color.Gray,
-                            focusedIndicatorColor = Color.Gray,
-                            unfocusedIndicatorColor = Color.Gray,
-                            unfocusedContainerColor = Color.White,
-                            focusedLabelColor = Color.White,
-                        ),
-                )
+                }
             }
         }
     }

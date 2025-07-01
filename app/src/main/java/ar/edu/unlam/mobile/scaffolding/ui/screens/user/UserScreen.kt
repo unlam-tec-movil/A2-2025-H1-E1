@@ -51,14 +51,14 @@ fun UserScreen(
                 .fillMaxSize()
                 .background(Color.White),
     ) {
-        Box(
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color(0xFF4B877A)),
-        )
-
+        Image(
+        painter = painterResource(id = R.drawable.banner),
+        contentDescription = "Editar Perfil",
+        modifier =
+            Modifier
+                .height(250.dp)
+                .fillMaxWidth()
+    )
         Box(
             modifier =
                 Modifier
@@ -122,21 +122,18 @@ fun UserScreen(
 
         Spacer(modifier = Modifier.height(30.dp))
         Row {
-            Spacer(modifier = Modifier.width(50.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text("3", modifier = Modifier.align(Alignment.CenterHorizontally))
                 Text("Post", color = Color.Gray)
             }
-            Spacer(modifier = Modifier.width(70.dp))
-            Column {
-                Text("20", modifier = Modifier.align(Alignment.CenterHorizontally))
-                Text("Seguidores", color = Color.Gray)
-            }
-            Spacer(modifier = Modifier.width(70.dp))
+
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text("453", modifier = Modifier.align(Alignment.CenterHorizontally))
                 Text("Seguidos", color = Color.Gray)
             }
+            Spacer(modifier = Modifier.weight(1f))
         }
 
         Box(
