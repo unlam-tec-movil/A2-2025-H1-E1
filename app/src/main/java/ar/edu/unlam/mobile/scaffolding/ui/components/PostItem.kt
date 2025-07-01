@@ -273,16 +273,18 @@ fun HeaderPostItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Date(date: String) {
-    val formattedDate = try {
-        val zonedDateTime = ZonedDateTime.parse(date)
-        val formatter = DateTimeFormatter.ofPattern(
-            "EEEE, d 'de' MMMM 'de' yyyy",
-            Locale("es")
-        )
-        zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
-    } catch (e: Exception) {
-        date
-    }
+    val formattedDate =
+        try {
+            val zonedDateTime = ZonedDateTime.parse(date)
+            val formatter =
+                DateTimeFormatter.ofPattern(
+                    "EEEE, d 'de' MMMM 'de' yyyy",
+                    Locale("es"),
+                )
+            zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
+        } catch (e: Exception) {
+            date
+        }
 
     Text(
         text = formattedDate,
@@ -291,7 +293,6 @@ fun Date(date: String) {
         color = Color.Gray,
     )
 }
-
 
 @Composable
 fun UserName(userName: String) {
