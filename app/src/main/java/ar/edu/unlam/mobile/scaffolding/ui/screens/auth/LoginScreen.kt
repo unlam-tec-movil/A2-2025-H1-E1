@@ -23,9 +23,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -64,7 +61,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
-import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.utils.Resource
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import kotlinx.coroutines.launch
@@ -230,8 +226,6 @@ fun LoginCard(
     onLoginClick: () -> Unit,
     navController: NavController,
 ) {
-
-
     Column(
         modifier =
             Modifier
@@ -254,7 +248,7 @@ fun LoginCard(
                 Icon(
                     imageVector = Icons.Default.Person,
                     contentDescription = "E-mail",
-                    tint = Color.Gray
+                    tint = Color.Gray,
                 )
             },
             onValueChange = onUsernameChange,
@@ -271,11 +265,10 @@ fun LoginCard(
             keyboardActions = KeyboardActions(),
             trailingIcon = {
                 IconButton(onClick = { isVisible = !isVisible }) {
-
                     Icon(
                         imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                         contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 }
             },

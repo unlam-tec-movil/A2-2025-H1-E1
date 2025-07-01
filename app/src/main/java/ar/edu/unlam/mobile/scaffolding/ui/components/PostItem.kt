@@ -60,7 +60,6 @@ fun ButtonsPost(
     val currentRoute = navController.currentBackStackEntry?.destination?.route
     val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
-
     fun formatLikes(likes: Long): String {
         return when {
             likes >= 100_000_000_000 -> "∞"
@@ -111,18 +110,18 @@ fun ButtonsPost(
             horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(
-                onClick = { if (currentPostId != post.id && !isInCommentsScreen) {
-                    navController.navigate("comments/${post.id}")
-                }
+                onClick = {
+                    if (currentPostId != post.id && !isInCommentsScreen) {
+                        navController.navigate("comments/${post.id}")
+                    }
                 },
-                enabled = currentPostId != post.id
+                enabled = currentPostId != post.id,
             ) {
-
                 Icon(
                     Icons.Default.Comment,
                     "Comentar",
-                 //   tint = Color.Gray,
-                    tint = if(currentPostId == post.id) BlueGreen else Color.Gray,
+                    //   tint = Color.Gray,
+                    tint = if (currentPostId == post.id) BlueGreen else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
             }
@@ -158,7 +157,6 @@ fun PostItem(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
-
 ) {
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
@@ -167,7 +165,6 @@ fun PostItem(
     val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
     val currentRoute = navController.currentBackStackEntry?.destination?.route
     val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
-
 
     fun onPostClick() {
         if (isCooldown) return
@@ -178,11 +175,9 @@ fun PostItem(
                 // Espera a ver si es 1 solo click o 2
                 scope.launch {
                     delay(300L)
-                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen ) {
-
+                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen) {
                         navController.navigate("comments/${post.id}")
                     } else if (clickCount == 2) {
-
                         onLikeClick(post)
                     }
                     clickCount = 0

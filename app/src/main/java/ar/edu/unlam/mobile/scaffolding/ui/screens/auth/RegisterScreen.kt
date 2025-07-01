@@ -16,9 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Clear
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Visibility
@@ -95,7 +92,7 @@ fun RegisterScreen(
                     Icon(
                         imageVector = Icons.Default.Person,
                         contentDescription = "User",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 },
                 onValueChange = { username = it },
@@ -113,7 +110,7 @@ fun RegisterScreen(
                     Icon(
                         imageVector = Icons.Default.MailOutline,
                         contentDescription = "E-mail",
-                        tint = Color.Gray
+                        tint = Color.Gray,
                     )
                 },
                 onValueChange = { email = it },
@@ -129,11 +126,10 @@ fun RegisterScreen(
                 keyboardActions = KeyboardActions(),
                 trailingIcon = {
                     IconButton(onClick = { isVisible = !isVisible }) {
-
                         Icon(
                             imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     }
                 },
@@ -155,12 +151,12 @@ fun RegisterScreen(
                         Icon(
                             imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
                             contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
-                            tint = Color.Gray
+                            tint = Color.Gray,
                         )
                     }
                 },
                 visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
-                onValueChange = { confirmPassword = it }
+                onValueChange = { confirmPassword = it },
             )
 
             Spacer(modifier = Modifier.height(60.dp))

@@ -4,15 +4,12 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -44,13 +41,10 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
-import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
-import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
-import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.SoftGreen
-
-
+import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 @Composable
 fun DetailPostScreen(
@@ -126,14 +120,16 @@ fun DetailPostScreen(
             }
 
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color.White)
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .background(Color.White),
         ) {
             Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 70.dp) // deja espacio para el input fijo
+                modifier =
+                    Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 70.dp),
             ) {
                 post?.let {
                     PostItem(
@@ -145,10 +141,11 @@ fun DetailPostScreen(
                     )
                 } ?: run {
                     Box(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .weight(1f),
-                        contentAlignment = Alignment.Center
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .weight(1f),
+                        contentAlignment = Alignment.Center,
                     ) {
                         Text(
                             "Post no encontrado",
@@ -160,36 +157,39 @@ fun DetailPostScreen(
                 }
 
                 Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f) // lista de comentarios toma todo el espacio disponible restante
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                 ) {
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 3.dp,
-                        color = Color.LightGray
+                        color = Color.LightGray,
                     )
                     Text(
                         text = "Comentarios",
                         fontWeight = FontWeight.SemiBold,
                         color = Color.DarkGray,
                         fontSize = 18.sp,
-                        modifier = Modifier
-                            .padding(vertical = 8.dp)
-                            .padding(start = 20.dp),
+                        modifier =
+                            Modifier
+                                .padding(vertical = 8.dp)
+                                .padding(start = 20.dp),
                     )
                     HorizontalDivider(
                         modifier = Modifier.fillMaxWidth(),
                         thickness = 3.dp,
-                        color = Color.LightGray
+                        color = Color.LightGray,
                     )
 
                     if (filteredComments.isEmpty()) {
                         Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f),
-                            contentAlignment = Alignment.Center
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                            contentAlignment = Alignment.Center,
                         ) {
                             Text(
                                 "Sin Comentarios",
@@ -204,9 +204,10 @@ fun DetailPostScreen(
                             navController = controller,
                             favoriteViewModel = favoriteViewModel,
                             onLikeClick = { viewModel.onLikeClicked(it) },
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .weight(1f)
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
                         )
                     }
                 }
@@ -214,16 +215,18 @@ fun DetailPostScreen(
 
             // Input fijo al fondo
             InputComment(
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .background(SoftGreen)
-                    .padding(8.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .background(SoftGreen)
+                        .padding(8.dp),
                 idPost = idPost,
                 detailPostViewModel = detailPostViewModel,
             )
         }
     }
 }
+
 @Composable
 fun InputComment(
     modifier: Modifier = Modifier,
@@ -269,7 +272,7 @@ fun InputComment(
                     cursorColor = Color.DarkGray,
                     focusedIndicatorColor = Color.Transparent,
                     unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent
+                    disabledIndicatorColor = Color.Transparent,
                 ),
         )
 
@@ -284,7 +287,7 @@ fun InputComment(
             Icon(
                 imageVector = Icons.Default.Send,
                 contentDescription = "Enviar comentario",
-                tint = BlueGreen
+                tint = BlueGreen,
             )
         }
     }

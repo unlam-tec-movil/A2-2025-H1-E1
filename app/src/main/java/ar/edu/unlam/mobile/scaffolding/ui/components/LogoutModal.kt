@@ -29,10 +29,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
-import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.DarkRed
-
 
 @Composable
 fun LogoutModal(
@@ -110,8 +107,7 @@ fun LogoutModal(
                 ) {
                     TextButton(
                         onClick = onDismiss,
-                        modifier = Modifier.weight(1f)
-
+                        modifier = Modifier.weight(1f),
                     ) {
                         Text(text = "Cancelar", color = Color.Gray)
                     }
@@ -124,13 +120,14 @@ fun LogoutModal(
                                 containerColor = DarkRed,
                             ),
                     ) {
-                        Text(text = "Cerrar",
+                        Text(
+                            text = "Cerrar",
                             textAlign = TextAlign.Center,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,
                             fontSize = 14.sp,
-                            modifier = Modifier.fillMaxWidth())
-
+                            modifier = Modifier.fillMaxWidth(),
+                        )
                     }
                 }
             }

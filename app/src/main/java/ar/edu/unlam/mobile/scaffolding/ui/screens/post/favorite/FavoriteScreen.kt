@@ -29,6 +29,6 @@ fun FavoriteScreen(
         navController = navController,
         favoriteViewModel = favoriteViewModel,
         onLikeClick = { viewModel.onLikeClicked(it) },
-        modifier
+        modifier,
     )
 }

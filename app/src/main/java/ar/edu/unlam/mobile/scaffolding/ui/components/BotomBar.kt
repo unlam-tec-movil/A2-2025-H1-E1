@@ -34,15 +34,16 @@ fun BottomBar(controller: NavHostController) {
         HorizontalDivider(
             modifier = Modifier.fillMaxWidth(),
             thickness = 2.dp,
-            color = Color.LightGray
+            color = Color.LightGray,
         )
 
         NavigationBar(
-            modifier = Modifier
-                .height(60.dp)
-                .padding(0.dp)
-                .fillMaxWidth(),
-            containerColor = Color.White
+            modifier =
+                Modifier
+                    .height(60.dp)
+                    .padding(0.dp)
+                    .fillMaxWidth(),
+            containerColor = Color.White,
         ) {
             NavigationBarItem(
                 selected = navBackStackEntry?.destination?.hierarchy?.any { it.route == "home" } == true,
@@ -55,9 +56,10 @@ fun BottomBar(controller: NavHostController) {
                     )
                 },
                 modifier = Modifier.clip(CircleShape),
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.LightGray,
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.LightGray,
+                    ),
             )
 
             NavigationBarItem(
@@ -71,9 +73,10 @@ fun BottomBar(controller: NavHostController) {
                     )
                 },
                 modifier = Modifier.clip(CircleShape),
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.LightGray,
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.LightGray,
+                    ),
             )
 
             NavigationBarItem(
@@ -87,9 +90,10 @@ fun BottomBar(controller: NavHostController) {
                     )
                 },
                 modifier = Modifier.clip(CircleShape),
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.LightGray,
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.LightGray,
+                    ),
             )
 
             NavigationBarItem(
@@ -103,9 +107,10 @@ fun BottomBar(controller: NavHostController) {
                     )
                 },
                 modifier = Modifier.clip(CircleShape),
-                colors = NavigationBarItemDefaults.colors(
-                    indicatorColor = Color.LightGray,
-                )
+                colors =
+                    NavigationBarItemDefaults.colors(
+                        indicatorColor = Color.LightGray,
+                    ),
             )
         }
     }
