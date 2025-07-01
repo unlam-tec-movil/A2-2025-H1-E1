@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
 import androidx.compose.material3.Text
@@ -20,8 +18,8 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
@@ -38,7 +36,9 @@ fun MyTextField(
     keyboardActions: KeyboardActions,
     readOnly: Boolean = false,
     height: Dp = 56.dp,
-    trailingIcon: ImageVector? = null,
+    trailingIcon: @Composable (() -> Unit)? = null,
+    contentDescription: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
 ) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(10.dp))
@@ -49,18 +49,8 @@ fun MyTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             readOnly = readOnly,
-            trailingIcon =
-                trailingIcon?.let {
-                    {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = it,
-                                contentDescription = null,
-                                tint = Color(0xFF828282),
-                            )
-                        }
-                    }
-                },
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
             shape = RoundedCornerShape(30.dp),
             colors =
                 OutlinedTextFieldDefaults.colors(

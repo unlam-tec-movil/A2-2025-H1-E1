@@ -65,12 +65,13 @@ fun UserScreen(
                 .fillMaxSize()
                 .background(Color.White),
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.unlamoptionb),
+            contentDescription = "Editar Perfil",
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color(0xFF4B877A)),
+                    .height(250.dp)
+                    .fillMaxWidth(),
         )
 
         Box(
@@ -135,7 +136,6 @@ fun UserScreen(
         }
 
         val user = (userState as? Success)?.user
-
         val userPosts =
             user?.let {
                 when (val state = postState.value) {
@@ -160,7 +160,14 @@ fun UserScreen(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Spacer(modifier = Modifier.height(2.dp).fillMaxWidth().background(color = GrayLight))
+        Spacer(
+            modifier =
+                Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .background(color = GrayLight),
+        )
+
         Column(modifier = Modifier.fillMaxSize()) {
             when (val state = postState.value) {
                 is PostUiState.Error -> Text("Error: ${state.message}")
@@ -171,17 +178,12 @@ fun UserScreen(
                 }
 
                 is PostUiState.Success -> {
-                    val user = (userState as? Success)?.user
-                    val userPosts =
-                        user?.let {
-                            state.list.filter { post -> post.author == user.name }
-                        } ?: emptyList()
-
                     ListPost(
                         posts = userPosts,
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { feedViewModel.onLikeClicked(it) },
+                        modifier = Modifier.weight(1f),
                     )
                 }
             }

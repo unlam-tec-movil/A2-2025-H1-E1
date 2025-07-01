@@ -23,12 +23,15 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CheckboxDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -38,6 +41,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,6 +53,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -238,18 +244,36 @@ fun LoginCard(
             text = username,
             keyboardOptions = KeyboardOptions(),
             keyboardActions = KeyboardActions(),
-            trailingIcon = Icons.Default.Person,
+            trailingIcon = {
+                Icon(
+                    imageVector = Icons.Default.Person,
+                    contentDescription = "E-mail",
+                    tint = Color.Gray,
+                )
+            },
             onValueChange = onUsernameChange,
         )
+
         Spacer(modifier = Modifier.height(10.dp))
 
+        var isVisible by rememberSaveable { mutableStateOf(false) }
         MyTextField(
             modifier = Modifier.padding(horizontal = 16.dp),
             label = "Contraseña",
             text = password,
             keyboardOptions = KeyboardOptions(),
             keyboardActions = KeyboardActions(),
-            trailingIcon = Icons.Default.Lock,
+            trailingIcon = {
+                IconButton(onClick = { isVisible = !isVisible }) {
+                    Icon(
+                        imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                        contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                        tint = Color.Gray,
+                    )
+                }
+            },
+            visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+            contentDescription = "Password",
             onValueChange = onPasswordChange,
         )
         Spacer(modifier = Modifier.height(10.dp))

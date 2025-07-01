@@ -241,7 +241,7 @@ fun ControllerPostScreenPreview() {
                     cursorBrush = SolidColor(Color.Gray),
                     decorationBox = { innerTextField ->
                         if (text.isEmpty()) {
-                            Text("What's happening?", color = Color.Gray, fontSize = 15.sp)
+                            Text("Publica una idea...", color = Color.Gray, fontSize = 15.sp)
                         }
                         innerTextField()
                     },

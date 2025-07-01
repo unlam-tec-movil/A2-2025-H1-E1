@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.datasources.network.responses.Tuit
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
@@ -54,6 +55,10 @@ fun ButtonsPost(
     onLikeClick: (Tuit) -> Unit,
 ) {
     val isBookmarked = favoriteViewModel.isFavorite(post.id)
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
     fun formatLikes(likes: Long): String {
         return when {
@@ -105,12 +110,18 @@ fun ButtonsPost(
             horizontalArrangement = Arrangement.Center,
         ) {
             IconButton(
-                onClick = { navController.navigate("comments/${post.id}") },
+                onClick = {
+                    if (currentPostId != post.id && !isInCommentsScreen) {
+                        navController.navigate("comments/${post.id}")
+                    }
+                },
+                enabled = currentPostId != post.id,
             ) {
                 Icon(
                     Icons.Default.Comment,
                     "Comentar",
-                    tint = Color.Gray,
+                    //   tint = Color.Gray,
+                    tint = if (currentPostId == post.id) BlueGreen else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
             }
@@ -147,22 +158,35 @@ fun PostItem(
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
 ) {
-    var countLike by remember { mutableStateOf(0) }
+    var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
+    val currentBackStackEntry = navController.currentBackStackEntry
+    val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
+    val currentRoute = navController.currentBackStackEntry?.destination?.route
+    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
-    fun likedAuto() {
+    fun onPostClick() {
         if (isCooldown) return
 
-        countLike += 1
-        if (countLike == 2) {
-            onLikeClick(post)
-            countLike = 0
-            isCooldown = true
-
-            scope.launch {
-                delay(1000L)
-                isCooldown = false
+        clickCount += 1
+        when (clickCount) {
+            1 -> {
+                // Espera a ver si es 1 solo click o 2
+                scope.launch {
+                    delay(300L)
+                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen) {
+                        navController.navigate("comments/${post.id}")
+                    } else if (clickCount == 2) {
+                        onLikeClick(post)
+                    }
+                    clickCount = 0
+                    isCooldown = true
+                    delay(1000L)
+                    isCooldown = false
+                }
+            }
+            2 -> {
             }
         }
     }
@@ -171,7 +195,7 @@ fun PostItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = { likedAuto() },
+        onClick = { onPostClick() },
     ) {
         Column(modifier) {
             HeaderPostItem(post.author, post.avatarUrl)
@@ -253,6 +277,7 @@ fun ListPost(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
+    modifier: Modifier?,
 ) {
     LazyColumn(
         modifier =

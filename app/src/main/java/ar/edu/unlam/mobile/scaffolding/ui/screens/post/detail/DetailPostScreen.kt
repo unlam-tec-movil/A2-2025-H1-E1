@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -40,7 +41,9 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.PostItem
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
-import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
+import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
+import ar.edu.unlam.mobile.scaffolding.ui.theme.SoftGreen
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 
 @Composable
@@ -116,77 +119,107 @@ fun DetailPostScreen(
                 else -> emptyList()
             }
 
-        Column(
+        Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .background(ar.edu.unlam.mobile.scaffolding.ui.theme.Green),
+                    .background(Color.White),
         ) {
-            post?.let {
-                PostItem(
-                    post = it,
-                    modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                    navController = controller,
-                    favoriteViewModel = favoriteViewModel,
-                    onLikeClick = { viewModel.onLikeClicked(it) },
-                )
-            } ?: run {
-                // Si no se encuentra el post, mostrar mensaje
-                Box(
-                    modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f)
-                            .background(Color.White),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Text(
-                        "Post no encontrado",
-                        textAlign = TextAlign.Center,
-                        color = Green,
-                        fontWeight = FontWeight.Bold,
-                    )
-                }
-            }
-
-            Text(
-                text = "Comentarios",
-                fontWeight = FontWeight.SemiBold,
-                color = Color.White,
-                fontSize = 18.sp,
+            Column(
                 modifier =
                     Modifier
-                        .padding(vertical = 8.dp)
-                        .padding(start = 20.dp),
-            )
+                        .fillMaxSize()
+                        .padding(bottom = 70.dp),
+            ) {
+                post?.let {
+                    PostItem(
+                        post = it,
+                        modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
+                        navController = controller,
+                        favoriteViewModel = favoriteViewModel,
+                        onLikeClick = { viewModel.onLikeClicked(it) },
+                    )
+                } ?: run {
+                    Box(
+                        modifier =
+                            Modifier
+                                .fillMaxSize()
+                                .weight(1f),
+                        contentAlignment = Alignment.Center,
+                    ) {
+                        Text(
+                            "Post no encontrado",
+                            textAlign = TextAlign.Center,
+                            color = GrayLight,
+                            fontWeight = FontWeight.Bold,
+                        )
+                    }
+                }
 
-            if (filteredComments.isEmpty()) {
-                Box(
+                Column(
                     modifier =
                         Modifier
                             .fillMaxWidth()
-                            .weight(1f)
-                            .background(Color.White),
-                    contentAlignment = Alignment.Center,
+                            .weight(1f),
                 ) {
-                    Text(
-                        "Sin Comentarios",
-                        textAlign = TextAlign.Center,
-                        color = Green,
-                        fontWeight = FontWeight.Bold,
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 3.dp,
+                        color = Color.LightGray,
                     )
+                    Text(
+                        text = "Comentarios",
+                        fontWeight = FontWeight.SemiBold,
+                        color = Color.DarkGray,
+                        fontSize = 18.sp,
+                        modifier =
+                            Modifier
+                                .padding(vertical = 8.dp)
+                                .padding(start = 20.dp),
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier.fillMaxWidth(),
+                        thickness = 3.dp,
+                        color = Color.LightGray,
+                    )
+
+                    if (filteredComments.isEmpty()) {
+                        Box(
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                            contentAlignment = Alignment.Center,
+                        ) {
+                            Text(
+                                "Sin Comentarios",
+                                textAlign = TextAlign.Center,
+                                color = GrayLight,
+                                fontWeight = FontWeight.Bold,
+                            )
+                        }
+                    } else {
+                        ListPost(
+                            posts = filteredComments,
+                            navController = controller,
+                            favoriteViewModel = favoriteViewModel,
+                            onLikeClick = { viewModel.onLikeClicked(it) },
+                            modifier =
+                                Modifier
+                                    .fillMaxWidth()
+                                    .weight(1f),
+                        )
+                    }
                 }
-            } else {
-                ListPost(
-                    posts = filteredComments,
-                    navController = controller,
-                    favoriteViewModel = favoriteViewModel,
-                    onLikeClick = { viewModel.onLikeClicked(it) },
-                )
             }
 
+            // Input fijo al fondo
             InputComment(
-                modifier = Modifier.padding(0.dp),
+                modifier =
+                    Modifier
+                        .align(Alignment.BottomCenter)
+                        .background(SoftGreen)
+                        .padding(8.dp),
                 idPost = idPost,
                 detailPostViewModel = detailPostViewModel,
             )
@@ -206,7 +239,7 @@ fun InputComment(
         modifier =
             modifier
                 .fillMaxWidth()
-                .background(Green),
+                .background(SoftGreen),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         TextField(
@@ -216,7 +249,7 @@ fun InputComment(
                 Text(
                     "Escribe un comentario...",
                     fontWeight = FontWeight.Bold,
-                    color = Color.White,
+                    color = Color.DarkGray,
                 )
             },
             modifier =
@@ -227,7 +260,7 @@ fun InputComment(
             singleLine = false,
             textStyle =
                 TextStyle(
-                    color = Color.White,
+                    color = Color.DarkGray,
                     fontSize = 18.sp,
                     fontWeight = FontWeight.Bold,
                 ),
@@ -236,7 +269,10 @@ fun InputComment(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
-                    cursorColor = Color.White,
+                    cursorColor = Color.DarkGray,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
                 ),
         )
 
@@ -251,6 +287,7 @@ fun InputComment(
             Icon(
                 imageVector = Icons.Default.Send,
                 contentDescription = "Enviar comentario",
+                tint = BlueGreen,
             )
         }
     }

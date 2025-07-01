@@ -16,11 +16,14 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.MailOutline
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -29,6 +32,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,6 +41,9 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,7 +88,13 @@ fun RegisterScreen(
                 text = username,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
-                trailingIcon = Icons.Default.Person,
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.Person,
+                        contentDescription = "User",
+                        tint = Color.Gray,
+                    )
+                },
                 onValueChange = { username = it },
             )
 
@@ -93,19 +106,35 @@ fun RegisterScreen(
                 text = email,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
-                trailingIcon = Icons.Default.MailOutline,
+                trailingIcon = {
+                    Icon(
+                        imageVector = Icons.Default.MailOutline,
+                        contentDescription = "E-mail",
+                        tint = Color.Gray,
+                    )
+                },
                 onValueChange = { email = it },
             )
 
             Spacer(modifier = Modifier.height(10.dp))
-
+            var isVisible by rememberSaveable { mutableStateOf(false) }
             MyTextField(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 label = "Contraseña",
                 text = password,
                 keyboardOptions = KeyboardOptions(),
                 keyboardActions = KeyboardActions(),
-                trailingIcon = Icons.Default.Lock,
+                trailingIcon = {
+                    IconButton(onClick = { isVisible = !isVisible }) {
+                        Icon(
+                            imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                            tint = Color.Gray,
+                        )
+                    }
+                },
+                visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
+                contentDescription = "Password",
                 onValueChange = { password = it },
             )
 
@@ -115,9 +144,18 @@ fun RegisterScreen(
                 modifier = Modifier.padding(horizontal = 16.dp),
                 label = "Confirmar contraseña",
                 text = confirmPassword,
-                keyboardOptions = KeyboardOptions(),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
                 keyboardActions = KeyboardActions(),
-                trailingIcon = Icons.Default.Lock,
+                trailingIcon = {
+                    IconButton(onClick = { isVisible = !isVisible }) {
+                        Icon(
+                            imageVector = if (isVisible) Icons.Default.Visibility else Icons.Default.VisibilityOff,
+                            contentDescription = if (isVisible) "Ocultar contraseña" else "Mostrar contraseña",
+                            tint = Color.Gray,
+                        )
+                    }
+                },
+                visualTransformation = if (isVisible) VisualTransformation.None else PasswordVisualTransformation(),
                 onValueChange = { confirmPassword = it },
             )
 
