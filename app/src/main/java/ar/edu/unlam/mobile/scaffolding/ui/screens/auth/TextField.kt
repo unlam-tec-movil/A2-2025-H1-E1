@@ -22,12 +22,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalView
+import androidx.compose.ui.text.input.VisualTransformation
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import ar.edu.unlam.mobile.scaffolding.ui.theme.BlueGreen
-
 @Composable
 fun MyTextField(
     modifier: Modifier = Modifier,
@@ -38,8 +38,11 @@ fun MyTextField(
     keyboardActions: KeyboardActions,
     readOnly: Boolean = false,
     height: Dp = 56.dp,
-    trailingIcon: ImageVector? = null,
-) {
+    trailingIcon:  @Composable (() -> Unit)? = null,
+    contentDescription: String? = null,
+    visualTransformation: VisualTransformation = VisualTransformation.None,
+
+    ) {
     Column(modifier = modifier) {
         Spacer(modifier = Modifier.height(10.dp))
         OutlinedTextField(
@@ -49,35 +52,24 @@ fun MyTextField(
             keyboardOptions = keyboardOptions,
             keyboardActions = keyboardActions,
             readOnly = readOnly,
-            trailingIcon =
-                trailingIcon?.let {
-                    {
-                        IconButton(onClick = { /*TODO*/ }) {
-                            Icon(
-                                imageVector = it,
-                                contentDescription = null,
-                                tint = Color(0xFF828282),
-                            )
-                        }
-                    }
-                },
+            trailingIcon = trailingIcon,
+            visualTransformation = visualTransformation,
             shape = RoundedCornerShape(30.dp),
-            colors =
-                OutlinedTextFieldDefaults.colors(
-                    focusedBorderColor = Color(0xFF317971),
-                    unfocusedBorderColor = Color(0xFFEFEEEE),
-                    focusedTextColor = Color(0xFF317971),
-                    unfocusedTextColor = Color(0xFF317971),
-                    focusedContainerColor = Color(0xFFEFEEEE),
-                    unfocusedContainerColor = Color(0xFFEFEEEE),
-                ),
-            modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .height(height),
+            colors = OutlinedTextFieldDefaults.colors(
+                focusedBorderColor = Color(0xFF317971),
+                unfocusedBorderColor = Color(0xFFEFEEEE),
+                focusedTextColor = Color(0xFF317971),
+                unfocusedTextColor = Color(0xFF317971),
+                focusedContainerColor = Color(0xFFEFEEEE),
+                unfocusedContainerColor = Color(0xFFEFEEEE),
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(height),
         )
     }
 }
+
 
 @Composable
 fun rememberImeState(): State<Boolean> {
