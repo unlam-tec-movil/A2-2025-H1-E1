@@ -48,7 +48,6 @@ fun UserScreen(
 
     val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
     val currentUserId = currentUserIdState.value
-    val isCurrentUser = userId == currentUserId
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -98,9 +97,9 @@ fun UserScreen(
             Image(
                 painter =
                     painterResource(
-                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
+                        id = R.drawable.ic_edit,
                     ),
-                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
+                contentDescription = "Editar perfil",
                 modifier =
                     Modifier
                         .size(45.dp)
@@ -108,13 +107,7 @@ fun UserScreen(
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable(onClick = {
-                            if (isCurrentUser) {
-                                // Acción para editar perfil
-                            } else {
-                                // Acción para seguir usuario
-                            }
-                        }),
+                        .clickable(onClick = {controller.navigate("edit profile")}),
             )
         }
 

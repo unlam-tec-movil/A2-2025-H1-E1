@@ -33,6 +33,8 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -197,13 +199,14 @@ fun HeaderPostItem(
     navController: NavController,
     date: String,
 ) {
+    val encodedUserImage = URLEncoder.encode(userImage ?: "", StandardCharsets.UTF_8.toString())
     Row(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .clickable {
                     if (userId != currentUserId) {
-                        navController.navigate("user/$userId")
+                        navController.navigate("userProfile/$userId/$userName/$encodedUserImage")
                     }
                 },
     ) {

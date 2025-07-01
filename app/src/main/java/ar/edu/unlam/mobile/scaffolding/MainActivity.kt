@@ -36,6 +36,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft.DraftContainerScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserProfile.UserProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.Edit
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
@@ -170,6 +171,22 @@ fun MainScreen() {
                 val id = navBackStackEntry.arguments?.getString("id") ?: "1"
                 UserScreen(userId = id, controller)
             }
+
+            composable(
+                route = "userProfile/{id}/{name}/{avatarUrl}",
+                arguments = listOf(
+                    navArgument("id") { type = NavType.StringType },
+                    navArgument("name") { type = NavType.StringType },
+                    navArgument("avatarUrl") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val id = backStackEntry.arguments?.getString("id") ?: ""
+                val name = backStackEntry.arguments?.getString("name") ?: ""
+                val avatarUrl = backStackEntry.arguments?.getString("avatarUrl") ?: ""
+
+                UserProfileScreen(userId = id, userName = name, avatarUrl = avatarUrl, controller = controller)
+            }
+
 
             composable(
                 "newPost",
