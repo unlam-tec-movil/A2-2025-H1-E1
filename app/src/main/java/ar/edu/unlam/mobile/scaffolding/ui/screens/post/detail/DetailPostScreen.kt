@@ -49,9 +49,10 @@ fun DetailPostScreen(
         }
     }
 
-    val homeBackStackEntry = remember(controller.currentBackStackEntry) {
-        controller.getBackStackEntry("home")
-    }
+    val homeBackStackEntry =
+        remember(controller.currentBackStackEntry) {
+            controller.getBackStackEntry("home")
+        }
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
 
     if (postState.value is PostUiState.Loading || commentState.value is CommentsState.Loading) {
@@ -83,10 +84,11 @@ fun DetailPostScreen(
 
     if (postState.value is PostUiState.Success) {
         val post = (postState.value as PostUiState.Success).list.find { it.id == idPost }
-        val filteredComments = when (val comments = commentState.value) {
-            is CommentsState.Success -> comments.comments
-            else -> emptyList()
-        }
+        val filteredComments =
+            when (val comments = commentState.value) {
+                is CommentsState.Success -> comments.comments
+                else -> emptyList()
+            }
 
         Box(
             modifier = Modifier.fillMaxSize().background(Color.White),
@@ -101,7 +103,7 @@ fun DetailPostScreen(
                         navController = controller,
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { detailPostViewModel.onLikeClicked(it) },
-                        currentUserId = currentUserId
+                        currentUserId = currentUserId,
                     )
                 } ?: run {
                     Box(
@@ -157,7 +159,7 @@ fun DetailPostScreen(
                             favoriteViewModel = favoriteViewModel,
                             onLikeClick = { detailPostViewModel.onLikeClicked(it) },
                             modifier = Modifier.fillMaxWidth().weight(1f),
-                            currentUserId = currentUserId
+                            currentUserId = currentUserId,
                         )
                     }
                 }
@@ -197,20 +199,22 @@ fun InputComment(
             modifier = Modifier.weight(1f).padding(end = 8.dp),
             maxLines = 3,
             singleLine = false,
-            textStyle = TextStyle(
-                color = Color.DarkGray,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-            ),
-            colors = TextFieldDefaults.colors(
-                focusedContainerColor = Color.Transparent,
-                unfocusedContainerColor = Color.Transparent,
-                disabledContainerColor = Color.Transparent,
-                cursorColor = Color.DarkGray,
-                focusedIndicatorColor = Color.Transparent,
-                unfocusedIndicatorColor = Color.Transparent,
-                disabledIndicatorColor = Color.Transparent,
-            ),
+            textStyle =
+                TextStyle(
+                    color = Color.DarkGray,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Bold,
+                ),
+            colors =
+                TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
+                    cursorColor = Color.DarkGray,
+                    focusedIndicatorColor = Color.Transparent,
+                    unfocusedIndicatorColor = Color.Transparent,
+                    disabledIndicatorColor = Color.Transparent,
+                ),
         )
 
         IconButton(

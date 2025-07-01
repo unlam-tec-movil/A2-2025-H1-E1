@@ -26,9 +26,10 @@ fun FavoriteScreen(
     navController: NavController,
     viewModel: FeedViewModel = hiltViewModel(),
 ) {
-    val homeBackStackEntry = remember(navController.currentBackStackEntry) {
-        navController.getBackStackEntry("home")
-    }
+    val homeBackStackEntry =
+        remember(navController.currentBackStackEntry) {
+            navController.getBackStackEntry("home")
+        }
 
     val favoriteViewModel: FavoriteViewModel = viewModel(viewModelStoreOwner = homeBackStackEntry)
     val favorites = favoriteViewModel.favorites.collectAsState()
@@ -37,9 +38,10 @@ fun FavoriteScreen(
     val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
 
     Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(Color.White),
+        modifier =
+            modifier
+                .fillMaxSize()
+                .background(Color.White),
     ) {
         if (favorites.value.isEmpty()) {
             Text(
@@ -55,7 +57,7 @@ fun FavoriteScreen(
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = { viewModel.onLikeClicked(it) },
                 modifier = modifier,
-                currentUserId = currentUserId
+                currentUserId = currentUserId,
             )
         }
     }

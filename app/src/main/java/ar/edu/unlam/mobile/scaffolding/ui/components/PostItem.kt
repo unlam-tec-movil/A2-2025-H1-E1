@@ -133,7 +133,7 @@ fun PostItem(
     navController: NavController,
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
-    currentUserId: String
+    currentUserId: String,
 ) {
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
@@ -171,7 +171,7 @@ fun PostItem(
         modifier = Modifier.fillMaxWidth(),
         shape = RoundedCornerShape(0.dp),
         colors = CardDefaults.cardColors(containerColor = Color.White),
-        onClick = { onPostClick() }
+        onClick = { onPostClick() },
     ) {
         Column(modifier) {
             HeaderPostItem(
@@ -180,7 +180,7 @@ fun PostItem(
                 userName = post.author,
                 userImage = post.avatarUrl,
                 navController = navController,
-                date = post.date
+                date = post.date,
             )
             BodyPostItem(post.message)
             ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
@@ -198,20 +198,22 @@ fun HeaderPostItem(
     date: String,
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable {
-                if (userId != currentUserId) {
-                    navController.navigate("user/$userId")
-                }
-            },
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (userId != currentUserId) {
+                        navController.navigate("user/$userId")
+                    }
+                },
     ) {
         AvatarItem(avatarUrl = userImage, size = 50)
         Column(
-            modifier = Modifier
-                .height(40.dp)
-                .fillMaxWidth()
-                .padding(start = 10.dp),
+            modifier =
+                Modifier
+                    .height(40.dp)
+                    .fillMaxWidth()
+                    .padding(start = 10.dp),
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.Start,
         ) {
@@ -226,13 +228,14 @@ fun HeaderPostItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Date(date: String) {
-    val formattedDate = try {
-        val zonedDateTime = ZonedDateTime.parse(date)
-        val formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", Locale("es"))
-        zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
-    } catch (e: Exception) {
-        date
-    }
+    val formattedDate =
+        try {
+            val zonedDateTime = ZonedDateTime.parse(date)
+            val formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", Locale("es"))
+            zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
+        } catch (e: Exception) {
+            date
+        }
 
     Text(
         text = formattedDate,
@@ -267,10 +270,11 @@ fun ImagePostItem(imageUrl: String) {
     Image(
         painter = painter,
         contentDescription = "Imagen del post",
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clip(RoundedCornerShape(10.dp)),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clip(RoundedCornerShape(10.dp)),
         contentScale = ContentScale.Crop,
     )
 }
@@ -293,7 +297,7 @@ fun ListPost(
     favoriteViewModel: FavoriteViewModel,
     onLikeClick: (Tuit) -> Unit,
     modifier: Modifier?,
-    currentUserId: String
+    currentUserId: String,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxWidth().background(color = GrayLight),
@@ -305,7 +309,7 @@ fun ListPost(
                 navController = navController,
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = onLikeClick,
-                currentUserId = currentUserId
+                currentUserId = currentUserId,
             )
             Spacer(modifier = Modifier.height(5.dp))
         }

@@ -50,7 +50,6 @@ fun UserScreen(
     val currentUserId = currentUserIdState.value
     val isCurrentUser = userId == currentUserId
 
-
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
             controller.getBackStackEntry("home")
@@ -198,7 +197,7 @@ fun UserScreen(
                         favoriteViewModel = favoriteViewModel,
                         onLikeClick = { feedViewModel.onLikeClicked(it) },
                         modifier = Modifier.weight(1f),
-                        currentUserId = currentUserId
+                        currentUserId = currentUserId,
                     )
                 }
             }
