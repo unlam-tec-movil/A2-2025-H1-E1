@@ -28,6 +28,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState.*
+import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.AsyncImage
 
@@ -133,25 +134,32 @@ fun UserScreen(
             }
         }
 
-        Spacer(modifier = Modifier.height(30.dp))
+        val user = (userState as? Success)?.user
+
+        val userPosts = user?.let {
+            when(val state = postState.value) {
+                is PostUiState.Success -> state.list.filter { post -> post.author == user.name }
+                else -> emptyList()
+            }
+        } ?: emptyList()
+
+        Spacer(modifier = Modifier.height(20.dp))
         Row {
-            Spacer(modifier = Modifier.width(50.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
-                Text("3", modifier = Modifier.align(Alignment.CenterHorizontally))
+                Text(userPosts.size.toString(), modifier = Modifier.align(Alignment.CenterHorizontally))
                 Text("Post", color = Color.Gray)
             }
-            Spacer(modifier = Modifier.width(70.dp))
-            Column {
-                Text("20", modifier = Modifier.align(Alignment.CenterHorizontally))
-                Text("Seguidores", color = Color.Gray)
-            }
-            Spacer(modifier = Modifier.width(70.dp))
+            Spacer(modifier = Modifier.weight(1f))
             Column {
                 Text("453", modifier = Modifier.align(Alignment.CenterHorizontally))
                 Text("Seguidos", color = Color.Gray)
             }
+            Spacer(modifier = Modifier.weight(1f))
         }
 
+        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(2.dp).fillMaxWidth().background(color = GrayLight))
         Column(modifier = Modifier.fillMaxSize()) {
             when (val state = postState.value) {
                 is PostUiState.Error -> Text("Error: ${state.message}")
