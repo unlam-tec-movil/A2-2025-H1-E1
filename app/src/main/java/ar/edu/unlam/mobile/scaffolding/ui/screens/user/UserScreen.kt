@@ -29,7 +29,6 @@ import coil.compose.AsyncImage
 
 @Composable
 fun UserScreen(
-    userId: String = "User",
     controller: NavHostController = rememberNavController(),
     viewModel: UserViewModel = hiltViewModel(),
 ) {

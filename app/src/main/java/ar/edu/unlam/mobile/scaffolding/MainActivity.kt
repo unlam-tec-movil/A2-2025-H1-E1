@@ -41,7 +41,6 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -166,8 +165,8 @@ fun MainScreen() {
                 route = "user/{id}",
                 arguments = listOf(navArgument("id") { type = NavType.StringType }),
             ) { navBackStackEntry ->
-                val id = navBackStackEntry.arguments?.getString("id") ?: "1"
-                UserScreen(userId = id, controller)
+                navBackStackEntry.arguments?.getString("id") ?: "1"
+                UserScreen(controller)
             }
 
             composable(
