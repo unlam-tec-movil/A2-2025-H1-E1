@@ -1,9 +1,13 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -94,6 +98,11 @@ fun ControllerPostScreen(
     }
 
     Scaffold { innerPading ->
+        Box(
+            modifier = modifier
+                .fillMaxSize()
+                .background(Color.White)
+        ) {
         Column(modifier.padding(innerPading)) {
             Row(
                 modifier.fillMaxWidth(),
@@ -134,8 +143,13 @@ fun ControllerPostScreen(
                     ) { Text("Publicar", fontWeight = FontWeight.Bold) }
                 }
             }
+            Spacer(modifier = Modifier.height(10.dp))
 
-            Row {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 12.dp),
+            ) {
                 when (val profileStateValue = userState) {
                     is UserUiState.Loading -> {
                         AvatarItem(size = 50)
@@ -192,7 +206,7 @@ fun ControllerPostScreen(
                 )
             }
         }
-    }
+    }}
 }
 
 @Composable
