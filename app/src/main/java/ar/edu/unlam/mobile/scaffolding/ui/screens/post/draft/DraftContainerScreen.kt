@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -7,21 +8,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -52,31 +47,32 @@ fun DraftContainerScreen(
     }
 
     Scaffold(
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = "Mis Borradores",
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 20.sp,
-                    )
-                },
-                navigationIcon = {
-                    IconButton(onClick = onNavigateBack) {
-                        Icon(
-                            imageVector = Icons.Default.ArrowBack,
-                            contentDescription = "Volver",
-                        )
-                    }
-                },
-            )
-        },
-    ) { paddingValues ->
+//        topBar = {
+//            TopAppBar(
+//                title = {
+//                    Text(
+//                        text = "Mis Borradores",
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 20.sp,
+//                    )
+//                },
+//                navigationIcon = {
+//                    IconButton(onClick = onNavigateBack) {
+//                        Icon(
+//                            imageVector = Icons.Default.ArrowBack,
+//                            contentDescription = "Volver",
+//                        )
+//                    }
+//                },
+//            )
+//        },
+    ) {
+            paddingValues ->
         Box(
             modifier =
                 Modifier
                     .fillMaxSize()
-                    .padding(paddingValues),
+                    .padding(paddingValues).background(Color.White),
         ) {
             when {
                 isLoading -> {
@@ -89,7 +85,7 @@ fun DraftContainerScreen(
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .padding(16.dp),
+                                .padding(16.dp).background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -105,7 +101,7 @@ fun DraftContainerScreen(
                         modifier =
                             Modifier
                                 .fillMaxSize()
-                                .padding(16.dp),
+                                .padding(16.dp).background(Color.White),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
@@ -118,7 +114,7 @@ fun DraftContainerScreen(
                 }
                 else -> {
                     LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
+                        modifier = Modifier.fillMaxSize().background(Color.White),
                         contentPadding = androidx.compose.foundation.layout.PaddingValues(16.dp),
                     ) {
                         items(drafts) { draft ->
