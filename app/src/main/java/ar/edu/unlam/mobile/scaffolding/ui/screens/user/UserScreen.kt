@@ -136,12 +136,13 @@ fun UserScreen(
 
         val user = (userState as? Success)?.user
 
-        val userPosts = user?.let {
-            when(val state = postState.value) {
-                is PostUiState.Success -> state.list.filter { post -> post.author == user.name }
-                else -> emptyList()
-            }
-        } ?: emptyList()
+        val userPosts =
+            user?.let {
+                when (val state = postState.value) {
+                    is PostUiState.Success -> state.list.filter { post -> post.author == user.name }
+                    else -> emptyList()
+                }
+            } ?: emptyList()
 
         Spacer(modifier = Modifier.height(20.dp))
         Row {
@@ -171,9 +172,10 @@ fun UserScreen(
 
                 is PostUiState.Success -> {
                     val user = (userState as? Success)?.user
-                    val userPosts = user?.let {
-                        state.list.filter { post -> post.author == user.name }
-                    } ?: emptyList()
+                    val userPosts =
+                        user?.let {
+                            state.list.filter { post -> post.author == user.name }
+                        } ?: emptyList()
 
                     ListPost(
                         posts = userPosts,
@@ -182,7 +184,6 @@ fun UserScreen(
                         onLikeClick = { feedViewModel.onLikeClicked(it) },
                     )
                 }
-
             }
         }
 
