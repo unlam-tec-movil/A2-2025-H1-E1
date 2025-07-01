@@ -1,16 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.components
 
+import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -18,17 +13,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Favorite
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
+import androidx.compose.material3.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,6 +33,9 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import coil.compose.rememberAsyncImagePainter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.ZonedDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 @Composable
 fun ButtonsPost(
@@ -58,8 +47,6 @@ fun ButtonsPost(
     val isBookmarked = favoriteViewModel.isFavorite(post.id)
     val currentBackStackEntry = navController.currentBackStackEntry
     val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
     fun formatLikes(likes: Long): String {
         return when {
@@ -72,23 +59,14 @@ fun ButtonsPost(
     }
 
     Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 5.dp),
+        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
     ) {
-        // Filita de like
         Row(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start,
-            modifier =
-                Modifier
-                    .weight(1f)
-                    .padding(0.dp),
+            modifier = Modifier.weight(1f).padding(0.dp),
         ) {
-            IconButton(
-                onClick = { onLikeClick(post) },
-            ) {
+            IconButton(onClick = { onLikeClick(post) }) {
                 Icon(
                     imageVector = Icons.Default.Favorite,
                     contentDescription = "Me gusta",
@@ -104,7 +82,6 @@ fun ButtonsPost(
             )
         }
 
-        // Filita de Comentarios
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f),
@@ -112,7 +89,7 @@ fun ButtonsPost(
         ) {
             IconButton(
                 onClick = {
-                    if (currentPostId != post.id && !isInCommentsScreen) {
+                    if (currentPostId != post.id) {
                         navController.navigate("comments/${post.id}")
                     }
                 },
@@ -120,15 +97,13 @@ fun ButtonsPost(
             ) {
                 Icon(
                     Icons.Default.Comment,
-                    "Comentar",
-                    //   tint = Color.Gray,
+                    contentDescription = "Comentar",
                     tint = if (currentPostId == post.id) BlueGreen else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
             }
         }
 
-        // Filita de de guardar
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.weight(1f),
@@ -142,7 +117,7 @@ fun ButtonsPost(
             ) {
                 Icon(
                     Icons.Default.Bookmark,
-                    "Guardar",
+                    contentDescription = "Guardar",
                     tint = if (isBookmarked) Green else Color.Gray,
                     modifier = Modifier.size(30.dp),
                 )
@@ -163,32 +138,31 @@ fun PostItem(
     var clickCount by remember { mutableStateOf(0) }
     var isCooldown by remember { mutableStateOf(false) }
     val scope = rememberCoroutineScope()
-    val currentBackStackEntry = navController.currentBackStackEntry
-    val currentPostId = currentBackStackEntry?.arguments?.getInt("idPost")
-    val currentRoute = navController.currentBackStackEntry?.destination?.route
-    val isInCommentsScreen = currentRoute?.startsWith("comments/") == true
 
     fun onPostClick() {
         if (isCooldown) return
 
-        clickCount += 1
-        when (clickCount) {
-            1 -> {
-                // Espera a ver si es 1 solo click o 2
-                scope.launch {
-                    delay(300L)
-                    if (clickCount == 1 && currentPostId != post.id && !isInCommentsScreen) {
-                        navController.navigate("comments/${post.id}")
-                    } else if (clickCount == 2) {
-                        onLikeClick(post)
-                    }
-                    clickCount = 0
-                    isCooldown = true
-                    delay(1000L)
-                    isCooldown = false
+        val currentClickTime = System.currentTimeMillis()
+        val clickThreshold = 300L
+
+        if (clickCount == 0) {
+            clickCount = 1
+
+            scope.launch {
+                val firstClickTime = currentClickTime
+                delay(clickThreshold)
+                if (clickCount == 1 && firstClickTime == currentClickTime) {
+                    // No acción
                 }
+                clickCount = 0
             }
-            2 -> {
+        } else {
+            clickCount = 0
+            isCooldown = true
+            onLikeClick(post)
+            scope.launch {
+                delay(1000L)
+                isCooldown = false
             }
         }
     }
@@ -206,6 +180,7 @@ fun PostItem(
                 userName = post.author,
                 userImage = post.avatarUrl,
                 navController = navController,
+                date = post.date
             )
             BodyPostItem(post.message)
             ButtonsPost(post, navController, favoriteViewModel, onLikeClick)
@@ -214,16 +189,88 @@ fun PostItem(
 }
 
 @Composable
+fun HeaderPostItem(
+    userId: String,
+    currentUserId: String,
+    userName: String,
+    userImage: String?,
+    navController: NavController,
+    date: String,
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                if (userId != currentUserId) {
+                    navController.navigate("user/$userId")
+                }
+            },
+    ) {
+        AvatarItem(avatarUrl = userImage, size = 50)
+        Column(
+            modifier = Modifier
+                .height(40.dp)
+                .fillMaxWidth()
+                .padding(start = 10.dp),
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.Start,
+        ) {
+            UserName(userName)
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                Date(date)
+            }
+        }
+    }
+}
+
+@RequiresApi(Build.VERSION_CODES.O)
+@Composable
+fun Date(date: String) {
+    val formattedDate = try {
+        val zonedDateTime = ZonedDateTime.parse(date)
+        val formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", Locale("es"))
+        zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
+    } catch (e: Exception) {
+        date
+    }
+
+    Text(
+        text = formattedDate,
+        textAlign = TextAlign.Start,
+        fontSize = 12.sp,
+        color = Color.Gray,
+    )
+}
+
+@Composable
+fun UserName(userName: String) {
+    Text(
+        text = userName,
+        textAlign = TextAlign.Start,
+        fontWeight = FontWeight.Bold,
+        fontSize = 18.sp,
+    )
+}
+
+@Composable
+fun BodyPostItem(body: String) {
+    Text(
+        text = body,
+        modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp),
+        fontSize = 16.sp,
+    )
+}
+
+@Composable
 fun ImagePostItem(imageUrl: String) {
     val painter = rememberAsyncImagePainter(model = imageUrl)
     Image(
         painter = painter,
         contentDescription = "Imagen del post",
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clip(RoundedCornerShape(10.dp)),
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clip(RoundedCornerShape(10.dp)),
         contentScale = ContentScale.Crop,
     )
 }
@@ -240,58 +287,6 @@ fun TitlePostItem(title: String) {
 }
 
 @Composable
-fun BodyPostItem(body: String) {
-    Text(
-        text = body,
-        modifier = Modifier.padding(top = 7.dp, bottom = 2.dp, start = 5.dp),
-        fontSize = 16.sp,
-    )
-}
-
-@Composable
-fun HeaderPostItem(
-    userId: String,
-    currentUserId: String,
-    userName: String,
-    userImage: String?,
-    navController: NavController,
-) {
-    Row(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .clickable {
-                    if (userId != currentUserId) {
-                        navController.navigate("user/$userId")
-                    }
-                },
-    ) {
-        AvatarItem(avatarUrl = userImage, size = 50)
-        Column(
-            modifier =
-                Modifier
-                    .height(40.dp)
-                    .fillMaxWidth()
-                    .padding(start = 10.dp),
-            verticalArrangement = Arrangement.Center,
-            horizontalAlignment = Alignment.Start,
-        ) {
-            UserName(userName)
-        }
-    }
-}
-
-@Composable
-fun UserName(userName: String) {
-    Text(
-        text = userName,
-        textAlign = TextAlign.Start,
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
-    )
-}
-
-@Composable
 fun ListPost(
     posts: List<Tuit>,
     navController: NavController,
@@ -301,16 +296,13 @@ fun ListPost(
     currentUserId: String
 ) {
     LazyColumn(
-        modifier =
-            Modifier
-                .fillMaxWidth()
-                .background(color = GrayLight),
+        modifier = Modifier.fillMaxWidth().background(color = GrayLight),
     ) {
         items(posts) { post ->
             PostItem(
-                post,
+                post = post,
                 modifier = Modifier.padding(vertical = 20.dp, horizontal = 25.dp),
-                navController,
+                navController = navController,
                 favoriteViewModel = favoriteViewModel,
                 onLikeClick = onLikeClick,
                 currentUserId = currentUserId
