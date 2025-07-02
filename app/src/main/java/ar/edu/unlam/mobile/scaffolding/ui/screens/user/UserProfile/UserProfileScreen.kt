@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserProfile
+package ar.edu.unlam.mobile.scaffolding.ui.screens.user.userprofile
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,30 +21,33 @@ fun UserProfileScreen(
     userId: String,
     userName: String,
     avatarUrl: String,
-    controller: NavHostController
+    controller: NavHostController,
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().background(Color.White)
+        modifier = Modifier.fillMaxSize().background(Color.White),
     ) {
         Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(160.dp)
-                .background(Color(0xFF4B877A))
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .height(160.dp)
+                    .background(Color(0xFF4B877A)),
         )
 
         Box(
-            modifier = Modifier
-                .offset(y = (-40).dp)
-                .align(Alignment.CenterHorizontally)
+            modifier =
+                Modifier
+                    .offset(y = (-40).dp)
+                    .align(Alignment.CenterHorizontally),
         ) {
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(0.1.dp, Color.White, CircleShape)
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(0.1.dp, Color.White, CircleShape),
             )
         }
 
@@ -53,7 +56,7 @@ fun UserProfileScreen(
         Text(
             text = userName,
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(fontSize = 30.sp)
+            style = TextStyle(fontSize = 30.sp),
         )
 
 //        Text(
@@ -68,7 +71,7 @@ fun UserProfileScreen(
         Text(
             text = "Este es el perfil público del usuario.",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp),
         )
     }
 }

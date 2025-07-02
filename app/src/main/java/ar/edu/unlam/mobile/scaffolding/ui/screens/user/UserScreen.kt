@@ -107,7 +107,7 @@ fun UserScreen(
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable(onClick = {controller.navigate("edit profile")}),
+                        .clickable(onClick = { controller.navigate("edit profile") }),
             )
         }
 

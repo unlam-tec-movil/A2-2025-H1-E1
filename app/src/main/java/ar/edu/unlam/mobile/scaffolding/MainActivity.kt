@@ -174,11 +174,12 @@ fun MainScreen() {
 
             composable(
                 route = "userProfile/{id}/{name}/{avatarUrl}",
-                arguments = listOf(
-                    navArgument("id") { type = NavType.StringType },
-                    navArgument("name") { type = NavType.StringType },
-                    navArgument("avatarUrl") { type = NavType.StringType }
-                )
+                arguments =
+                    listOf(
+                        navArgument("id") { type = NavType.StringType },
+                        navArgument("name") { type = NavType.StringType },
+                        navArgument("avatarUrl") { type = NavType.StringType },
+                    ),
             ) { backStackEntry ->
                 val id = backStackEntry.arguments?.getString("id") ?: ""
                 val name = backStackEntry.arguments?.getString("name") ?: ""
@@ -186,7 +187,6 @@ fun MainScreen() {
 
                 UserProfileScreen(userId = id, userName = name, avatarUrl = avatarUrl, controller = controller)
             }
-
 
             composable(
                 "newPost",
