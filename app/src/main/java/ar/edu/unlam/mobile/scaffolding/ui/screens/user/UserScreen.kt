@@ -78,7 +78,7 @@ fun UserScreen(
                     .fillMaxWidth(),
         )
 
-        val isCurrentUser = (userState as? Success)?.user?.userId == currentUserId
+        val isCurrentUser = (userState as? Success)?.user?.userId == currentUserId.toIntOrNull()
 
         Box(
             modifier =
