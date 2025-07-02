@@ -36,9 +36,9 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft.DraftContainerScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.splash.SplashScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserProfile.UserProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.user.config.Edit
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.userprofile.UserProfileScreen
 import ar.edu.unlam.mobile.scaffolding.ui.theme.Green
 import ar.edu.unlam.mobile.scaffolding.ui.theme.ScaffoldingV2Theme
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
