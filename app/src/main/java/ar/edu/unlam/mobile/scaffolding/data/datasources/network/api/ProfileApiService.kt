@@ -18,6 +18,7 @@ interface ProfileApiService {
 
     @PUT("/api/v1/me/profile")
     suspend fun updateProfile(
+        @Header("Authorization") userToken: String,
         @Header("Application-Token") token: String,
         @Body request: ProfileRequest,
     )

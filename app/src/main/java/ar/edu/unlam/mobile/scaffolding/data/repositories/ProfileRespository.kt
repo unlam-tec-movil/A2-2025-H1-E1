@@ -12,8 +12,6 @@ class ProfileRespository
     constructor(
         private val profileApiService: ProfileApiService,
     ) {
-        // TODO: Implementa UserRepository para perfil, favoritos, etc.
-
         val applicationToken = BuildConfig.API_KEY
 
         suspend fun getProfile(userToken: String): ProfileResponse =
@@ -28,6 +26,7 @@ class ProfileRespository
             avatarUrl: String,
             userToken: String,
         ) = profileApiService.updateProfile(
+            userToken = userToken,
             token = applicationToken,
             request = ProfileRequest(name, password, avatarUrl),
         )

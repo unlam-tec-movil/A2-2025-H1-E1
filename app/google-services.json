@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "123456789",
+    "project_id": "scaffolding-app",
+    "storage_bucket": "scaffolding-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:123456789:android:abcdef123456",
+        "android_client_info": {
+          "package_name": "ar.edu.unlam.mobile.scaffolding"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyYourApiKeyHere"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

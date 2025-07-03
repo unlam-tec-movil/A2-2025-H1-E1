@@ -34,12 +34,12 @@ import coil.compose.AsyncImage
 
 @Composable
 fun UserScreen(
-    userId: String = "User",
     controller: NavHostController = rememberNavController(),
     viewModel: UserViewModel = hiltViewModel(),
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
     val postState = feedViewModel.posts.collectAsStateWithLifecycle()
+
     val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
@@ -69,13 +69,16 @@ fun UserScreen(
                 .fillMaxSize()
                 .background(Color.White),
     ) {
-        Box(
+        Image(
+            painter = painterResource(id = R.drawable.banner),
+            contentDescription = "Editar Perfil",
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color(0xFF4B877A)),
+                    .height(250.dp)
+                    .fillMaxWidth(),
         )
+
+        val isCurrentUser = (userState as? Success)?.user?.email == currentUserId
 
         Box(
             modifier =
@@ -95,10 +98,7 @@ fun UserScreen(
             )
 
             Image(
-                painter =
-                    painterResource(
-                        id = R.drawable.ic_edit,
-                    ),
+                painter = painterResource(id = R.drawable.ic_edit),
                 contentDescription = "Editar perfil",
                 modifier =
                     Modifier
@@ -107,16 +107,18 @@ fun UserScreen(
                         .offset(6.dp, 6.dp)
                         .padding(4.dp)
                         .clip(CircleShape)
-                        .clickable(onClick = { controller.navigate("edit profile") }),
+                        .clickable {
+                            if (isCurrentUser) {
+                                controller.navigate("edit profile")
+                            } else {
+                                // Acción para seguir usuario
+                            }
+                        },
             )
         }
 
         when (val state = userState) {
-            is Loading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                )
-            }
+            is Loading -> CircularProgressIndicator(Modifier.align(Alignment.CenterHorizontally))
 
             is Success -> {
                 val user = state.user
@@ -132,13 +134,12 @@ fun UserScreen(
                 )
             }
 
-            is Error -> {
+            is Error ->
                 Text(
                     text = "Error: ${state.message}",
                     modifier = Modifier.align(Alignment.CenterHorizontally),
                     style = TextStyle(color = Color.Red),
                 )
-            }
         }
 
         val user = (userState as? Success)?.user
@@ -152,6 +153,7 @@ fun UserScreen(
             } ?: emptyList()
 
         Spacer(modifier = Modifier.height(20.dp))
+
         Row {
             Spacer(modifier = Modifier.weight(1f))
             Column {
@@ -167,31 +169,37 @@ fun UserScreen(
         }
 
         Spacer(modifier = Modifier.height(20.dp))
-        Spacer(modifier = Modifier.height(2.dp).fillMaxWidth().background(color = GrayLight))
+        Spacer(
+            modifier =
+                Modifier
+                    .height(2.dp)
+                    .fillMaxWidth()
+                    .background(color = GrayLight),
+        )
+
         Column(modifier = Modifier.fillMaxSize()) {
             when (val state = postState.value) {
                 is PostUiState.Error -> Text("Error: ${state.message}")
-                PostUiState.Loading -> {
+
+                PostUiState.Loading ->
                     Box(Modifier.fillMaxSize()) {
                         CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
                     }
-                }
 
                 is PostUiState.Success -> {
-                    val user = (userState as? Success)?.user
-                    val userPosts =
-                        user?.let {
-                            state.list.filter { post -> post.author == user.name }
-                        } ?: emptyList()
+                    if (userState is Success) {
+                        val user = (userState as Success).user
+                        val filteredPosts = state.list.filter { it.author == user.name }
 
-                    ListPost(
-                        posts = userPosts,
-                        navController = controller,
-                        favoriteViewModel = favoriteViewModel,
-                        onLikeClick = { feedViewModel.onLikeClicked(it) },
-                        modifier = Modifier.weight(1f),
-                        currentUserId = currentUserId,
-                    )
+                        ListPost(
+                            posts = filteredPosts,
+                            navController = controller,
+                            favoriteViewModel = favoriteViewModel,
+                            onLikeClick = { feedViewModel.onLikeClicked(it) },
+                            modifier = Modifier.weight(1f),
+                            currentUserId = currentUserId,
+                        )
+                    }
                 }
             }
         }
