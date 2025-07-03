@@ -98,25 +98,21 @@ fun UserScreen(
             )
 
             Image(
-                painter =
-                    painterResource(
-                        id = if (isCurrentUser) R.drawable.ic_edit else R.drawable.unlamlogo,
-                    ),
-                contentDescription = if (isCurrentUser) "Editar perfil" else "Seguir usuario",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            if (isCurrentUser) {
-                                // Acción para editar perfil
-                            } else {
-                                // Acción para seguir usuario
-                            }
-                        },
+                painter = painterResource(id = R.drawable.ic_edit),
+                contentDescription = "Editar perfil",
+                modifier = Modifier
+                    .size(45.dp)
+                    .align(Alignment.BottomEnd)
+                    .offset(6.dp, 6.dp)
+                    .padding(4.dp)
+                    .clip(CircleShape)
+                    .clickable {
+                        if (isCurrentUser) {
+                            controller.navigate("edit profile")
+                        } else {
+                            // Acción para seguir usuario
+                        }
+                    }
             )
         }
 
