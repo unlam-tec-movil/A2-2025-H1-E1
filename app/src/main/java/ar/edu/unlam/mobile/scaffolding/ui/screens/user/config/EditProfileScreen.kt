@@ -77,12 +77,6 @@ fun Edit(
         }
     }
 
-    var bio by remember {
-        mutableStateOf(
-            "meomeo",
-        )
-    }
-
     var imageUri by rememberSaveable { mutableStateOf<Uri?>(null) }
     val launcher =
         rememberLauncherForActivityResult(
@@ -119,7 +113,8 @@ fun Edit(
                     if (currentImageUri != null) {
                         viewModel.uploadAvatar(currentImageUri, token)
                     } else {
-                        viewModel.updateUser(name, bio, userUrl, token)
+                        // Solo actualizar nombre y avatar, no cambiar la contraseña
+                        viewModel.updateUser(name, "", userUrl, token)
                     }
                     shouldNavigate = true
                 },
@@ -267,23 +262,26 @@ fun Edit(
                     var nam by rememberSaveable { mutableStateOf(state.user.name) }
                     name = nam
                     Text(
-                        text = "Usuario",
+                        text = "URL del Avatar",
                         style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
                     )
                     TextField(
                         value = userUrl1,
                         onValueChange = { userUrl1 = it },
                         modifier = Modifier.fillMaxWidth(),
+                        enabled = false,
                         colors =
                             TextFieldDefaults.colors(
-                                focusedTextColor = Color.Black,
-                                unfocusedTextColor = Color(0xFF386A5F),
-                                disabledTextColor = LocalContentColor.current,
+                                focusedTextColor = Color.Gray,
+                                unfocusedTextColor = Color.Gray,
+                                disabledTextColor = Color.Gray,
                                 disabledLabelColor = Color.Gray,
                                 focusedIndicatorColor = Color.Gray,
                                 unfocusedIndicatorColor = Color.Gray,
-                                unfocusedContainerColor = Color.White,
-                                focusedLabelColor = Color.White,
+                                unfocusedContainerColor = Color(0xFFF5F5F5),
+                                focusedContainerColor = Color(0xFFF5F5F5),
+                                disabledContainerColor = Color(0xFFF5F5F5),
+                                focusedLabelColor = Color.Gray,
                             ),
                     )
 
@@ -307,31 +305,6 @@ fun Edit(
                                 focusedLabelColor = Color.White,
                             ),
                     )
-
-                    Column(modifier = Modifier.padding(vertical = 8.dp)) {
-                        Text(
-                            text = "Biografía",
-                            style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
-                        )
-                        TextField(
-                            value = bio,
-                            onValueChange = { bio = it },
-                            modifier =
-                                Modifier
-                                    .fillMaxWidth()
-                                    .height(100.dp),
-                            colors =
-                                TextFieldDefaults.colors(
-                                    unfocusedTextColor = Color(0xFF386A5F),
-                                    disabledTextColor = LocalContentColor.current,
-                                    disabledLabelColor = Color.Gray,
-                                    focusedIndicatorColor = Color.Gray,
-                                    unfocusedIndicatorColor = Color.Gray,
-                                    unfocusedContainerColor = Color.White,
-                                    focusedLabelColor = Color.White,
-                                ),
-                        )
-                    }
                 }
             }
         }
