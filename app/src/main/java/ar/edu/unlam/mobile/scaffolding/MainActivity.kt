@@ -14,6 +14,8 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -31,6 +33,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.components.TopBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.LoginScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.auth.RegisterScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.follows.Followed
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.controller.ControllerPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.detail.DetailPostScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.post.draft.DraftContainerScreen
@@ -202,6 +205,13 @@ fun MainScreen() {
                         controller.navigate("newPost")
                     },
                 )
+            }
+
+            composable("followed") {
+                val context = LocalContext.current
+                val userStore = remember { UserStore(context) }
+                val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
+                Followed(currentUserEmail = currentUserId)
             }
         }
     }

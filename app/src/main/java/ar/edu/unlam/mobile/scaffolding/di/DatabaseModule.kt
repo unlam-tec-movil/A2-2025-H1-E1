@@ -4,10 +4,12 @@ import android.content.Context
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.database.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.database.DraftDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.database.FavoriteDao
+import ar.edu.unlam.mobile.scaffolding.data.datasources.local.database.FollowDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.database.UserDao
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.repository.DraftRepository
 import ar.edu.unlam.mobile.scaffolding.data.datasources.local.repository.UserRepository
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FavoriteRepository
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FollowRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -38,6 +40,10 @@ object DatabaseModule {
 
     @Provides
     @Singleton
+    fun provideFollowDao(db: AppDatabase): FollowDao = db.followDao()
+
+    @Provides
+    @Singleton
     fun provideFavoriteRepository(dao: FavoriteDao): FavoriteRepository = FavoriteRepository(dao)
 
     @Provides
@@ -47,4 +53,11 @@ object DatabaseModule {
     @Provides
     @Singleton
     fun provideUserRepository(dao: UserDao): UserRepository = UserRepository(dao)
+
+    @Provides
+    @Singleton
+    fun provideFollowRepository(
+        followDao: FollowDao,
+        userDao: UserDao,
+    ): FollowRepository = FollowRepository(followDao, userDao)
 }

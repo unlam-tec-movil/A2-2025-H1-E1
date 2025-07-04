@@ -151,13 +151,8 @@ fun LoginScreen(
                 coroutineScope.launch {
                     userStore.escribirTokenUsuario(token)
                 }
-                if (rememberUser) {
-                    userStore.escribirDatosUsuario(username)
-                    userStore.escribirEstadoLogin(true)
-                } else {
-                    userStore.escribirDatosUsuario("")
-                    userStore.escribirEstadoLogin(false)
-                }
+                userStore.escribirDatosUsuario(username)
+                userStore.escribirEstadoLogin(true)
 
                 navController.navigate("home") {
                     popUpTo("login") { inclusive = true }
