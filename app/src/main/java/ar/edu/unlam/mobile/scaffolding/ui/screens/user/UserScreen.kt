@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.data.repositories.FollowRepository
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
@@ -31,6 +32,16 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserUiState.*
 import ar.edu.unlam.mobile.scaffolding.ui.theme.GrayLight
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.AsyncImage
+import dagger.hilt.EntryPoint
+import dagger.hilt.InstallIn
+import dagger.hilt.android.EntryPointAccessors
+import dagger.hilt.components.SingletonComponent
+
+@EntryPoint
+@InstallIn(SingletonComponent::class)
+interface FollowRepositoryEntryPoint {
+    fun followRepository(): FollowRepository
+}
 
 @Composable
 fun UserScreen(
@@ -38,9 +49,14 @@ fun UserScreen(
     viewModel: UserViewModel = hiltViewModel(),
     feedViewModel: FeedViewModel = hiltViewModel(),
 ) {
+    val context = LocalContext.current
+    val followRepository =
+        EntryPointAccessors.fromApplication(
+            context.applicationContext,
+            FollowRepositoryEntryPoint::class.java,
+        ).followRepository()
     val postState = feedViewModel.posts.collectAsStateWithLifecycle()
 
-    val context = LocalContext.current
     val userStore = remember { UserStore(context) }
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
@@ -48,6 +64,13 @@ fun UserScreen(
 
     val currentUserIdState = userStore.leerDatosUsuario.collectAsState(initial = "")
     val currentUserId = currentUserIdState.value
+
+    // Estados para seguimiento
+    var followersCount by remember { mutableStateOf(0) }
+    var followedCount by remember { mutableStateOf(0) }
+    var isFollowing by remember { mutableStateOf(false) }
+    var isCurrentUser by remember { mutableStateOf(false) }
+    val scope = rememberCoroutineScope()
 
     val homeBackStackEntry =
         remember(controller.currentBackStackEntry) {
@@ -60,6 +83,23 @@ fun UserScreen(
         if (token.isNotEmpty()) {
             viewModel.loadProfile(token)
             feedViewModel.getPosts(token)
+        }
+    }
+
+    // Cargar datos de seguimiento cuando cambie el usuario
+    LaunchedEffect(userState, currentUserId) {
+        if (userState is Success && currentUserId.isNotEmpty()) {
+            val user = (userState as Success).user
+            isCurrentUser = user.email == currentUserId
+
+            if (!isCurrentUser) {
+                // Si no es el usuario actual, verificar si lo está siguiendo
+                isFollowing = followRepository.isFollowing(currentUserId, user.email)
+            }
+
+            // Cargar contadores
+            followersCount = followRepository.getFollowersCount(user.email)
+            followedCount = followRepository.getFollowedCount(user.email)
         }
     }
 
@@ -78,8 +118,6 @@ fun UserScreen(
                     .fillMaxWidth(),
         )
 
-        val isCurrentUser = (userState as? Success)?.user?.email == currentUserId
-
         Box(
             modifier =
                 Modifier
@@ -97,24 +135,22 @@ fun UserScreen(
                         .border(0.1.dp, Color.White, CircleShape),
             )
 
-            Image(
-                painter = painterResource(id = R.drawable.ic_edit),
-                contentDescription = "Editar perfil",
-                modifier =
-                    Modifier
-                        .size(45.dp)
-                        .align(Alignment.BottomEnd)
-                        .offset(6.dp, 6.dp)
-                        .padding(4.dp)
-                        .clip(CircleShape)
-                        .clickable {
-                            if (isCurrentUser) {
+            if (isCurrentUser) {
+                Image(
+                    painter = painterResource(id = R.drawable.ic_edit),
+                    contentDescription = "Editar perfil",
+                    modifier =
+                        Modifier
+                            .size(45.dp)
+                            .align(Alignment.BottomEnd)
+                            .offset(6.dp, 6.dp)
+                            .padding(4.dp)
+                            .clip(CircleShape)
+                            .clickable {
                                 controller.navigate("edit profile")
-                            } else {
-                                // Acción para seguir usuario
-                            }
-                        },
-            )
+                            },
+                )
+            }
         }
 
         when (val state = userState) {
@@ -161,9 +197,19 @@ fun UserScreen(
                 Text("Post", color = Color.Gray)
             }
             Spacer(modifier = Modifier.weight(1f))
-            Column {
-                Text("453", modifier = Modifier.align(Alignment.CenterHorizontally))
-                Text("Seguidos", color = Color.Gray)
+            Column(
+                modifier =
+                    Modifier.clickable {
+                        if (isCurrentUser) {
+                            controller.navigate("followed")
+                        }
+                    },
+            ) {
+                Text(
+                    if (isCurrentUser) followedCount.toString() else followersCount.toString(),
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                )
+                Text(if (isCurrentUser) "Seguidos" else "Seguidores", color = Color.Gray)
             }
             Spacer(modifier = Modifier.weight(1f))
         }
