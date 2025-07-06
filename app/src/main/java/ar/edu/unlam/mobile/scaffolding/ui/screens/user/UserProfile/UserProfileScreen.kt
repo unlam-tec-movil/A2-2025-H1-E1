@@ -5,6 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -15,8 +16,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FollowRepository
+import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.PostUiState
+import ar.edu.unlam.mobile.scaffolding.ui.screens.post.favorite.FavoriteViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.screens.user.UserViewModel
 import ar.edu.unlam.mobile.scaffolding.utils.UserStore
 import coil.compose.AsyncImage
 import dagger.hilt.EntryPoint
@@ -37,6 +45,8 @@ fun UserProfileScreen(
     userName: String,
     avatarUrl: String,
     controller: NavHostController,
+    feedViewModel: FeedViewModel = hiltViewModel(),
+    viewModel: UserViewModel = hiltViewModel()
 ) {
     val context = LocalContext.current
     val followRepository =
@@ -47,6 +57,25 @@ fun UserProfileScreen(
 
     val userStore = remember { UserStore(context) }
     val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
+    val favoriteViewModel: FavoriteViewModel = hiltViewModel()
+
+
+    val postState = feedViewModel.posts.collectAsStateWithLifecycle()
+    val userPosts = remember(postState.value) {
+        when (val state = postState.value) {
+            is PostUiState.Success -> state.list.filter { it.author == userName }
+            else -> emptyList()
+        }
+    }
+
+    val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
+    val token = tokenState.value
+    LaunchedEffect(token) {
+        if (token.isNotEmpty()) {
+            feedViewModel.getPosts(token)
+        }
+    }
+
 
     // Estados para seguimiento
     var isFollowing by remember { mutableStateOf(false) }
@@ -97,13 +126,7 @@ fun UserProfileScreen(
             style = TextStyle(fontSize = 30.sp),
         )
 
-        Text(
-            text = userId,
-            modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(color = Color.Gray, fontSize = 16.sp),
-        )
-
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(10.dp))
 
         // Botón de seguir/dejar de seguir
         Button(
@@ -143,5 +166,38 @@ fun UserProfileScreen(
             modifier = Modifier.align(Alignment.CenterHorizontally),
             style = TextStyle(fontSize = 16.sp),
         )
+
+        Spacer(modifier = Modifier.height(20.dp))
+
+        Text(
+            text = "${userPosts.size} tuit${if (userPosts.size != 1) "s." else "."}",
+            modifier = Modifier.align(Alignment.CenterHorizontally),
+            style = TextStyle(fontSize = 16.sp)
+        )
+
+        Column(modifier = Modifier.fillMaxSize()) {
+            when (val state = postState.value) {
+                is PostUiState.Error -> Text("Error: ${state.message}")
+                PostUiState.Loading -> {
+                    Box(Modifier.fillMaxSize()) {
+                        CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                    }
+                }
+
+                is PostUiState.Success -> {
+                    val userPosts = state.list.filter { post -> post.author == userName }
+
+                    ListPost(
+                        posts = userPosts,
+                        navController = controller,
+                        favoriteViewModel = favoriteViewModel,
+                        onLikeClick = { feedViewModel.onLikeClicked(it) },
+                        modifier = Modifier.weight(1f),
+                        currentUserId = currentUserId,
+                    )
+                }
+            }
+        }
+
     }
 }
