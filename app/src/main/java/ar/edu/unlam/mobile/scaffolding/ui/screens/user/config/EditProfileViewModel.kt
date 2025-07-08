@@ -58,6 +58,7 @@ class EditProfileViewModel
         fun uploadAvatar(
             imageUri: Uri,
             userToken: String,
+            password: String,
         ) {
             viewModelScope.launch {
                 try {
@@ -67,11 +68,10 @@ class EditProfileViewModel
                     // Obtener el perfil actual para mantener los datos existentes
                     val currentProfile = profileRepository.getProfile(userToken)
 
-                    // Actualizar solo el avatar
+                    // Actualizar solo el avatar, pero enviando la contraseña actual
                     profileRepository.updateProfile(
                         name = currentProfile.name,
-                        // No cambiar la contraseña
-                        password = "",
+                        password = password,
                         avatarUrl = downloadUrl,
                         userToken = userToken,
                     )
