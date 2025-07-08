@@ -179,7 +179,6 @@ fun MainScreen() {
                 route = "userProfile/{id}/{name}/{avatarUrl}",
                 arguments =
                     listOf(
-                        navArgument("id") { type = NavType.StringType },
                         navArgument("name") { type = NavType.StringType },
                         navArgument("avatarUrl") { type = NavType.StringType },
                     ),
