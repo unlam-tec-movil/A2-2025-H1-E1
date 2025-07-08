@@ -8,7 +8,9 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
@@ -20,6 +22,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -35,6 +38,8 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.time.Duration
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -214,7 +219,7 @@ fun HeaderPostItem(
         Column(
             modifier =
                 Modifier
-                    .height(40.dp)
+                    .height(50.dp)
                     .fillMaxWidth()
                     .padding(start = 10.dp),
             verticalArrangement = Arrangement.Center,
@@ -231,17 +236,29 @@ fun HeaderPostItem(
 @RequiresApi(Build.VERSION_CODES.O)
 @Composable
 fun Date(date: String) {
-    val formattedDate =
+    val context = LocalContext.current
+    val timeAgoText = remember(date) {
         try {
             val zonedDateTime = ZonedDateTime.parse(date)
-            val formatter = DateTimeFormatter.ofPattern("EEEE, d 'de' MMMM 'de' yyyy", Locale("es"))
-            zonedDateTime.format(formatter).replaceFirstChar { it.uppercase() }
+            val now = ZonedDateTime.now(ZoneId.systemDefault())
+            val duration = Duration.between(zonedDateTime, now)
+
+            when {
+                duration.toMinutes() < 1 -> "Justo ahora"
+                duration.toMinutes() < 60 -> "Hace ${duration.toMinutes()} minutos"
+                duration.toHours() < 24 -> "Hace ${duration.toHours()} horas"
+                duration.toDays() < 7 -> "Hace ${duration.toDays()} días"
+                duration.toDays() < 30 -> "Hace ${duration.toDays() / 7} semanas"
+                duration.toDays() < 365 -> "Hace ${duration.toDays() / 30} meses"
+                else -> "Hace ${duration.toDays() / 365} años"
+            }
         } catch (e: Exception) {
-            date
+            "Fecha desconocida"
         }
+    }
 
     Text(
-        text = formattedDate,
+        text = timeAgoText,
         textAlign = TextAlign.Start,
         fontSize = 12.sp,
         color = Color.Gray,
@@ -318,3 +335,6 @@ fun ListPost(
         }
     }
 }
+
+
+

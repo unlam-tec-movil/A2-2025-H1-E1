@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens.user.userprofile
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
@@ -12,13 +13,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavHostController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.repositories.FollowRepository
 import ar.edu.unlam.mobile.scaffolding.ui.components.ListPost
 import ar.edu.unlam.mobile.scaffolding.ui.screens.feed.FeedViewModel
@@ -93,12 +97,14 @@ fun UserProfileScreen(
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White),
     ) {
-        Box(
+
+        Image(
+            painter = painterResource(id = R.drawable.banner),
+            contentDescription = "Editar Perfil",
             modifier =
                 Modifier
-                    .fillMaxWidth()
-                    .height(160.dp)
-                    .background(Color(0xFF4B877A)),
+                    .height(184.dp)
+                    .fillMaxWidth(),
         )
 
         Box(
@@ -110,15 +116,15 @@ fun UserProfileScreen(
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = "Imagen de perfil",
-                modifier =
-                    Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .border(0.1.dp, Color.White, CircleShape),
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .border(0.1.dp, Color.White, CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.profile_photo),
+                fallback = painterResource(R.drawable.profile_photo)
             )
         }
-
-        Spacer(modifier = Modifier.height(10.dp))
 
         Text(
             text = userName,

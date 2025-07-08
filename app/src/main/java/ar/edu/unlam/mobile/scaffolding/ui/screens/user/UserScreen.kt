@@ -5,7 +5,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -13,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -114,7 +117,7 @@ fun UserScreen(
             contentDescription = "Editar Perfil",
             modifier =
                 Modifier
-                    .height(250.dp)
+                    .height(184.dp)
                     .fillMaxWidth(),
         )
 
@@ -126,14 +129,17 @@ fun UserScreen(
         ) {
             val avatarUrl = (userState as? Success)?.user?.avatarUrl
             AsyncImage(
-                model = avatarUrl ?: R.drawable.profile_photo,
+                model = avatarUrl,
                 contentDescription = "Imagen de perfil",
-                modifier =
-                    Modifier
-                        .size(120.dp)
-                        .clip(CircleShape)
-                        .border(0.1.dp, Color.White, CircleShape),
+                modifier = Modifier
+                    .size(120.dp)
+                    .clip(CircleShape)
+                    .border(0.1.dp, Color.White, CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(R.drawable.profile_photo),
+                fallback = painterResource(R.drawable.profile_photo)
             )
+
 
             if (isCurrentUser) {
                 Image(
