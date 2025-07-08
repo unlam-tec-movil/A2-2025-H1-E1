@@ -10,10 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import ar.edu.unlam.mobile.scaffolding.data.models.UserProof
+import ar.edu.unlam.mobile.scaffolding.ui.components.AvatarItem
 
 @Composable
 fun FollowedUserItem(
@@ -39,12 +37,7 @@ fun FollowedUserItem(
         horizontalArrangement = Arrangement.SpaceBetween,
     ) {
         Row(verticalAlignment = Alignment.CenterVertically) {
-            Icon(
-                imageVector = Icons.Default.AccountCircle,
-                contentDescription = null,
-                modifier = Modifier.size(48.dp),
-                tint = Color(0xFF6B8F89),
-            )
+            AvatarItem(avatarUrl = user.avatarUrl, size = 48)
             Spacer(modifier = Modifier.width(12.dp))
             Column {
                 Text(user.name, fontWeight = FontWeight.SemiBold, fontSize = 16.sp)
