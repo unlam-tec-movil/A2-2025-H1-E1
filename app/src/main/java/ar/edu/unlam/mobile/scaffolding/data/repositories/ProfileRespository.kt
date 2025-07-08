@@ -38,4 +38,16 @@ class ProfileRespository
                 page = 1,
                 parents = false,
             )
+
+        suspend fun getFeedWithPagination(
+            userToken: String,
+            page: Int,
+            parents: Boolean = false,
+        ): List<Tuit> =
+            profileApiService.getFeed(
+                userToken = userToken,
+                token = applicationToken,
+                page = page,
+                parents = parents,
+            )
     }
