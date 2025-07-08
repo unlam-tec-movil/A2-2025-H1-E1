@@ -22,14 +22,48 @@ class FeedViewModel
         val posts: StateFlow<PostUiState> get() = _posts
         private var userToken: String = ""
 
+        // Variables para paginación
+        private var currentPage = 1
+        private var isLoadingMore = false
+        private var hasMorePages = true
+
         fun getPosts(userToken: String) {
             this.userToken = userToken
+            currentPage = 1
+            hasMorePages = true
             viewModelScope.launch {
                 try {
-                    _posts.value = PostUiState.Success(profileRepository.getFeed(userToken))
+                    _posts.value = PostUiState.Loading
+                    val posts = profileRepository.getFeedWithPagination(userToken, currentPage)
+                    _posts.value = PostUiState.Success(posts)
                 } catch (e: Exception) {
                     val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handlePostError(e)
                     _posts.value = PostUiState.Error(errorMsg)
+                }
+            }
+        }
+
+        fun loadMorePosts() {
+            if (isLoadingMore || !hasMorePages) return
+
+            viewModelScope.launch {
+                try {
+                    isLoadingMore = true
+                    currentPage++
+                    val newPosts = profileRepository.getFeedWithPagination(userToken, currentPage)
+
+                    if (newPosts.isEmpty()) {
+                        hasMorePages = false
+                    } else {
+                        val currentPosts = (_posts.value as? PostUiState.Success)?.list ?: emptyList()
+                        _posts.value = PostUiState.Success(currentPosts + newPosts)
+                    }
+                } catch (e: Exception) {
+                    currentPage-- // Revertir el incremento en caso de error
+                    val errorMsg = ar.edu.unlam.mobile.scaffolding.utils.ErrorHandler.handlePostError(e)
+                    _posts.value = PostUiState.Error(errorMsg)
+                } finally {
+                    isLoadingMore = false
                 }
             }
         }
@@ -64,6 +98,10 @@ class FeedViewModel
                 }
             }
         }
+
+        fun hasMorePages(): Boolean = hasMorePages
+
+        fun isLoadingMore(): Boolean = isLoadingMore
     }
 
 sealed interface PostUiState {
