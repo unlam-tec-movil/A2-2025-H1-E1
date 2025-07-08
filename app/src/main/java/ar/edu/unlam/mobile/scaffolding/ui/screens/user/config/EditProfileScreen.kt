@@ -70,6 +70,7 @@ fun Edit(
     var name by rememberSaveable { mutableStateOf("") }
     var userUrl by rememberSaveable { mutableStateOf("") }
     var shouldNavigate by remember { mutableStateOf(false) }
+    var password by rememberSaveable { mutableStateOf("") }
 
     LaunchedEffect(token) {
         if (token.isNotEmpty()) {
@@ -111,14 +112,13 @@ fun Edit(
                 onClick = {
                     val currentImageUri = imageUri
                     if (currentImageUri != null) {
-                        viewModel.uploadAvatar(currentImageUri, token)
+                        viewModel.uploadAvatar(currentImageUri, token, password)
                     } else {
-                        // Solo actualizar nombre y avatar, no cambiar la contraseña
-                        viewModel.updateUser(name, "", userUrl, token)
+                        viewModel.updateUser(name, password, userUrl, token)
                     }
                     shouldNavigate = true
                 },
-                enabled = userState !is UserEditUiState.Loading && userState !is UserEditUiState.Uploading,
+                enabled = password.isNotBlank() && userState !is UserEditUiState.Loading && userState !is UserEditUiState.Uploading,
                 modifier =
                     Modifier
                         .align(Alignment.BottomEnd)
@@ -304,6 +304,29 @@ fun Edit(
                                 unfocusedContainerColor = Color.White,
                                 focusedLabelColor = Color.White,
                             ),
+                    )
+
+                    Text(
+                        text = "Contraseña",
+                        style = MaterialTheme.typography.labelSmall.copy(color = Color.Gray),
+                    )
+                    TextField(
+                        value = password,
+                        onValueChange = { password = it },
+                        modifier = Modifier.fillMaxWidth(),
+                        colors =
+                            TextFieldDefaults.colors(
+                                focusedTextColor = Color.Black,
+                                unfocusedTextColor = Color(0xFF386A5F),
+                                disabledTextColor = LocalContentColor.current,
+                                disabledLabelColor = Color.Gray,
+                                focusedIndicatorColor = Color.Gray,
+                                unfocusedIndicatorColor = Color.Gray,
+                                unfocusedContainerColor = Color.White,
+                                focusedLabelColor = Color.White,
+                            ),
+                        visualTransformation = androidx.compose.ui.text.input.PasswordVisualTransformation(),
+                        singleLine = true,
                     )
                 }
             }
