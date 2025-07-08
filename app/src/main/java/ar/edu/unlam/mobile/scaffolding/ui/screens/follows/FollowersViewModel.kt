@@ -17,7 +17,7 @@ class FollowersViewModel : ViewModel() {
                     name = "Danturron",
                     username = "cacaman",
                     isFollowing = false,
-                    avatarUrl = "" // Valor vacío o de prueba
+                    avatarUrl = "",
                 )
             }
     }
