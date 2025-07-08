@@ -8,9 +8,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.Comment
@@ -41,8 +39,6 @@ import java.nio.charset.StandardCharsets
 import java.time.Duration
 import java.time.ZoneId
 import java.time.ZonedDateTime
-import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun ButtonsPost(
@@ -237,25 +233,26 @@ fun HeaderPostItem(
 @Composable
 fun Date(date: String) {
     val context = LocalContext.current
-    val timeAgoText = remember(date) {
-        try {
-            val zonedDateTime = ZonedDateTime.parse(date)
-            val now = ZonedDateTime.now(ZoneId.systemDefault())
-            val duration = Duration.between(zonedDateTime, now)
+    val timeAgoText =
+        remember(date) {
+            try {
+                val zonedDateTime = ZonedDateTime.parse(date)
+                val now = ZonedDateTime.now(ZoneId.systemDefault())
+                val duration = Duration.between(zonedDateTime, now)
 
-            when {
-                duration.toMinutes() < 1 -> "Justo ahora"
-                duration.toMinutes() < 60 -> "Hace ${duration.toMinutes()} minutos"
-                duration.toHours() < 24 -> "Hace ${duration.toHours()} horas"
-                duration.toDays() < 7 -> "Hace ${duration.toDays()} días"
-                duration.toDays() < 30 -> "Hace ${duration.toDays() / 7} semanas"
-                duration.toDays() < 365 -> "Hace ${duration.toDays() / 30} meses"
-                else -> "Hace ${duration.toDays() / 365} años"
+                when {
+                    duration.toMinutes() < 1 -> "Justo ahora"
+                    duration.toMinutes() < 60 -> "Hace ${duration.toMinutes()} minutos"
+                    duration.toHours() < 24 -> "Hace ${duration.toHours()} horas"
+                    duration.toDays() < 7 -> "Hace ${duration.toDays()} días"
+                    duration.toDays() < 30 -> "Hace ${duration.toDays() / 7} semanas"
+                    duration.toDays() < 365 -> "Hace ${duration.toDays() / 30} meses"
+                    else -> "Hace ${duration.toDays() / 365} años"
+                }
+            } catch (e: Exception) {
+                "Fecha desconocida"
             }
-        } catch (e: Exception) {
-            "Fecha desconocida"
         }
-    }
 
     Text(
         text = timeAgoText,
@@ -335,6 +332,3 @@ fun ListPost(
         }
     }
 }
-
-
-

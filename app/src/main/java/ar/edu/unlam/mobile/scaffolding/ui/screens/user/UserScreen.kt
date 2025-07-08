@@ -5,9 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
@@ -131,15 +129,15 @@ fun UserScreen(
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(0.1.dp, Color.White, CircleShape),
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(0.1.dp, Color.White, CircleShape),
                 contentScale = ContentScale.Crop,
                 error = painterResource(R.drawable.profile_photo),
-                fallback = painterResource(R.drawable.profile_photo)
+                fallback = painterResource(R.drawable.profile_photo),
             )
-
 
             if (isCurrentUser) {
                 Image(

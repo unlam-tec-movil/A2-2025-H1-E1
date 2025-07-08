@@ -50,7 +50,7 @@ fun UserProfileScreen(
     avatarUrl: String,
     controller: NavHostController,
     feedViewModel: FeedViewModel = hiltViewModel(),
-    viewModel: UserViewModel = hiltViewModel()
+    viewModel: UserViewModel = hiltViewModel(),
 ) {
     val context = LocalContext.current
     val followRepository =
@@ -63,14 +63,14 @@ fun UserProfileScreen(
     val currentUserId by userStore.leerDatosUsuario.collectAsState(initial = "")
     val favoriteViewModel: FavoriteViewModel = hiltViewModel()
 
-
     val postState = feedViewModel.posts.collectAsStateWithLifecycle()
-    val userPosts = remember(postState.value) {
-        when (val state = postState.value) {
-            is PostUiState.Success -> state.list.filter { it.author == userName }
-            else -> emptyList()
+    val userPosts =
+        remember(postState.value) {
+            when (val state = postState.value) {
+                is PostUiState.Success -> state.list.filter { it.author == userName }
+                else -> emptyList()
+            }
         }
-    }
 
     val tokenState = userStore.leerTokenUsuario.collectAsState(initial = "")
     val token = tokenState.value
@@ -79,7 +79,6 @@ fun UserProfileScreen(
             feedViewModel.getPosts(token)
         }
     }
-
 
     // Estados para seguimiento
     var isFollowing by remember { mutableStateOf(false) }
@@ -97,7 +96,6 @@ fun UserProfileScreen(
     Column(
         modifier = Modifier.fillMaxSize().background(Color.White),
     ) {
-
         Image(
             painter = painterResource(id = R.drawable.banner),
             contentDescription = "Editar Perfil",
@@ -116,13 +114,14 @@ fun UserProfileScreen(
             AsyncImage(
                 model = avatarUrl,
                 contentDescription = "Imagen de perfil",
-                modifier = Modifier
-                    .size(120.dp)
-                    .clip(CircleShape)
-                    .border(0.1.dp, Color.White, CircleShape),
+                modifier =
+                    Modifier
+                        .size(120.dp)
+                        .clip(CircleShape)
+                        .border(0.1.dp, Color.White, CircleShape),
                 contentScale = ContentScale.Crop,
                 error = painterResource(R.drawable.profile_photo),
-                fallback = painterResource(R.drawable.profile_photo)
+                fallback = painterResource(R.drawable.profile_photo),
             )
         }
 
@@ -178,7 +177,7 @@ fun UserProfileScreen(
         Text(
             text = "${userPosts.size} tuit${if (userPosts.size != 1) "s." else "."}",
             modifier = Modifier.align(Alignment.CenterHorizontally),
-            style = TextStyle(fontSize = 16.sp)
+            style = TextStyle(fontSize = 16.sp),
         )
 
         Column(modifier = Modifier.fillMaxSize()) {
@@ -204,6 +203,5 @@ fun UserProfileScreen(
                 }
             }
         }
-
     }
 }
