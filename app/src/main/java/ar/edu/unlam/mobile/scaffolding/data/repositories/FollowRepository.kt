@@ -62,6 +62,7 @@ class FollowRepository
                     name = user.name,
                     username = user.email,
                     isFollowing = true,
+                    avatarUrl = user.avatarUrl, // Incluye avatarUrl
                 )
             }
         }
@@ -73,6 +74,7 @@ class FollowRepository
                     name = user.name,
                     username = user.email,
                     isFollowing = false,
+                    avatarUrl = user.avatarUrl, // Incluye avatarUrl
                 )
             }
         }
